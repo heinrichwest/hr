@@ -1,0 +1,609 @@
+Below is a **full end-to-end scope** you can hand to **Antigravity** to build an **HR + IR (Industrial Relations) + Payroll** system for **South Africa**, including **deliverables, modules, workflows, compliance items, and detailed to-do lists**.
+
+---
+
+## 1) Project overview
+
+### 1.1 Purpose
+
+Build a secure, compliant South African HR, Industrial Relations, and Payroll platform that manages:
+
+* Employee lifecycle (hire → onboard → work → leave → discipline → exit)
+* IR case management (warnings, hearings, grievances, disputes, CCMA preparation)
+* Payroll processing compliant with SA requirements (PAYE/UIF/SDL/ETI, IRP5, EMP201/EMP501-ready outputs)
+* Reporting, audit trails, and document management
+
+### 1.2 Target users
+
+* HR Admin / HR Manager
+* Payroll Admin / Payroll Manager
+* Line Managers / Supervisors
+* Employees (self-service)
+* IR Officer / ER Manager / Legal
+* Finance (read-only or reporting)
+* System Admin (technical)
+
+### 1.3 Deployment model
+
+* Web application (desktop-first), mobile responsive
+* Optional mobile app later (Phase 2/3)
+* Multi-tenant (multiple companies / legal entities) or single-tenant (decide in build; design for multi-tenant)
+
+---
+
+## 2) Success criteria
+
+* Run payroll end-to-end for a full pay cycle with approvals, audit logs, exports, payslips.
+* Produce statutory-ready outputs (IRP5 certificates, EMP201 values, EMP501 reconciliation dataset/export format).
+* Track IR processes with templates, evidence, outcomes, and time-stamped audit trails.
+* POPIA-aligned security with role-based access, encryption, logging, and data retention rules.
+* Employee self-service reduces HR admin workload (leave, personal details, documents, payslips).
+
+---
+
+## 3) Core modules (Functional scope)
+
+## 3.1 Company setup (multi-entity support)
+
+**Entities & structures**
+
+* Company / legal entity profiles (reg no, UIF ref, SDL ref, PAYE ref, addresses)
+* Sites/branches, departments, job levels, cost centres, reporting lines
+* Pay frequencies: weekly, fortnightly, monthly
+* Work schedules: shifts, standard hours, public holiday rules (configurable)
+* Pay elements configuration:
+
+  * Earnings (basic, hourly, allowances, commission, bonus)
+  * Deductions (UIF, pension, medical, garnishee, loans, union)
+  * Employer contributions (pension, medical, etc.)
+* Benefit providers, union memberships, bargaining council (optional)
+
+**Deliverables**
+
+* Setup screens + import templates (CSV/Excel)
+* Validations + audit logs
+
+---
+
+## 3.2 Employee master data (HRIS)
+
+**Employee profile**
+
+* Personal details (ID/passport, demographics), contact, banking, next of kin
+* Employment details: start date, contract type, grade, department, manager, cost centre
+* Pay details: salary/hourly rate, pay frequency, pay elements, tax number, UIF status
+* Document vault: contracts, IDs, certificates, warnings, medical notes (permissioned)
+* Employment status changes: promotions, transfers, salary changes, suspension, termination
+
+**Workflows**
+
+* Create employee (draft → HR review → active)
+* Changes require approvals (manager/HR/payroll depending on field)
+* History log of all changes
+
+---
+
+## 3.3 Contracts & onboarding
+
+* Contract templates (per role/grade/contract type)
+* Offer letter workflow (optional)
+* Onboarding checklist per job role:
+
+  * Documents required (ID, bank letter, certificates)
+  * Policy acknowledgements
+  * Equipment issue tracking (optional)
+* Probation tracking and reminders
+
+---
+
+## 3.4 Leave & absence management (BCEA-aligned)
+
+**Leave types (configurable)**
+
+* Annual leave, Sick leave, Family responsibility leave
+* Maternity/parental/adoption leave (as configured)
+* Study leave, unpaid leave, special leave
+* Leave accrual rules per company/policy (e.g., monthly accrual, caps, carryover)
+
+**Process**
+
+* Employee applies → manager approves → HR optional verification → payroll sync
+* Sick leave: upload medical note, rule triggers (e.g., >2 days requires note)
+* Leave balances visible in ESS (employee self-service)
+* Calendar view for managers
+
+**Outputs**
+
+* Leave ledger per employee
+* Leave liability reporting (optional)
+
+---
+
+## 3.5 Time & attendance (optional but recommended for hourly staff)
+
+* Clock-in/out (web or integration-ready)
+* Timesheets for hours worked, overtime, night shift, Sunday/public holiday work
+* Approval workflow (Supervisor → Payroll)
+* Exceptions: late, absence, missing punches
+* Payroll-ready export of hours by pay element
+
+*(If you already have a time system, build integration and skip capturing UI.)*
+
+---
+
+## 3.6 Payroll (South Africa)
+
+### Payroll capabilities
+
+* Employee payroll per pay period with:
+
+  * Earnings (salary/hourly/allowances/commission/bonus)
+  * Pre-tax and post-tax deductions
+  * Employer contributions
+  * Garnishee orders and loans (with amortisation schedules)
+* Retro-pay handling and backpay calculations (approved changes effective in past periods)
+* Pro-rata salary for joiners/leavers and unpaid leave
+* Termination payroll:
+
+  * Notice pay, leave payout, deductions, final payslip
+* Multiple bank accounts? (optional)
+* Multi-company payroll run with segregation
+
+### Statutory / compliance outputs (SA)
+
+* PAYE calculation engine **configurable by tax tables** (do not hardcode numbers)
+* UIF + SDL calculations (configurable)
+* ETI support (optional if needed; configurable rules & validations)
+* IRP5/IT3(a) certificate generation
+* EMP201 summary values per period
+* EMP501 reconciliation dataset/export support
+* SARS submission file formats: generate export files aligned to required schemas (exact formats confirmed during implementation)
+
+### Payroll operations
+
+* Payroll calendar and cut-off dates
+* Payroll run workflow:
+
+  1. Inputs locked (leave/time/adjustments)
+  2. Calculate payroll (preview)
+  3. Exception review (outliers, negative pay, missing bank details)
+  4. Approvals (Payroll Manager → Finance)
+  5. Finalise payroll (lock period)
+  6. Generate outputs (payslips, bank file, journals, statutory exports)
+* Re-open period policy (role restricted, logged)
+
+### Outputs
+
+* Payslips (PDF + ESS access)
+* Bank payment file formats (configurable; typically per bank requirements)
+* GL journals export (CSV / Xero-ready mapping optional)
+* Payroll reports (see reporting section)
+
+---
+
+## 3.7 Employee self-service (ESS)
+
+* View payslips + tax certificates (role/time restricted)
+* Update personal details (approval required for sensitive fields)
+* Submit leave requests
+* Upload documents (ID, banking proof, medical notes)
+* View employment letters (optional)
+* View IR notices relevant to employee (permissioned)
+
+---
+
+## 3.8 Industrial Relations (IR / Employee Relations) module
+
+This is a major differentiator: **case management + legal-grade audit + templates**.
+
+### IR Case types
+
+* Misconduct (disciplinary)
+* Incapacity / poor performance
+* Grievance
+* Abscondment
+* Operational requirements (retrenchment process tracking – optional)
+* Dispute / CCMA / Bargaining council (tracking and evidence pack)
+
+### IR workflows
+
+**A) Misconduct / disciplinary workflow**
+
+* Incident logged → preliminary investigation checklist
+* Evidence collection (documents, images, witness statements)
+* Notice of hearing generation (template + delivery tracking)
+* Hearing scheduling + participants
+* Minutes capture (notes, attachments, outcome)
+* Sanction recording (warning types, suspension, dismissal)
+* Appeal process tracking
+* Auto-create warning record on employee profile
+* Warning validity periods (e.g., verbal 3 months, written 6 months — configurable)
+
+**B) Grievance workflow**
+
+* Grievance submitted → acknowledgement → investigation → meetings → outcome letter
+* Confidential access controls
+
+**C) Performance / incapacity workflow**
+
+* Performance counselling → PIP template → review meetings → outcomes
+* Attach training/coaching records (optional)
+
+**D) Dispute/CCMA workflow**
+
+* Case log: referral date, case number, commissioner, hearing dates
+* Document pack builder: contracts, warnings, payslips, attendance, correspondence
+* Outcome tracking: settlement, arbitration award, reinstatement, etc.
+
+### Templates & document generation
+
+* Warning letters, hearing notices, outcomes, grievance outcomes, appeal outcomes
+* Versioning and template editor (admin-only)
+* Mail merge fields (employee name, ID, incident date, policy references, etc.)
+
+### Security & audit
+
+* IR cases have restricted access (IR role + selected HR + manager as allowed)
+* Full audit trail: who viewed, downloaded, edited, and when
+
+---
+
+## 3.9 Document management
+
+* Secure employee document vault
+* IR evidence vault (separate permissions)
+* Document categories, tags, expiry reminders (ID expiry, certificates)
+* Versioning (optional)
+
+---
+
+## 3.10 Reporting & analytics
+
+### Standard reports
+
+**HR**
+
+* Headcount, turnover, new hires, terminations
+* Leave balances and leave taken
+* Org structure, employee listing, contract types
+
+**Payroll**
+
+* Payroll register, pay element summaries
+* Deductions and contributions
+* Cost centre payroll totals
+* Bank payment summary
+* Variance reports (this period vs last)
+* Statutory summaries (PAYE/UIF/SDL/ETI values)
+
+**IR**
+
+* Cases by type/status/outcome
+* Warnings issued by department/manager
+* Time-to-resolution metrics
+* CCMA outcomes tracking
+
+### Report features
+
+* Filter, group, export to Excel/CSV
+* Role-based report access
+* Scheduled reports (optional)
+
+---
+
+## 3.11 Integrations (optional / as needed)
+
+* Accounting: Xero (journals, cost centres) – optional
+* Time & attendance device/software – optional
+* Email/SMS for notifications – optional
+* Identity provider (Microsoft/Google SSO) – optional
+* Document signing (e-sign) – optional
+
+---
+
+## 4) Non-functional requirements
+
+### 4.1 Security & POPIA
+
+* Role-based access control (RBAC)
+* Field-level permissions for sensitive data (ID, bank, salary)
+* Encryption at rest + TLS in transit
+* Audit logs (immutable logs for payroll finalisation and IR case actions)
+* Data retention policies:
+
+  * Payroll records retention (configurable)
+  * IR case retention (configurable)
+* Consent and privacy notices for employees (ESS)
+
+### 4.2 Performance
+
+* Payroll calc performance targets (e.g., 1,000 employees within minutes – refine)
+* Fast search for employees and cases
+
+### 4.3 Reliability
+
+* Daily backups, restore testing
+* Uptime targets (define)
+* Error monitoring and alerting
+
+### 4.4 Usability
+
+* Simple navigation by role (HR vs Payroll vs IR)
+* Audit-friendly screens (show “what changed”)
+* Accessibility basics (keyboard navigation, readable PDFs)
+
+---
+
+## 5) Roles & permissions (example matrix)
+
+* **System Admin:** all configs, no salary visibility unless explicitly granted
+* **HR Admin:** employee profiles, contracts, leave, documents
+* **Payroll Admin:** payroll processing, pay elements, payslips
+* **IR Officer:** IR case access, templates, evidence packs
+* **Manager:** approve leave/time; limited employee profile visibility; view own team only
+* **Employee:** ESS access to own data only
+* **Finance:** payroll summary reports, journal exports (no IR)
+
+*(Antigravity must implement RBAC so roles are configurable per company.)*
+
+---
+
+## 6) Key workflows (acceptance-level)
+
+### 6.1 Hire-to-pay workflow
+
+1. HR creates employee + uploads contract
+2. Payroll config applied (pay elements, tax refs, bank)
+3. Employee activated → appears in payroll calendar
+4. Leave/time inputs captured → approvals
+5. Payroll run calculated → reviewed → approved → finalised
+6. Payslips issued → bank/journal exports generated
+7. Period locked + audit log saved
+
+### 6.2 Discipline workflow (misconduct)
+
+1. Incident logged + evidence attached
+2. Investigation checklist completed
+3. Hearing notice generated (template)
+4. Hearing occurs → minutes & outcome recorded
+5. Warning/sanction recorded on employee profile
+6. Appeals tracked
+7. Case closed with full audit trail
+
+---
+
+## 7) Data model (minimum entities)
+
+* Company, Site, Department, CostCentre
+* Employee, EmploymentHistory, SalaryHistory
+* PayElement, PayRun, PayRunLine, Deduction, Contribution
+* LeaveType, LeaveBalance, LeaveRequest, LeaveLedger
+* Timesheet, TimesheetLine, OvertimeRule (if used)
+* IRCase, IRCaseEvent, IRCaseDocument, WarningRecord, Hearing
+* Document, DocumentCategory, Template
+* User, Role, Permission, AuditLog
+* Notification, Task, Approval
+
+---
+
+## 8) Deliverables
+
+### Product deliverables
+
+* Functional HR + IR + Payroll modules (as above)
+* Admin/configuration portal
+* Employee Self-Service portal
+* Reporting suite
+* Document generation (PDF) for payslips, letters, templates
+* Import tools (employees, balances, pay elements)
+* Exports for bank/journals/statutory datasets
+* Audit log viewer (admin)
+
+### Technical deliverables
+
+* Architecture documentation
+* API documentation (internal + optional external)
+* Database schema + migration scripts
+* Automated tests suite
+* CI/CD pipeline
+* Logging/monitoring setup
+* Backup/restore plan
+* Security review checklist
+
+### Project deliverables
+
+* Project plan + milestones
+* Sprint backlog in Jira (or similar)
+* UAT test plan + sign-off sheets
+* Training materials + handover pack
+
+---
+
+## 9) Phased implementation plan (recommended)
+
+### Phase 0 — Discovery & Specification (2–4 weeks)
+
+* Requirements workshops (HR, Payroll, IR, Finance)
+* Confirm policies (leave rules, payroll rules, IR templates)
+* Confirm SARS/statutory export formats and bank file requirements per your banks
+* Finalise user roles, approval chains
+* Produce:
+
+  * PRD (Product Requirements Doc)
+  * Wireframes
+  * Technical architecture
+  * Delivery plan + backlog
+
+### Phase 1 — HR Core + ESS (4–8 weeks)
+
+* Company setup
+* Employee master data
+* Document vault
+* Leave module + approvals
+* ESS basics
+
+### Phase 2 — Payroll MVP (6–10 weeks)
+
+* Pay elements
+* Payroll run workflow (calculate → approve → finalise)
+* Payslips
+* Basic statutory calculations configurable
+* Bank file + journal export MVP
+
+### Phase 3 — IR Module (6–10 weeks)
+
+* IR cases, workflows, templates, evidence
+* Warning tracking + expiry rules
+* CCMA/dispute tracking + pack builder
+
+### Phase 4 — Compliance & Advanced (4–8 weeks)
+
+* IRP5 + EMP201/EMP501 exports finalised and tested
+* ETI (if required)
+* Advanced reporting, scheduled reports
+* Integrations (Xero/time system/SSO)
+* Hardening, performance, security audits
+
+---
+
+# 10) Detailed To-Do Lists (what Antigravity must do)
+
+## 10.1 Product / Project to-dos
+
+* Create PRD + user stories per module
+* Define “Definition of Done” and acceptance criteria templates
+* Map policies:
+
+  * Leave policies (accrual/carryover/rules)
+  * Payroll policies (elements, overtime rules, deductions)
+  * IR policies (warning durations, procedures, templates)
+* Define roles + permission matrix
+* Define approval chains (leave/time/payroll changes)
+* Confirm statutory deliverables list (IRP5, EMP201, EMP501 datasets)
+* UAT plan + UAT schedule
+* Change management plan (training + comms)
+
+## 10.2 UX/UI to-dos
+
+* Wireframes for:
+
+  * Admin setup
+  * Employee profile
+  * Leave flow (apply/approve/calendar)
+  * Payroll run wizard (inputs → calc → review → finalise)
+  * Payslip viewer
+  * IR case workspace (timeline + evidence + templates + outcomes)
+  * Reports hub
+* Build design system (components, form patterns, audit views)
+* Accessibility pass
+
+## 10.3 Backend engineering to-dos
+
+* Set up project structure, environments, CI/CD
+* Implement auth + RBAC + field-level security
+* Build core database schema + migrations
+* Audit logging framework (immutable logs for key actions)
+* Implement modules:
+
+  1. Company setup APIs
+  2. Employee APIs + history tracking
+  3. Leave engine + ledger
+  4. Payroll engine:
+
+     * Pay element framework
+     * Calculation pipeline
+     * Retro pay
+     * Finalisation locks
+  5. IR case engine:
+
+     * Case types
+     * Event timeline
+     * Template merge + PDF generation
+     * Evidence vault permissions
+  6. Reporting layer + export endpoints
+* Document generation service (PDF)
+* Import/export engine (CSV/Excel)
+* Notification service (email/SMS optional)
+
+## 10.4 Frontend engineering to-dos
+
+* Role-based navigation
+* Forms + validation patterns
+* Employee profile screens + document upload
+* Leave screens + manager approval inbox
+* Payroll run screens (wizard) + exception review
+* Payslip and certificate viewing (PDF)
+* IR case workspace + template generation UI
+* Reports filters + export UI
+* Admin configuration UI (elements, policies, roles)
+
+## 10.5 QA / Testing to-dos
+
+* Test strategy:
+
+  * Unit tests (calc rules, accrual rules)
+  * Integration tests (payrun finalisation, exports)
+  * E2E tests (hire-to-pay, disciplinary process)
+* Test datasets (edge cases: joiner/leaver, unpaid leave, garnishees, retro changes)
+* Payroll reconciliation testing checklist
+* Security testing (permissions, data leaks, audit integrity)
+* UAT scripts for each role
+
+## 10.6 DevOps / Security to-dos
+
+* Environments: dev/stage/prod
+* Secrets management
+* Backups + restore drills
+* Monitoring + alerting
+* Vulnerability scanning
+* POPIA-aligned logging & retention config
+* Disaster recovery plan
+
+---
+
+## 11) Acceptance criteria (examples)
+
+**Payroll finalisation**
+
+* Given a payroll is calculated and approved, when finalised:
+
+  * The period is locked
+  * Payslips are generated
+  * Bank file and journal export are produced
+  * Audit log records who finalised and when
+  * No changes allowed unless re-opened with elevated permission and logged
+
+**IR case**
+
+* Given an IR case is created, the system must:
+
+  * Store all events in a timeline
+  * Restrict access to authorised roles
+  * Generate letters from templates with merge fields
+  * Record every view/download/action in audit logs
+
+---
+
+## 12) Out of scope (unless added)
+
+* Recruitment/ATS (job ads, candidate pipeline)
+* Full performance management suite (OKRs, 360 reviews) beyond basic PIP tracking
+* Full learning management (LMS)
+* Native mobile apps (Phase 2/3 option)
+* Full accounting system (only exports/integrations)
+
+---
+
+## 13) Open decisions (Antigravity must confirm early)
+
+* Multi-tenant vs single-tenant architecture
+* Cloud provider preference (AWS/Azure/etc.)
+* SSO requirement (Microsoft/Google)
+* Bank payment file specs required (per bank)
+* Whether ETI is required
+* Whether time & attendance is internal or integrated
+* Volume: number of employees, companies, payroll frequency
+* Document e-sign needs
+
+---
+

@@ -1,0 +1,285 @@
+SpecCon React Brand Implementation Spec
+1) Non-negotiables (from the brand guide)
+Logo usage rules
+
+Only use official standard/reversed logo assets. Do not omit icon, rearrange, alter colour, alter type, tilt, or alter icon. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Colour palette
+
+Blue #12265E 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Orange is shown as ##FFA600 in the PDF (treat as #FFA600) 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+White #FFFFFF 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Light Blue #92ABC4 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Typography
+
+Roboto = wide usage; Times New Roman = limited aesthetic usage. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Voice & tone (UI copy)
+
+“Intelligent, aspirational, confident — but never aloof or complicated… speaking plainly in South African English.” 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+
+Avoid jargon/buzzwords, avoid being cold/aloof, don’t overcomplicate, don’t be gimmicky. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+ 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+2) Recommended React setup (framework-agnostic)
+
+This works whether you use CSS Modules, Tailwind, styled-components, Emotion, MUI, etc.
+
+Folder layout
+src/
+  brand/
+    tokens.ts
+    global.css
+    BrandProvider.tsx
+  components/
+    Button/
+      Button.tsx
+      button.css
+    Logo/
+      SpecconLogo.tsx
+
+3) Tokens (TypeScript) — src/brand/tokens.ts
+export const speccon = {
+  color: {
+    brand: {
+      primary: "#12265E",  // Blue
+      accent: "#FFA600",   // Orange (PDF shows ##FFA600)
+      support: "#92ABC4",  // Light Blue
+      white: "#FFFFFF",
+    },
+  },
+  typography: {
+    fontFamily: {
+      sans: '"Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif',
+      serif: '"Times New Roman", Times, serif',
+    },
+    // keep simple; teams can adjust sizes per product needs
+    scale: {
+      body: "16px",
+      small: "14px",
+      caption: "12px",
+      h1: "40px",
+      h2: "32px",
+      h3: "24px",
+    },
+    lineHeight: {
+      body: 1.5,
+      heading: 1.2,
+    },
+  },
+} as const;
+
+export type SpecconTokens = typeof speccon;
+
+4) Global CSS variables — src/brand/global.css
+:root {
+  --speccon-brand-primary: #12265e;
+  --speccon-brand-accent: #ffa600;
+  --speccon-brand-support: #92abc4;
+  --speccon-white: #ffffff;
+
+  --speccon-font-sans: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --speccon-font-serif: "Times New Roman", Times, serif;
+
+  --speccon-text-primary: var(--speccon-brand-primary);
+  --speccon-surface: var(--speccon-white);
+}
+
+html, body {
+  font-family: var(--speccon-font-sans);
+  color: var(--speccon-text-primary);
+  background: var(--speccon-surface);
+}
+
+5) Brand Provider — src/brand/BrandProvider.tsx
+
+Use this to ensure the global stylesheet is loaded once, and to expose tokens via context if needed.
+
+import React, { createContext, useContext, PropsWithChildren } from "react";
+import { speccon, type SpecconTokens } from "./tokens";
+import "./global.css";
+
+const BrandContext = createContext<SpecconTokens>(speccon);
+
+export function BrandProvider({ children }: PropsWithChildren) {
+  return <BrandContext.Provider value={speccon}>{children}</BrandContext.Provider>;
+}
+
+export function useBrand() {
+  return useContext(BrandContext);
+}
+
+
+Usage:
+
+import { BrandProvider } from "./brand/BrandProvider";
+
+export function App() {
+  return (
+    <BrandProvider>
+      {/* routes/layout */}
+    </BrandProvider>
+  );
+}
+
+6) Base components (enforce brand in UI)
+Button — src/components/Button/Button.tsx
+
+Rules:
+
+Primary uses Blue.
+
+Accent uses Orange (use sparingly for emphasis; verify contrast for text in your UI).
+
+Keep copy plain SA English and action-driven. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+ 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+import React from "react";
+import "./button.css";
+
+type Variant = "primary" | "secondary" | "accent";
+
+export function Button(
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }
+) {
+  const { variant = "primary", className = "", ...rest } = props;
+  return <button className={`sc-btn sc-btn--${variant} ${className}`} {...rest} />;
+}
+
+
+src/components/Button/button.css
+
+.sc-btn {
+  font-family: var(--speccon-font-sans);
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sc-btn--primary {
+  background: var(--speccon-brand-primary);
+  color: var(--speccon-white);
+}
+
+.sc-btn--secondary {
+  background: var(--speccon-white);
+  color: var(--speccon-brand-primary);
+  border-color: var(--speccon-brand-primary);
+}
+
+.sc-btn--accent {
+  background: var(--speccon-brand-accent);
+  color: var(--speccon-brand-primary);
+}
+
+Logo component — src/components/Logo/SpecconLogo.tsx
+
+Enforce “no transforms / no recolour” by design: only allow choosing the asset variant.
+
+import React from "react";
+
+type Variant = "standard" | "reversed";
+
+export function SpecconLogo({ variant = "standard", alt = "SpecCon" }: { variant?: Variant; alt?: string }) {
+  const src = variant === "reversed"
+    ? "/assets/brand/speccon-logo-reversed.svg"
+    : "/assets/brand/speccon-logo-standard.svg";
+
+  return <img src={src} alt={alt} style={{ display: "block", height: 32, width: "auto" }} />;
+}
+
+
+(Logo must never be tilted, recoloured, rearranged, etc.) 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+7) Copy rules developers should follow (for labels, empty states, errors)
+Must sound like:
+
+“Warmly authoritative” and “straightforward” (plain language, clear next step) 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Structured and purposeful 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Must avoid:
+
+Jargon/buzzwords, cold/aloof tone, overcomplication, gimmicky/salesy messaging. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Approved phrase bank examples (safe UI headings/CTAs)
+
+“Progress starts with people.” 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+
+“Invest in growth. Invest in South Africa.” 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+
+“Let’s build a stronger South Africa — together.” 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+
+“Partner with SpecCon — where knowledge meets opportunity.” 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+8) Quick “definition of done” for dev reviews
+
+Only brand palette colours are used for branded UI elements. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Default UI font is Roboto; Times New Roman is not used in dashboards/forms. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+Logos are never altered (no CSS transforms/filters/recolour). 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+UI text is plain SA English, structured, no jargon. 
+
+f3f458c7-40e2-4915-885b-5407753…
+
+ 
+
+f3f458c7-40e2-4915-885b-5407753…

@@ -1,0 +1,1047 @@
+/* ============================================================
+   LEAVE MANAGEMENT MODULE STYLES
+   ============================================================ */
+
+/* Page Header */
+.leave-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-6);
+    gap: var(--space-4);
+}
+
+.leave-header-content {
+    flex: 1;
+}
+
+.leave-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.leave-subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.leave-header-actions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+/* Leave Stats Cards */
+.leave-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.leave-stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.leave-stat-card:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.leave-stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.leave-stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.leave-stat-card--pending .leave-stat-value { color: var(--speccon-warning); }
+.leave-stat-card--approved .leave-stat-value { color: var(--speccon-success); }
+.leave-stat-card--rejected .leave-stat-value { color: var(--speccon-error); }
+.leave-stat-card--taken .leave-stat-value { color: var(--speccon-info); }
+
+/* Filters */
+.leave-filters {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.leave-filter-search {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+}
+
+.leave-search-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-tertiary);
+    pointer-events: none;
+}
+
+.leave-filter-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--space-3) 0 var(--space-10);
+    font-size: var(--text-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+}
+
+.leave-filter-input:focus {
+    outline: none;
+    border-color: var(--speccon-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.leave-filter-selects {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.leave-filter-select {
+    height: 40px;
+    padding: 0 var(--space-8) 0 var(--space-3);
+    font-size: var(--text-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: all var(--transition-fast);
+}
+
+.leave-filter-select:focus {
+    outline: none;
+    border-color: var(--speccon-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Tabs Navigation */
+.leave-tabs {
+    display: flex;
+    gap: var(--space-1);
+    margin-bottom: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-1);
+}
+
+.leave-tab {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.leave-tab:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+}
+
+.leave-tab--active {
+    background: var(--speccon-brand-primary);
+    color: white;
+}
+
+.leave-tab--active:hover {
+    background: var(--speccon-brand-dark);
+    color: white;
+}
+
+.leave-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 var(--space-1);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-full);
+    background: var(--speccon-warning-bg);
+    color: var(--speccon-warning);
+}
+
+.leave-tab--active .leave-tab-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* Table Container */
+.leave-table-container {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.leave-table-wrapper {
+    overflow-x: auto;
+}
+
+.leave-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.leave-table th,
+.leave-table td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leave-table th {
+    background: var(--color-bg-secondary);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.leave-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.leave-table tbody tr:hover {
+    background: var(--color-bg-secondary);
+}
+
+.leave-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Employee Cell */
+.leave-employee-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.leave-employee-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-semibold);
+    color: white;
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+}
+
+.leave-employee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.leave-employee-name {
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+}
+
+.leave-employee-department {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+/* Leave Type Badge */
+.leave-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+}
+
+.leave-type-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+}
+
+/* Date Range */
+.leave-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.leave-date-range {
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+}
+
+.leave-days-count {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+/* Status Badge */
+.leave-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.leave-status-badge--draft {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.leave-status-badge--pending {
+    background: var(--speccon-warning-bg);
+    color: var(--speccon-warning);
+}
+
+.leave-status-badge--approved {
+    background: var(--speccon-success-bg);
+    color: var(--speccon-success);
+}
+
+.leave-status-badge--rejected {
+    background: var(--speccon-error-bg);
+    color: var(--speccon-error);
+}
+
+.leave-status-badge--cancelled {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+}
+
+.leave-status-badge--taken {
+    background: var(--speccon-info-bg);
+    color: var(--speccon-info);
+}
+
+/* Action Buttons */
+.leave-action-buttons {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+}
+
+.leave-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.leave-action-btn:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border-hover);
+    color: var(--color-text);
+}
+
+.leave-action-btn--approve {
+    border-color: var(--speccon-success);
+    color: var(--speccon-success);
+}
+
+.leave-action-btn--approve:hover {
+    background: var(--speccon-success-bg);
+}
+
+.leave-action-btn--reject {
+    border-color: var(--speccon-error);
+    color: var(--speccon-error);
+}
+
+.leave-action-btn--reject:hover {
+    background: var(--speccon-error-bg);
+}
+
+/* Table Footer */
+.leave-table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+}
+
+.leave-table-count {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Empty State */
+.leave-empty-state {
+    padding: var(--space-12);
+    text-align: center;
+}
+
+.leave-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-4);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-tertiary);
+}
+
+.leave-empty-text {
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.leave-empty-hint {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    margin: 0;
+}
+
+/* ============================================================
+   LEAVE REQUEST FORM STYLES
+   ============================================================ */
+
+.leave-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.leave-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+}
+
+.leave-form-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+/* Leave Form Card */
+.leave-form-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-6);
+    overflow: hidden;
+}
+
+.leave-form-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leave-form-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-lg);
+    background: var(--speccon-brand-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leave-form-card-title {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.leave-form-card-body {
+    padding: var(--space-6);
+}
+
+/* Leave Balance Summary */
+.leave-balance-summary {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+}
+
+.leave-balance-item {
+    flex: 1;
+    text-align: center;
+    padding: var(--space-2);
+}
+
+.leave-balance-item + .leave-balance-item {
+    border-left: 1px solid var(--color-border);
+}
+
+.leave-balance-value {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+}
+
+.leave-balance-value--available {
+    color: var(--speccon-success);
+}
+
+.leave-balance-value--pending {
+    color: var(--speccon-warning);
+}
+
+.leave-balance-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    margin-top: var(--space-1);
+}
+
+/* Form Grid */
+.leave-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.leave-form-grid--full {
+    grid-column: 1 / -1;
+}
+
+/* Form Field */
+.leave-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.leave-form-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+}
+
+.leave-form-label span {
+    color: var(--speccon-error);
+    margin-left: 2px;
+}
+
+.leave-form-input,
+.leave-form-select,
+.leave-form-textarea {
+    height: 40px;
+    padding: 0 var(--space-3);
+    font-size: var(--text-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+}
+
+.leave-form-textarea {
+    height: auto;
+    padding: var(--space-3);
+    resize: vertical;
+    min-height: 80px;
+}
+
+.leave-form-input:focus,
+.leave-form-select:focus,
+.leave-form-textarea:focus {
+    outline: none;
+    border-color: var(--speccon-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.leave-form-input:disabled,
+.leave-form-select:disabled {
+    background: var(--color-bg-secondary);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.leave-form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: var(--space-8);
+    cursor: pointer;
+}
+
+.leave-form-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.leave-form-error {
+    font-size: var(--text-xs);
+    color: var(--speccon-error);
+}
+
+/* Checkbox */
+.leave-form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.leave-form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--speccon-brand-primary);
+}
+
+.leave-form-checkbox label {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+/* Half Day Options */
+.leave-half-day-options {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.leave-half-day-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.leave-half-day-option:hover {
+    border-color: var(--color-border-hover);
+}
+
+.leave-half-day-option input {
+    accent-color: var(--speccon-brand-primary);
+}
+
+.leave-half-day-option--selected {
+    border-color: var(--speccon-brand-primary);
+    background: rgba(0, 123, 255, 0.05);
+}
+
+/* Form Footer */
+.leave-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-6);
+}
+
+/* ============================================================
+   LEAVE BALANCES STYLES
+   ============================================================ */
+
+.leave-balances-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.leave-balance-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+}
+
+.leave-balance-card:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.leave-balance-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leave-balance-card-type {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.leave-balance-card-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+}
+
+.leave-balance-card-name {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+}
+
+.leave-balance-card-cycle {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.leave-balance-card-body {
+    padding: var(--space-4);
+}
+
+.leave-balance-card-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.leave-balance-card-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--speccon-success);
+}
+
+.leave-balance-card-total {
+    font-size: var(--text-lg);
+    color: var(--color-text-tertiary);
+}
+
+.leave-balance-card-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.leave-balance-card-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.leave-balance-card-detail-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.leave-balance-card-detail-value {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+}
+
+/* Progress Bar */
+.leave-balance-progress {
+    margin-bottom: var(--space-4);
+}
+
+.leave-balance-progress-bar {
+    height: 8px;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.leave-balance-progress-fill {
+    height: 100%;
+    background: var(--speccon-success);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
+.leave-balance-progress-fill--low {
+    background: var(--speccon-warning);
+}
+
+.leave-balance-progress-fill--critical {
+    background: var(--speccon-error);
+}
+
+/* Employee Selector */
+.leave-employee-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-6);
+}
+
+.leave-employee-selector-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.leave-employee-selector-select {
+    flex: 1;
+    height: 40px;
+    padding: 0 var(--space-8) 0 var(--space-3);
+    font-size: var(--text-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+/* Approval Modal */
+.leave-approval-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.leave-approval-modal-content {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: var(--shadow-xl);
+}
+
+.leave-approval-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leave-approval-modal-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.leave-approval-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.leave-approval-modal-close:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+}
+
+.leave-approval-modal-body {
+    padding: var(--space-6);
+}
+
+.leave-approval-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+/* Leave Detail Info */
+.leave-detail-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.leave-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.leave-detail-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.leave-detail-value {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .leave-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .leave-balances-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .leave-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .leave-header {
+        flex-direction: column;
+    }
+
+    .leave-header-actions {
+        width: 100%;
+    }
+
+    .leave-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-filter-selects {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .leave-filter-select {
+        width: 100%;
+    }
+
+    .leave-tabs {
+        overflow-x: auto;
+    }
+
+    .leave-tab {
+        white-space: nowrap;
+        flex: none;
+    }
+
+    .leave-balances-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-employee-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .leave-detail-info {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-balance-summary {
+        flex-direction: column;
+    }
+
+    .leave-balance-item + .leave-balance-item {
+        border-left: none;
+        border-top: 1px solid var(--color-border);
+        padding-top: var(--space-3);
+    }
+}
+
+@media (max-width: 480px) {
+    .leave-header-actions {
+        flex-direction: column;
+    }
+
+    .leave-header-actions .btn {
+        width: 100%;
+    }
+
+    .leave-half-day-options {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,121 @@
+
+Here’s a **complete recommended role set** (you can still merge roles later; but it’s safer to start granular and then combine).
+
+## Recommended user roles
+
+### 1) System & Security
+
+* **System Administrator (Technical)**
+  Manages environments, integrations, backups, system-wide settings. *Typically no access to salaries/IR unless explicitly granted.*
+* **Security / Compliance Admin (POPIA)** *(optional but recommended)*
+  Manages retention rules, privacy notices, access reviews, audit log access.
+
+### 2) HR (Operational)
+
+* **HR Administrator**
+  Employee profiles, contracts, onboarding, documents, leave policy application.
+* **HR Manager**
+  Approves sensitive HR changes (termination, promotions, salary change requests if HR-controlled), oversees HR reporting.
+
+### 3) Payroll
+
+* **Payroll Administrator**
+  Captures payroll inputs, adjustments, employee payroll setup, runs calculations.
+* **Payroll Manager (Finaliser)**
+  Approves/finalises pay runs, controls re-open of periods, signs off on statutory outputs.
+
+### 4) Finance
+
+* **Finance Reviewer / Approver** *(optional but common)*
+  Second-approval on payroll finalisation, reviews totals/variances, GL journals.
+* **Finance Read-Only**
+  Can view payroll reports and journals only (no employee-level pay unless allowed).
+
+### 5) Line Management
+
+* **Line Manager / Supervisor**
+  Approves leave, approves timesheets, initiates IR incidents (if allowed), views team-only info.
+* **Department Head** *(optional)*
+  Higher-level approvals (e.g., second-level leave approvals, terminations, high-risk IR outcomes).
+
+### 6) Employee Self-Service
+
+* **Employee**
+  ESS: leave requests, view payslips/certificates, update limited personal info, upload docs.
+
+### 7) Industrial Relations / Employee Relations (IR/ER)
+
+* **IR Officer / ER Practitioner**
+  Creates/manages IR cases, evidence, hearings, letters, outcomes; restricted access role.
+* **IR Manager / ER Manager**
+  Oversight, approvals for sanctions (e.g., dismissal), access to all IR dashboards.
+* **Chairperson (Disciplinary Hearing)** *(can be internal/external)*
+  Limited access to a specific hearing/case pack; records outcome.
+* **Initiator / Complainant Manager** *(optional role)*
+  Submits incident details and evidence; limited access to their cases only.
+* **Employee Representative / Union Representative** *(optional; controlled access)*
+  Case-limited access to notices and evidence packs *only when granted*.
+* **Legal Advisor / External Attorney** *(optional)*
+  Case-limited access with download restrictions and watermarking (recommended).
+
+### 8) Other operational roles (optional, depending on your organisation)
+
+* **Time & Attendance Clerk** *(if you use time module)*
+  Captures timesheets/clocking exceptions, no payroll finalisation rights.
+* **Document Controller** *(optional)*
+  Manages templates and document categories (no payroll).
+* **Auditor (Read-only + audit logs)** *(recommended)*
+  Read-only across selected modules + audit trail access, no editing.
+
+---
+
+## Critical permissions (these should be separate “capabilities”, not just roles)
+
+Even if you collapse roles, keep these permission flags distinct:
+
+### Payroll high-risk permissions
+
+* View salary/bank/ID fields
+* Create pay run
+* Approve pay run
+* **Finalise pay run**
+* **Re-open finalised period**
+* Create once-off adjustments
+* Override statutory settings
+* Generate statutory exports (IRP5/EMP201/EMP501 datasets)
+
+### IR high-risk permissions
+
+* Create IR case
+* View IR evidence vault
+* Generate IR letters/notices
+* Record outcomes/sanctions
+* Close case
+* View/download case pack
+* Grant third-party access (union/legal)
+
+### HR high-risk permissions
+
+* Terminate employee
+* Salary changes
+* Bank detail changes
+* Change manager/department (org changes)
+* Leave balance manual adjustments
+
+---
+
+## Suggested “minimum viable” role set (if you want fewer)
+
+If you want a lean first build, use these 8:
+
+1. System Admin
+2. HR Admin
+3. HR Manager
+4. Payroll Admin
+5. Payroll Manager (Finaliser)
+6. Finance Approver (optional but recommended)
+7. Line Manager
+8. Employee
+9. IR Officer *(add as 9th if IR is in MVP)*
+
+

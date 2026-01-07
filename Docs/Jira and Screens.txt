@@ -1,0 +1,863 @@
+Absolutely — here are **both** add-ons:
+
+1. a **Jira-ready Epic → Story → Subtask backlog**, and
+2. a **Requirements Pack** with **screen list + field lists per screen** (HR, IR, Payroll, Admin, ESS).
+
+---
+
+# A) Jira-ready backlog (Epics → Stories → Subtasks)
+
+## Jira standards (apply to all stories)
+
+**Story format:**
+“As a `<role>`, I want `<capability>`, so that `<benefit>`.”
+
+**Definition of Done (DoD):**
+
+* UI + API complete
+* Validation rules implemented
+* RBAC permissions enforced
+* Audit logs for create/update/delete actions
+* Tests (unit + integration where relevant)
+* Error handling + user messages
+* Documentation updated (admin + user help notes)
+
+---
+
+## EPIC 0 — Discovery & Specification
+
+**Goal:** Finalise policy rules, outputs, exports, and acceptance tests.
+
+**Stories**
+
+* **0.1 Requirements workshops & policy capture**
+
+  * Subtasks: workshop sessions (HR/Payroll/IR/Finance), confirm leave policies, confirm payroll elements, confirm IR templates & warning durations, confirm approval chains.
+* **0.2 Produce PRD + wireframes**
+
+  * Subtasks: module wireframes, screen inventory, user journeys, edge-case list.
+* **0.3 Create data dictionary**
+
+  * Subtasks: entities, fields, relationships, retention rules.
+* **0.4 Define outputs & export specifications**
+
+  * Subtasks: bank file formats, GL export mapping, statutory dataset requirements, report list.
+* **0.5 UAT plan & test scripts**
+
+  * Subtasks: role-based scripts, payroll reconciliation tests, IR case tests.
+
+**Acceptance criteria**
+
+* Signed-off PRD, wireframes, roles matrix, policies, and UAT scripts.
+
+---
+
+## EPIC 1 — Platform Foundation (Auth, RBAC, Audit, Tenancy)
+
+**Stories**
+
+* **1.1 Authentication (login/logout/forgot password)**
+* **1.2 Multi-company / legal entity support**
+* **1.3 RBAC & permission engine**
+* **1.4 Field-level security (salary/bank/ID)**
+* **1.5 Audit logging framework**
+* **1.6 Notification framework (email/in-app; SMS optional)**
+* **1.7 Document storage service (secure vault)**
+* **1.8 Admin settings: public holidays + calendars**
+
+**Subtasks (typical per story)**
+
+* DB schema + migrations
+* API endpoints + validation
+* Frontend screens
+* Unit/integration tests
+* Audit events wired
+
+**Acceptance criteria**
+
+* Users only see permitted data; audit logs show full trail; documents stored securely with access checks.
+
+---
+
+## EPIC 2 — Company & Org Setup (Admin)
+
+**Stories**
+
+* **2.1 Company profile setup (PAYE/UIF/SDL refs, branches)**
+* **2.2 Org structure setup (departments, job grades, cost centres)**
+* **2.3 Payroll calendar setup (weekly/fortnightly/monthly, cut-off dates)**
+* **2.4 Pay element configuration (earnings/deductions/contributions)**
+* **2.5 Leave policy configuration (types, accrual rules, caps)**
+* **2.6 Templates setup (contracts + IR letters)**
+* **2.7 Import templates & bulk upload tools**
+
+**Acceptance criteria**
+
+* Admin can configure the organisation without developer intervention; imports validate and provide error files.
+
+---
+
+## EPIC 3 — HR Core (HRIS)
+
+**Stories**
+
+* **3.1 Employee create/edit profile**
+* **3.2 Employee employment history + changes (promotion/transfer/salary change)**
+* **3.3 Contract management (templates + generated PDFs)**
+* **3.4 Onboarding checklist**
+* **3.5 Employee documents vault (categories, expiry reminders)**
+* **3.6 Termination workflow (HR side)**
+* **3.7 Employee list + search + filters**
+
+**Acceptance criteria**
+
+* Full employee lifecycle tracked with history and audit logs; documents permissioned and retrievable.
+
+---
+
+## EPIC 4 — Employee Self-Service (ESS)
+
+**Stories**
+
+* **4.1 My Profile (view + limited update with approvals)**
+* **4.2 My Documents (upload + view)**
+* **4.3 My Leave (apply, track, balances)**
+* **4.4 My Payslips + Tax Certificates**
+* **4.5 My Notifications + tasks**
+
+**Acceptance criteria**
+
+* Employee sees only own data; sensitive fields require approval; payslips and certificates downloadable.
+
+---
+
+## EPIC 5 — Leave Management (BCEA-aligned rules configurable)
+
+**Stories**
+
+* **5.1 Leave types & accrual engine**
+* **5.2 Leave request submission + validation**
+* **5.3 Manager approval inbox**
+* **5.4 HR overrides + adjustments (audited)**
+* **5.5 Leave balances + ledger**
+* **5.6 Leave calendar view (team)**
+* **5.7 Sick leave evidence upload + rules triggers**
+
+**Acceptance criteria**
+
+* Balances and ledgers reconcile; approvals and overrides are logged; payroll sync works.
+
+---
+
+## EPIC 6 — Time & Attendance (Optional)
+
+**Stories**
+
+* **6.1 Timesheet capture (hours, overtime, Sunday/PH)**
+* **6.2 Timesheet approvals**
+* **6.3 Payroll export of hours by pay element**
+* **6.4 Exception handling (missing punches, outliers)**
+
+**Acceptance criteria**
+
+* Approved time feeds payroll as locked inputs for a period.
+
+---
+
+## EPIC 7 — Payroll Engine (Core Processing)
+
+**Stories**
+
+* **7.1 Employee payroll setup (pay rate, elements, bank, tax refs)**
+* **7.2 Pay run workflow: create → inputs lock → calculate**
+* **7.3 Exception review dashboard**
+* **7.4 Approvals (Payroll Manager + Finance)**
+* **7.5 Finalise pay run (lock period, audit, outputs)**
+* **7.6 Pro-rata joiners/leavers + unpaid leave handling**
+* **7.7 Loans + garnishees schedules**
+* **7.8 Retro-pay/backpay**
+* **7.9 Termination payroll final pay**
+
+**Acceptance criteria**
+
+* Finalised periods are locked; re-open is permissioned and logged; outputs generated consistently.
+
+---
+
+## EPIC 8 — Statutory & Compliance Outputs (SA)
+
+**Stories**
+
+* **8.1 Statutory calculation configuration (PAYE/UIF/SDL; ETI optional)**
+* **8.2 Tax certificates (IRP5/IT3(a)) generation**
+* **8.3 EMP201 period summary outputs**
+* **8.4 EMP501 reconciliation dataset export**
+* **8.5 Audit-grade payroll reports and reconciliation**
+* **8.6 Security & POPIA: retention, access logs, consent text**
+
+**Acceptance criteria**
+
+* Statutory outputs generated for test dataset and reconciled to payroll registers; admin can update tables/config without code changes.
+
+---
+
+## EPIC 9 — Payroll Outputs (Payslips, Bank Files, GL Exports)
+
+**Stories**
+
+* **9.1 Payslip PDF templates + ESS publishing**
+* **9.2 Bank file generation (configurable formats)**
+* **9.3 GL journal export with cost centre mapping**
+* **9.4 Report pack exports (CSV/Excel)**
+
+**Acceptance criteria**
+
+* Outputs match configured formats; exports are repeatable; approved/finalised controls enforced.
+
+---
+
+## EPIC 10 — Industrial Relations (IR / ER Case Management)
+
+**Stories**
+
+* **10.1 IR case creation (type, parties, incident)**
+* **10.2 Investigation checklist + evidence upload**
+* **10.3 Hearing scheduling + notices**
+* **10.4 Hearing minutes + outcome recording**
+* **10.5 Warnings register + expiry rules**
+* **10.6 Appeals workflow**
+* **10.7 Grievances workflow**
+* **10.8 Poor performance/incapacity workflow (PIP)**
+* **10.9 Dispute/CCMA tracking + evidence pack builder**
+* **10.10 IR templates management (merge fields + versioning)**
+
+**Acceptance criteria**
+
+* IR cases are permissioned; timeline shows all actions; letters generated; warnings reflect on employee profile.
+
+---
+
+## EPIC 11 — Reporting & Dashboards
+
+**Stories**
+
+* **11.1 HR dashboards (headcount, turnover, leave)**
+* **11.2 Payroll dashboards (register, variances, deductions)**
+* **11.3 IR dashboards (case volumes, outcomes, cycle time)**
+* **11.4 Report builder (filters, export)**
+* **11.5 Scheduled reports (optional)**
+
+**Acceptance criteria**
+
+* Role-based access to reports; exports consistent and performant.
+
+---
+
+## EPIC 12 — Integrations (Optional)
+
+**Stories**
+
+* **12.1 Xero / accounting integration (journals)**
+* **12.2 SSO (Microsoft/Google)**
+* **12.3 Time & attendance integration**
+* **12.4 Email/SMS provider integration**
+
+**Acceptance criteria**
+
+* Integration is resilient (retries, logs, failure handling) and permissioned.
+
+---
+
+## EPIC 13 — Data Migration & Cutover
+
+**Stories**
+
+* **13.1 Import employees + balances + YTD payroll**
+* **13.2 Validate migrated data (reconciliation reports)**
+* **13.3 Parallel run (old vs new payroll for 1–2 cycles)**
+* **13.4 Go-live checklist + rollback plan**
+
+---
+
+## EPIC 14 — QA, Security Hardening, Release
+
+**Stories**
+
+* **14.1 Automated test suite**
+* **14.2 Security review (RBAC, data leaks, audit integrity)**
+* **14.3 Performance tests (payrun scale)**
+* **14.4 Production monitoring + backups + restore drill**
+* **14.5 Training & handover docs**
+
+---
+
+# B) Requirements Pack (Screen list + field lists)
+
+## B.1 Navigation map (modules)
+
+* **Admin** (Company, Org, Policies, Payroll, Templates, RBAC, Imports)
+* **HR** (Employees, Contracts, Onboarding, Documents, Terminations)
+* **Leave** (Requests, Approvals, Balances, Calendar)
+* **Payroll** (Pay Runs, Adjustments, Outputs, Statutory, Reports)
+* **IR** (Cases, Hearings, Warnings, Disputes, Templates)
+* **Reports** (HR/Payroll/IR)
+* **ESS** (My Profile, My Leave, My Payslips, My Documents)
+
+---
+
+## B.2 Authentication & User Management
+
+### Screen: Login
+
+**Fields**
+
+* Email/Username
+* Password
+
+### Screen: Forgot Password
+
+**Fields**
+
+* Email
+* OTP / reset link workflow
+
+### Screen: Users (Admin)
+
+**Fields**
+
+* First name, Last name
+* Email
+* Mobile (optional)
+* Role(s)
+* Company access (which entities)
+* Branch/site access (optional)
+* Status (Active/Disabled)
+* MFA enabled (optional)
+
+### Screen: Roles & Permissions (Admin)
+
+**Fields**
+
+* Role name
+* Permissions list (module + action: view/create/edit/delete/approve/finalise/export)
+* Field-level flags (view salary, view bank, view ID)
+
+---
+
+## B.3 Admin Setup
+
+### Screen: Company Profile
+
+**Fields**
+
+* Legal entity name
+* Trading name
+* Registration number
+* PAYE reference
+* UIF reference
+* SDL reference
+* Physical address, Postal address
+* Contact details
+* Default currency (ZAR)
+* Default pay frequency
+* Payroll calendar (link)
+
+### Screen: Org Structure
+
+**Fields**
+
+* Branch/Site: name, address, code
+* Department: name, code
+* Job title library: title, code
+* Job grade/level: name, min/max salary (optional)
+* Cost centre: name, code
+* Manager assignments rules (optional)
+
+### Screen: Public Holidays & Calendars
+
+**Fields**
+
+* Year
+* Holiday date, holiday name
+* Work schedule rules (standard hours/day)
+* Overtime multipliers (if used)
+
+### Screen: Pay Elements (Earnings/Deductions/Contributions)
+
+**Fields**
+
+* Element name
+* Type: earning/deduction/employer contribution
+* Calculation method: fixed / % / per hour / per day / formula (phase 2)
+* Tax treatment flags (configurable)
+* UIF applicable (Y/N)
+* SDL applicable (Y/N)
+* Pension/medical linkage (optional)
+* Posting account (GL code) (optional)
+* Active (Y/N)
+
+### Screen: Leave Policies
+
+**Fields**
+
+* Leave type name
+* Accrual method (monthly/annual/none)
+* Accrual rate
+* Max cap
+* Carryover rules
+* Validation rules (e.g., medical note required after X days)
+* Paid/unpaid flag
+* Eligibility (contract types, grades) (optional)
+
+### Screen: Templates (Contracts + IR letters)
+
+**Fields**
+
+* Template name
+* Category (contract/IR warning/hearing notice/outcome/grievance/PIP/etc.)
+* Version
+* Active (Y/N)
+* Merge fields allowed
+* Body content (rich text)
+* Attachments default (optional)
+
+### Screen: Imports
+
+**Fields**
+
+* Import type (employees, leave balances, pay elements, historical YTD)
+* Upload file
+* Mapping preview
+* Error report download
+
+---
+
+## B.4 HR (HRIS)
+
+### Screen: Employee List
+
+**Fields/filters**
+
+* Search (name, ID, employee number)
+* Status (active/terminated/on leave)
+* Department, branch, manager, contract type
+* Export list
+
+### Screen: Create/Edit Employee (Tabbed Profile)
+
+#### Tab: Personal Details
+
+**Fields**
+
+* Employee number (auto/manual)
+* First name, Last name
+* ID number / Passport number + country
+* Date of birth
+* Gender (optional)
+* Nationality (optional)
+* Marital status (optional)
+* Phone, Email
+* Residential address, Postal address
+* Next of kin: name, relation, phone
+* Emergency contact
+
+#### Tab: Employment Details
+
+**Fields**
+
+* Start date
+* Employment status (active/suspended/terminated)
+* Contract type (permanent/fixed-term/part-time/temporary)
+* Job title
+* Job grade/level
+* Department
+* Branch/site
+* Cost centre
+* Manager (lookup)
+* Probation start/end dates
+* Work schedule/shift (if used)
+
+#### Tab: Payroll Details (HR view may be limited)
+
+**Fields**
+
+* Pay frequency
+* Salary type (monthly/hourly)
+* Basic salary / hourly rate
+* Standard hours (if hourly)
+* Tax reference number
+* UIF applicable (Y/N)
+* Bank details:
+
+  * Account holder
+  * Bank name
+  * Account number
+  * Account type
+  * Branch code
+* Default pay elements (allowances/deductions)
+
+#### Tab: Leave
+
+**Fields**
+
+* Leave balances (read-only with ledger)
+* Adjust balance action (permissioned + reason)
+
+#### Tab: Documents
+
+**Fields**
+
+* Upload document
+* Category
+* Expiry date (optional)
+* Notes
+* Access level (HR only / payroll / IR restricted)
+
+#### Tab: IR History (read-only link)
+
+* Warnings issued, active cases (visibility permissioned)
+
+### Screen: Onboarding Checklist
+
+**Fields**
+
+* Checklist template
+* Employee
+* Items: description, required doc, due date, completed (Y/N), completed by, completed date
+
+### Screen: Termination (HR)
+
+**Fields**
+
+* Termination type (resignation/dismissal/retrenchment/other)
+* Termination date
+* Reason category
+* Notice period
+* Attach documents
+* Trigger final payroll (link to payroll termination run)
+* Exit checklist (optional)
+
+---
+
+## B.5 Leave Management
+
+### Screen: Leave Dashboard
+
+**Fields**
+
+* My team leave today/week/month
+* Pending approvals
+* Leave balances summary
+
+### Screen: Leave Request (Employee)
+
+**Fields**
+
+* Leave type
+* Start date, End date
+* Half day (optional)
+* Notes
+* Attachment (medical note where applicable)
+* Auto-calculated days/hours
+
+### Screen: Leave Approvals (Manager)
+
+**Fields**
+
+* Employee, leave type, dates, days
+* Current balance
+* Approve/Reject
+* Comment
+* Audit trail visible
+
+### Screen: Leave Ledger (HR)
+
+**Fields**
+
+* Employee
+* Transactions: accrual, taken, adjustment (date, amount, reason, created by)
+
+---
+
+## B.6 Payroll
+
+### Screen: Payroll Dashboard
+
+**Fields**
+
+* Current period status
+* Counts: employees included/excluded
+* Exceptions count
+* Approval status
+* Links to outputs
+
+### Screen: Pay Run List
+
+**Fields**
+
+* Pay frequency
+* Period start/end
+* Cut-off date
+* Status (draft/calculated/approved/finalised)
+* Created by, created date
+
+### Screen: Create Pay Run (Wizard)
+
+**Step 1 — Inputs lock**
+
+* Confirm included employees
+* Confirm locked sources (leave/time/adjustments)
+
+**Step 2 — Calculate**
+
+* Run calculation
+* Show calc summary totals
+
+**Step 3 — Exception review**
+
+* Outlier detection fields:
+
+  * Net pay negative
+  * Large variance vs last period
+  * Missing bank details
+  * Missing tax ref / UIF flags
+* Action: open employee payslip preview / pay details
+
+**Step 4 — Approvals**
+
+* Payroll Manager approval
+* Finance approval (optional)
+* Approval comment
+
+**Step 5 — Finalise**
+
+* Lock pay run
+* Generate outputs
+* Publish payslips to ESS
+
+### Screen: Employee Pay Details (Payroll)
+
+**Fields**
+
+* Basic salary / hourly rate
+* Pay elements list:
+
+  * element, amount/rate, recurring (Y/N), start/end date
+* Deductions:
+
+  * loans (balance, instalment, start/end)
+  * garnishees (case/order ref, amount, priority)
+* Employer contributions
+* Bank details (restricted)
+* Tax details (restricted)
+
+### Screen: Adjustments (Once-off)
+
+**Fields**
+
+* Employee
+* Element
+* Amount
+* Reason
+* Effective period
+* Requires approval (Y/N)
+
+### Screen: Termination Payroll (Final Pay Wizard)
+
+**Fields**
+
+* Termination date
+* Notice pay
+* Leave payout
+* Outstanding deductions
+* Final net pay summary
+* Generate final payslip and outputs
+
+### Screen: Payslip Viewer
+
+**Fields**
+
+* Period selector
+* Earnings breakdown
+* Deductions breakdown
+* Employer contributions
+* Net pay
+* PDF download
+
+### Screen: Statutory Outputs (Payroll Admin)
+
+**Fields**
+
+* Period / Tax year selection
+* Generate IRP5s
+* Generate EMP201 summary
+* Generate EMP501 dataset/export
+* Export files log (generated by/date/version)
+
+### Screen: Bank File Exports
+
+**Fields**
+
+* Bank format selector
+* Payment date
+* Export file
+* Audit log
+
+### Screen: GL Journal Export
+
+**Fields**
+
+* Period
+* Mapping set (cost centre → GL)
+* Export format
+* Export file
+
+---
+
+## B.7 IR / Employee Relations
+
+### Screen: IR Case List
+
+**Fields/filters**
+
+* Case type
+* Status (open/in progress/closed)
+* Employee
+* Department/manager
+* Outcome
+* Date opened/closed
+* Search by case number
+
+### Screen: Create IR Case
+
+**Fields**
+
+* Case type (misconduct/grievance/performance/dispute/etc.)
+* Employee
+* Incident date(s)
+* Summary
+* Policy category (optional)
+* Assigned IR officer
+* Confidentiality flag (restricted access list)
+
+### Screen: IR Case Workspace (Tabbed)
+
+#### Tab: Overview
+
+* Case number (auto)
+* Status
+* Assigned to
+* Employee details (limited view)
+* Key dates
+* Next action due date
+
+#### Tab: Timeline / Events
+
+* Add event: meeting, call, letter issued, evidence received
+* Date/time, notes, attachments
+
+#### Tab: Investigation Checklist
+
+* Checklist items + completion status
+* Findings summary
+
+#### Tab: Evidence Vault
+
+* Upload evidence (documents/images/audio if allowed)
+* Evidence category
+* Source (witness/manager/employee)
+* Chain of custody notes (optional)
+* Access control
+
+#### Tab: Hearing (Misconduct)
+
+* Schedule hearing: date/time/location
+* Participants: chairperson, initiator, employee rep, interpreter (optional)
+* Notice of hearing generation (template)
+* Minutes capture
+* Outcome + sanction
+
+#### Tab: Letters / Templates
+
+* Select template
+* Merge fields preview
+* Generate PDF
+* Delivery tracking:
+
+  * method (email/hand delivered)
+  * date/time
+  * proof of delivery upload
+
+#### Tab: Warnings Register
+
+* Warning type (verbal/written/final)
+* Issue date
+* Expiry date (auto by rule)
+* Linked case
+* Attach warning letter
+
+#### Tab: Appeals
+
+* Appeal lodged date
+* Grounds
+* Appeal hearing schedule
+* Outcome
+
+#### Tab: CCMA / Dispute
+
+* Case number
+* Referral date
+* Hearing dates
+* Outcome/award
+* Evidence pack builder (select docs + export as bundle)
+
+**Acceptance criteria**
+
+* IR access is restricted and audited; documents generated and linked; warnings visible in employee IR history.
+
+---
+
+## B.8 Reporting Hub
+
+### Screen: Reports Home
+
+**Fields**
+
+* Report category tiles (HR/Payroll/IR)
+* Saved filters
+* Export buttons
+
+### Standard report filters (common)
+
+* Company/entity
+* Period / date range
+* Branch/site
+* Department
+* Cost centre
+* Employee status
+
+---
+
+# C) Import templates (minimum required)
+
+Antigravity should deliver Excel/CSV templates with validation + error feedback:
+
+1. **Employees import**
+
+* employee_no, first_name, last_name, id/passport, dob, start_date, department, branch, manager, contract_type, salary_type, salary, pay_frequency, tax_ref, UIF_flag, bank fields…
+
+2. **Leave balances import**
+
+* employee_no, leave_type, opening_balance, as_at_date
+
+3. **Pay elements import**
+
+* element_name, type, calc_method, defaults, flags, GL code
+
+4. **YTD payroll import (for mid-year go-live)**
+
+* employee_no, YTD taxable income, YTD PAYE, YTD UIF, YTD SDL, etc.
+
+---
+
+

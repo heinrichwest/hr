@@ -1,0 +1,151 @@
+.sc-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  width: 100%;
+}
+
+.sc-input-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--speccon-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.sc-input-required {
+  color: var(--speccon-error);
+  font-weight: 600;
+}
+
+.sc-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--speccon-white);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.sc-input-wrapper:hover {
+  border-color: var(--speccon-brand-support);
+}
+
+.sc-input-wrapper--focused {
+  border-color: var(--speccon-brand-primary);
+  box-shadow: 0 0 0 3px rgba(18, 38, 94, 0.1);
+}
+
+.sc-input-wrapper--error {
+  border-color: var(--speccon-error);
+  background: var(--speccon-error-light);
+}
+
+.sc-input-wrapper--error:hover {
+  border-color: var(--speccon-error-dark);
+}
+
+.sc-input-wrapper--error.sc-input-wrapper--focused {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.sc-input-wrapper--disabled {
+  background: var(--speccon-bg-subtle);
+  border-color: var(--border-light);
+  cursor: not-allowed;
+}
+
+.sc-input-wrapper--disabled:hover {
+  border-color: var(--border-light);
+}
+
+.sc-input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--speccon-font-sans);
+  font-size: var(--text-base);
+  color: var(--speccon-text-main);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  transition: color var(--transition-fast);
+}
+
+.sc-input::placeholder {
+  color: var(--speccon-text-disabled);
+}
+
+.sc-input:disabled {
+  color: var(--speccon-text-disabled);
+  cursor: not-allowed;
+}
+
+.sc-input--with-left-icon {
+  padding-left: var(--space-2);
+}
+
+.sc-input--with-right-icon {
+  padding-right: var(--space-2);
+}
+
+.sc-input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--speccon-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.sc-input-icon--left {
+  padding-left: var(--space-4);
+}
+
+.sc-input-icon--right {
+  padding-right: var(--space-4);
+}
+
+.sc-input-wrapper--focused .sc-input-icon {
+  color: var(--speccon-brand-primary);
+}
+
+.sc-input-wrapper--error .sc-input-icon {
+  color: var(--speccon-error);
+}
+
+.sc-input-message {
+  font-size: var(--text-xs);
+  color: var(--speccon-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.sc-input-message--error {
+  color: var(--speccon-error);
+  font-weight: 500;
+}
+
+/* Autofill styling */
+.sc-input:-webkit-autofill,
+.sc-input:-webkit-autofill:hover,
+.sc-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--speccon-white) inset;
+  -webkit-text-fill-color: var(--speccon-text-main);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Size variants */
+.sc-input-wrapper--sm .sc-input {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.sc-input-wrapper--lg .sc-input {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-lg);
+}
