@@ -1,16 +1,32 @@
 import { useEffect, useState } from 'react';
 import { CompanyService } from '../../services/companyService';
+import { UserService } from '../../services/userService';
+import { EmployeeService } from '../../services/employeeService';
 import { Seeder } from '../../services/seeder';
 import type { Company } from '../../types/company';
+import type { UserProfile, UserRole } from '../../types/user';
 import { Button } from '../../components/Button/Button';
 import { MainLayout } from '../../components/Layout/MainLayout';
 import './TenantManagement.css';
+
+// Admin roles that can be assigned to tenant admins
+const ADMIN_ROLES: UserRole[] = ['HR Admin', 'HR Manager', 'Payroll Admin', 'Payroll Manager', 'Finance Approver'];
 
 export function TenantManagement() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isSeeding, setIsSeeding] = useState(false);
+
+    // Selected tenant for detail view
+    const [selectedTenant, setSelectedTenant] = useState<Company | null>(null);
+    const [tenantUsers, setTenantUsers] = useState<UserProfile[]>([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+
+    // Add admin form state
+    const [newAdminEmail, setNewAdminEmail] = useState('');
+    const [newAdminRole, setNewAdminRole] = useState<UserRole>('HR Admin');
+    const [addingAdmin, setAddingAdmin] = useState(false);
 
     // Form State
     const [newCompany, setNewCompany] = useState({
@@ -19,6 +35,12 @@ export function TenantManagement() {
         defaultCurrency: 'ZAR',
         defaultPayFrequency: 'monthly',
         financialYearEnd: 2
+    });
+
+    // Stats for selected tenant
+    const [tenantStats, setTenantStats] = useState({
+        employees: 0,
+        admins: 0
     });
 
     useEffect(() => {
@@ -37,6 +59,48 @@ export function TenantManagement() {
         }
     };
 
+    const loadTenantUsers = async (companyId: string) => {
+        setLoadingUsers(true);
+        try {
+            const users = await UserService.getAllUsers(companyId);
+            setTenantUsers(users);
+            setTenantStats(prev => ({
+                ...prev,
+                admins: users.filter(u => ADMIN_ROLES.includes(u.role)).length
+            }));
+        } catch (error) {
+            console.error("Failed to load tenant users", error);
+        } finally {
+            setLoadingUsers(false);
+        }
+    };
+
+    const loadTenantStats = async (companyId: string) => {
+        try {
+            const employees = await EmployeeService.getEmployees(companyId);
+            setTenantStats(prev => ({
+                ...prev,
+                employees: employees.length
+            }));
+        } catch (error) {
+            console.error("Failed to load tenant stats", error);
+        }
+    };
+
+    const handleSelectTenant = async (company: Company) => {
+        setSelectedTenant(company);
+        await Promise.all([
+            loadTenantUsers(company.id),
+            loadTenantStats(company.id)
+        ]);
+    };
+
+    const handleCloseTenantDetail = () => {
+        setSelectedTenant(null);
+        setTenantUsers([]);
+        setTenantStats({ employees: 0, admins: 0 });
+    };
+
     const handleCreateCompany = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -44,7 +108,7 @@ export function TenantManagement() {
                 legalName: newCompany.legalName,
                 registrationNumber: newCompany.registrationNumber,
                 defaultCurrency: newCompany.defaultCurrency,
-                defaultPayFrequency: newCompany.defaultPayFrequency as any,
+                defaultPayFrequency: newCompany.defaultPayFrequency as Company['defaultPayFrequency'],
                 financialYearEnd: newCompany.financialYearEnd,
                 physicalAddress: {
                     line1: '',
@@ -74,6 +138,30 @@ export function TenantManagement() {
         }
     };
 
+    const handleAddAdmin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedTenant || !newAdminEmail.trim()) return;
+
+        setAddingAdmin(true);
+        try {
+            // Create a placeholder user profile that will be linked when the user logs in
+            const fakeUid = `pending_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            await UserService.createUserProfile(fakeUid, newAdminEmail.trim().toLowerCase(), newAdminRole, selectedTenant.id);
+
+            // Reload tenant users
+            await loadTenantUsers(selectedTenant.id);
+
+            setNewAdminEmail('');
+            setNewAdminRole('HR Admin');
+            alert(`Admin user ${newAdminEmail} added successfully. They can now log in with this email.`);
+        } catch (error) {
+            console.error("Failed to add admin", error);
+            alert("Failed to add admin user");
+        } finally {
+            setAddingAdmin(false);
+        }
+    };
+
     const handleSeedData = async () => {
         if (!confirm('Are you sure you want to seed the database? This will create dummy tenants and data.')) return;
 
@@ -88,6 +176,13 @@ export function TenantManagement() {
         } finally {
             setIsSeeding(false);
         }
+    };
+
+    const getInitials = (email: string, displayName?: string) => {
+        if (displayName) {
+            return displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+        return email.charAt(0).toUpperCase();
     };
 
     return (
@@ -116,7 +211,7 @@ export function TenantManagement() {
             ) : (
                 <div className="tenants-grid animate-scale-in">
                     {companies.map(company => (
-                        <div key={company.id} className="tenant-card">
+                        <div key={company.id} className={`tenant-card ${selectedTenant?.id === company.id ? 'tenant-card--selected' : ''}`}>
                             <div className="tenant-card-header">
                                 <div>
                                     <h3 className="tenant-name">{company.legalName}</h3>
@@ -127,8 +222,9 @@ export function TenantManagement() {
                                 </span>
                             </div>
                             <div className="tenant-actions">
-                                <Button variant="secondary" size="sm">
-                                    Manage
+                                <Button variant="secondary" size="sm" onClick={() => handleSelectTenant(company)}>
+                                    <UsersIcon />
+                                    Manage Admins
                                 </Button>
                             </div>
                         </div>
@@ -136,6 +232,93 @@ export function TenantManagement() {
                 </div>
             )}
 
+            {/* Tenant Detail Panel */}
+            {selectedTenant && (
+                <div className="tenant-detail-panel animate-slide-down">
+                    <div className="tenant-detail-header">
+                        <h2>{selectedTenant.legalName} - Admin Users</h2>
+                        <Button variant="secondary" size="sm" onClick={handleCloseTenantDetail}>
+                            <CloseIcon />
+                            Close
+                        </Button>
+                    </div>
+                    <div className="tenant-detail-content">
+                        {/* Tenant Stats */}
+                        <div className="tenant-stats">
+                            <div className="tenant-stat">
+                                <div className="tenant-stat-value">{tenantStats.employees}</div>
+                                <div className="tenant-stat-label">Employees</div>
+                            </div>
+                            <div className="tenant-stat">
+                                <div className="tenant-stat-value">{tenantStats.admins}</div>
+                                <div className="tenant-stat-label">Admin Users</div>
+                            </div>
+                        </div>
+
+                        {/* Admin Users Section */}
+                        <div className="admin-users-section">
+                            <h3>
+                                <UsersIcon />
+                                Admin Users
+                            </h3>
+
+                            {loadingUsers ? (
+                                <div>Loading users...</div>
+                            ) : tenantUsers.filter(u => ADMIN_ROLES.includes(u.role)).length === 0 ? (
+                                <div className="empty-admins">
+                                    <UsersIcon />
+                                    <p>No admin users assigned to this tenant yet.</p>
+                                </div>
+                            ) : (
+                                <div className="admin-users-list">
+                                    {tenantUsers
+                                        .filter(u => ADMIN_ROLES.includes(u.role))
+                                        .map(user => (
+                                            <div key={user.uid} className="admin-user-card">
+                                                <div className="admin-user-info">
+                                                    <div className="admin-user-avatar">
+                                                        {getInitials(user.email, user.displayName)}
+                                                    </div>
+                                                    <div className="admin-user-details">
+                                                        <span className="admin-user-name">
+                                                            {user.displayName || user.email.split('@')[0]}
+                                                        </span>
+                                                        <span className="admin-user-email">{user.email}</span>
+                                                    </div>
+                                                </div>
+                                                <span className="admin-user-role">{user.role}</span>
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+
+                            {/* Add Admin Form */}
+                            <form className="add-admin-form" onSubmit={handleAddAdmin}>
+                                <input
+                                    type="email"
+                                    placeholder="Email address"
+                                    value={newAdminEmail}
+                                    onChange={e => setNewAdminEmail(e.target.value)}
+                                    required
+                                />
+                                <select
+                                    value={newAdminRole}
+                                    onChange={e => setNewAdminRole(e.target.value as UserRole)}
+                                >
+                                    {ADMIN_ROLES.map(role => (
+                                        <option key={role} value={role}>{role}</option>
+                                    ))}
+                                </select>
+                                <Button type="submit" variant="primary" disabled={addingAdmin}>
+                                    {addingAdmin ? 'Adding...' : 'Add Admin'}
+                                </Button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Tenant Modal */}
             {isCreateModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -178,5 +361,26 @@ export function TenantManagement() {
                 </div>
             )}
         </MainLayout>
+    );
+}
+
+// Icon Components
+function UsersIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+    );
+}
+
+function CloseIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
     );
 }

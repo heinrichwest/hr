@@ -86,3 +86,168 @@
     justify-content: flex-end;
     gap: 8px;
 }
+
+/* Tenant Detail Panel */
+.tenant-detail-panel {
+    background: white;
+    border: 1px solid var(--speccon-gray-200);
+    border-radius: var(--radius-lg);
+    margin-top: 24px;
+}
+
+.tenant-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--speccon-gray-200);
+}
+
+.tenant-detail-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--speccon-gray-900);
+    margin: 0;
+}
+
+.tenant-detail-content {
+    padding: 24px;
+}
+
+/* Admin Users Section */
+.admin-users-section {
+    margin-top: 24px;
+}
+
+.admin-users-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--speccon-gray-800);
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-user-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--speccon-gray-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--speccon-gray-200);
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--speccon-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-user-name {
+    font-weight: 500;
+    color: var(--speccon-gray-900);
+}
+
+.admin-user-email {
+    font-size: 13px;
+    color: var(--speccon-gray-500);
+}
+
+.admin-user-role {
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--speccon-blue-50);
+    color: var(--speccon-blue);
+}
+
+/* Add Admin Form */
+.add-admin-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--speccon-gray-200);
+}
+
+.add-admin-form input,
+.add-admin-form select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--speccon-gray-300);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+.add-admin-form input:focus,
+.add-admin-form select:focus {
+    outline: none;
+    border-color: var(--speccon-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Empty State */
+.empty-admins {
+    text-align: center;
+    padding: 32px;
+    color: var(--speccon-gray-500);
+}
+
+.empty-admins svg {
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+/* Tenant Stats */
+.tenant-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.tenant-stat {
+    background: var(--speccon-gray-50);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.tenant-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--speccon-gray-900);
+}
+
+.tenant-stat-label {
+    font-size: 13px;
+    color: var(--speccon-gray-500);
+    margin-top: 4px;
+}

@@ -49,32 +49,35 @@ export function MainLayout({ children }: MainLayoutProps) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Build navigation items based on permissions
-    const allNavItems: NavItem[] = [
+    // Check if user is System Admin
+    const isSystemAdmin = userProfile?.role?.toString().trim().toLowerCase() === 'system admin';
+
+    // Build navigation items based on role
+    // System Admin only sees Tenants and Settings
+    const systemAdminNavItems: NavItem[] = [
+        { label: 'Tenants', path: '/admin/tenants', icon: TenantsIcon },
+        { label: 'Settings', path: '/settings', icon: SettingsIcon },
+    ];
+
+    // Regular users see full navigation based on permissions
+    const regularNavItems: NavItem[] = [
         { label: 'Dashboard', path: '/', icon: DashboardIcon },
         { label: 'Employees', path: '/employees', icon: EmployeesIcon, permissions: ['employees.view', 'employees.view_team'] },
         { label: 'Leave', path: '/leave', icon: LeaveIcon, permissions: ['leave.view_all', 'leave.view_team', 'leave.approve'] },
         { label: 'Payroll', path: '/payroll', icon: PayrollIcon, permissions: ['payroll.view', 'payroll.create_run'] },
         { label: 'IR Cases', path: '/ir', icon: IRIcon, permissions: ['ir.view_cases', 'ir.create_case'] },
         { label: 'Reports', path: '/reports', icon: ReportsIcon, permissions: ['reports.hr', 'reports.payroll', 'reports.ir'] },
-        { label: 'Tenants', path: '/admin/tenants', icon: TenantsIcon, permissions: ['system.manage'] },
         { label: 'Users', path: '/admin/users', icon: UsersIcon, permissions: ['users.view', 'users.manage_roles'] },
         { label: 'Settings', path: '/settings', icon: SettingsIcon, permissions: ['system.settings', 'company.edit'] },
     ];
 
-    // Filter nav items based on user permissions
-    // Filter nav items based on user permissions
-    const navItems = allNavItems.filter(item => {
-        if (!item.permissions) return true; // Dashboard is always visible
-
-        // System Admin Bypass
-        const role = userProfile?.role?.toString().trim().toLowerCase();
-        if (role === 'system admin') {
-            return true;
-        }
-
-        return UserService.hasAnyPermission(userProfile, item.permissions);
-    });
+    // Filter nav items based on user role and permissions
+    const navItems = isSystemAdmin
+        ? systemAdminNavItems
+        : regularNavItems.filter(item => {
+            if (!item.permissions) return true; // Dashboard is always visible
+            return UserService.hasAnyPermission(userProfile, item.permissions);
+        });
 
     const userInitials = userProfile?.displayName
         ? userProfile.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
