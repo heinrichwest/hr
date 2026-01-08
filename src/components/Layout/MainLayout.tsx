@@ -57,13 +57,22 @@ export function MainLayout({ children }: MainLayoutProps) {
         { label: 'Payroll', path: '/payroll', icon: PayrollIcon, permissions: ['payroll.view', 'payroll.create_run'] },
         { label: 'IR Cases', path: '/ir', icon: IRIcon, permissions: ['ir.view_cases', 'ir.create_case'] },
         { label: 'Reports', path: '/reports', icon: ReportsIcon, permissions: ['reports.hr', 'reports.payroll', 'reports.ir'] },
+        { label: 'Tenants', path: '/admin/tenants', icon: TenantsIcon, permissions: ['system.manage'] },
         { label: 'Users', path: '/admin/users', icon: UsersIcon, permissions: ['users.view', 'users.manage_roles'] },
         { label: 'Settings', path: '/settings', icon: SettingsIcon, permissions: ['system.settings', 'company.edit'] },
     ];
 
     // Filter nav items based on user permissions
+    // Filter nav items based on user permissions
     const navItems = allNavItems.filter(item => {
         if (!item.permissions) return true; // Dashboard is always visible
+
+        // System Admin Bypass
+        const role = userProfile?.role?.toString().trim().toLowerCase();
+        if (role === 'system admin') {
+            return true;
+        }
+
         return UserService.hasAnyPermission(userProfile, item.permissions);
     });
 
@@ -220,6 +229,18 @@ function ReportsIcon() {
             <line x1="18" y1="20" x2="18" y2="10" />
             <line x1="12" y1="20" x2="12" y2="4" />
             <line x1="6" y1="20" x2="6" y2="14" />
+        </svg>
+    );
+}
+
+function TenantsIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 21h18" />
+            <path d="M5 21V7l8-4 8 4v14" />
+            <path d="M13 10V7" />
+            <path d="M13 14v-4" />
+            <path d="M13 18v-4" />
         </svg>
     );
 }

@@ -8,7 +8,13 @@
       "Bash(git remote add:*)",
       "Bash(git remote set-url:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Complete HR Management System\n\nFeatures:\n- User Management with 11 role-based access levels\n- Company Setup \\(company profiles, departments, org structure\\)\n- Employee Management \\(HRIS - profiles, employment history, documents\\)\n- Leave Management \\(leave types, requests, approvals, balances\\)\n- Payroll Module \\(pay elements, pay runs, payslips, SA tax compliance\\)\n- Industrial Relations \\(IR cases, hearings, warnings\\)\n- Employee Self-Service Portal \\(ESS\\)\n- Reports & Analytics Dashboard\n\nTech Stack:\n- React 19 + TypeScript + Vite\n- Firebase \\(Auth + Firestore\\)\n- South African HR/Payroll compliance \\(BCEA, PAYE, UIF, SDL\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(firebase --version:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd tenant management and seed data functionality\n\nFeatures:\n- Tenant Management page for creating and managing companies\n- Seeder service for populating demo data \\(3 tenants: Speccon, Megro, Andebe\\)\n- Each tenant gets: branches, departments, job titles, employees, users\n- Leave types seeded per tenant\n- Firebase configuration for hosting\n\nAll data is properly tenant-scoped using companyId isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

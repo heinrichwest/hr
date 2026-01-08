@@ -58,13 +58,10 @@ export function IRCaseForm() {
 
         try {
             setLoading(true);
-            const [employeesData, allUsers] = await Promise.all([
+            const [employeesData, companyUsers] = await Promise.all([
                 EmployeeService.getEmployees(userProfile.companyId),
-                UserService.getAllUsers()
+                UserService.getAllUsers(userProfile.companyId)
             ]);
-
-            // Filter users by company
-            const companyUsers = allUsers.filter(u => u.companyId === userProfile.companyId);
 
             setEmployees(employeesData.filter((e: Employee) => e.status === 'active'));
             setUsers(companyUsers);

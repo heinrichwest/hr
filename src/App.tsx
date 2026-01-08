@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { UserManagement } from './pages/admin/UserManagement';
+import { TenantManagement } from './pages/admin/TenantManagement';
 import { Settings } from './pages/settings/Settings';
 import { EmployeeList, EmployeeForm, EmployeeDetail } from './pages/employees';
 import { LeaveList, LeaveRequestForm, LeaveBalances } from './pages/leave';
@@ -43,6 +44,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <UserManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/tenants"
+              element={
+                <PrivateRoute>
+                  <TenantManagement />
                 </PrivateRoute>
               }
             />

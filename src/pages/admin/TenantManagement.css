@@ -1,0 +1,88 @@
+.tenants-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.tenants-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--speccon-gray-800);
+    margin: 0;
+}
+
+.tenants-subtitle {
+    color: var(--speccon-gray-500);
+    margin: 4px 0 0;
+}
+
+.tenants-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.tenants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.tenant-card {
+    background: white;
+    border: 1px solid var(--speccon-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: all 0.2s;
+}
+
+.tenant-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--speccon-gray-300);
+}
+
+.tenant-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.tenant-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--speccon-gray-900);
+    margin: 0;
+}
+
+.tenant-reg {
+    font-size: 13px;
+    color: var(--speccon-gray-500);
+    margin: 4px 0 0;
+}
+
+.tenant-status {
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.tenant-status--active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.tenant-status--inactive {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.tenant-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--speccon-gray-100);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

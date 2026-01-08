@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { doc, getDoc, setDoc, writeBatch, serverTimestamp, collection, getDocs, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, writeBatch, serverTimestamp, collection, getDocs, updateDoc, query, where } from "firebase/firestore";
 import type { UserProfile, UserRole, RoleDefinition, Permission } from "../types/user";
 import { ROLE_PERMISSIONS } from "../types/user";
 
@@ -13,7 +13,7 @@ export const UserService = {
         return null;
     },
 
-    async createUserProfile(uid: string, email: string, role: UserRole): Promise<void> {
+    async createUserProfile(uid: string, email: string, role: UserRole, companyId?: string): Promise<void> {
         const userRef = doc(db, "users", uid);
         const docSnap = await getDoc(userRef);
         if (!docSnap.exists()) {
@@ -21,6 +21,7 @@ export const UserService = {
                 uid,
                 email,
                 role,
+                companyId,
                 isActive: true,
                 createdAt: new Date(),
             };
@@ -31,9 +32,16 @@ export const UserService = {
         }
     },
 
-    async getAllUsers(): Promise<UserProfile[]> {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        return querySnapshot.docs.map(doc => doc.data() as UserProfile);
+    async getAllUsers(companyId?: string): Promise<UserProfile[]> {
+        const usersRef = collection(db, "users");
+        if (companyId) {
+            const q = query(usersRef, where("companyId", "==", companyId));
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.docs.map(doc => doc.data() as UserProfile);
+        } else {
+            const querySnapshot = await getDocs(usersRef);
+            return querySnapshot.docs.map(doc => doc.data() as UserProfile);
+        }
     },
 
     async updateUserRole(uid: string, newRole: UserRole): Promise<void> {
@@ -48,6 +56,14 @@ export const UserService = {
         const userRef = doc(db, "users", uid);
         await updateDoc(userRef, {
             ...data,
+            updatedAt: serverTimestamp()
+        });
+    },
+
+    async assignUserToCompany(uid: string, companyId: string): Promise<void> {
+        const userRef = doc(db, "users", uid);
+        await updateDoc(userRef, {
+            companyId: companyId,
             updatedAt: serverTimestamp()
         });
     },
@@ -245,12 +261,15 @@ export const UserService = {
         const setupSnap = await getDoc(setupRef);
 
         let role: UserRole = 'Employee';
+        let companyId: string | undefined = undefined;
 
         if (setupSnap.exists()) {
-            role = setupSnap.data().role as UserRole;
+            const data = setupSnap.data();
+            role = data.role as UserRole;
+            companyId = data.companyId || undefined;
         }
 
-        await this.createUserProfile(uid, email, role);
+        await this.createUserProfile(uid, email, role, companyId);
         return await this.getUserProfile(uid);
     }
 };

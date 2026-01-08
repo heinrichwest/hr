@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { UserService } from '../../services/userService';
+import { CompanyService } from '../../services/companyService';
+import { useAuth } from '../../contexts/AuthContext';
 import type { UserProfile, UserRole } from '../../types/user';
+import type { Company } from '../../types/company';
 import { Button } from '../../components/Button/Button';
 import { MainLayout } from '../../components/Layout/MainLayout';
 import './UserManagement.css';
@@ -21,25 +24,69 @@ const ALL_ROLES: UserRole[] = [
 ];
 
 export function UserManagement() {
+    const { userProfile } = useAuth();
     const [users, setUsers] = useState<UserProfile[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
     const [loading, setLoading] = useState(true);
     const [editingUserId, setEditingUserId] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
 
+    // Initial Load
     useEffect(() => {
-        loadUsers();
-    }, []);
+        const init = async () => {
+            if (!userProfile) return;
 
-    const loadUsers = async () => {
+            setLoading(true);
+            try {
+                if (userProfile.role === 'System Admin' || userProfile.role?.toLowerCase() === 'system admin') {
+                    // Load all companies for filter
+                    const allCompanies = await CompanyService.getAllCompanies();
+                    setCompanies(allCompanies);
+
+                    // Default to showing all users if no company selected, 
+                    // or maybe we should default to the first company?
+                    // For now, let's just load all.
+                    await loadUsers();
+                } else {
+                    // For non-system admin, lock to their company
+                    if (userProfile.companyId) {
+                        setSelectedCompanyId(userProfile.companyId);
+                        await loadUsers(userProfile.companyId);
+                    } else {
+                        // User has no company? Should not happen for normal users under this new model
+                        console.warn("User has no company ID");
+                        setUsers([]);
+                    }
+                }
+            } catch (error) {
+                console.error("Initialization failed", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        init();
+    }, [userProfile]);
+
+    const loadUsers = async (companyId?: string) => {
         setLoading(true);
         try {
-            const fetchedUsers = await UserService.getAllUsers();
+            // If companyId is passed, use it. Otherwise use selectedCompanyId if set.
+            const targetCompanyId = companyId || selectedCompanyId || undefined;
+
+            const fetchedUsers = await UserService.getAllUsers(targetCompanyId);
             setUsers(fetchedUsers);
         } catch (error) {
             console.error("Failed to load users", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCompanyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newCompanyId = e.target.value;
+        setSelectedCompanyId(newCompanyId);
+        await loadUsers(newCompanyId);
     };
 
     const handleEditRole = (user: UserProfile) => {
@@ -59,7 +106,8 @@ export function UserManagement() {
             await UserService.updateUserRole(uid, selectedRole);
             setEditingUserId(null);
             setSelectedRole(null);
-            loadUsers();
+            // Reload with current filters
+            loadUsers(selectedCompanyId);
         } catch (e) {
             alert("Failed to update role");
         }
@@ -117,7 +165,31 @@ export function UserManagement() {
                     <p className="users-subtitle">View and manage user roles and permissions</p>
                 </div>
                 <div className="users-header-actions">
-                    <Button variant="secondary" onClick={loadUsers}>
+                    {(userProfile?.role === 'System Admin' || userProfile?.role?.toLowerCase() === 'system admin') && (
+                        <div className="company-selector">
+                            <select
+                                value={selectedCompanyId}
+                                onChange={handleCompanyChange}
+                                className="company-select-input"
+                                style={{
+                                    padding: '8px 12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid var(--speccon-gray-200)',
+                                    marginRight: '12px',
+                                    backgroundColor: 'white',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                <option value="">All Companies</option>
+                                {companies.map(company => (
+                                    <option key={company.id} value={company.id}>
+                                        {company.legalName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    <Button variant="secondary" onClick={() => loadUsers(selectedCompanyId)}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="23 4 23 10 17 10" />
                             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
@@ -195,6 +267,18 @@ export function UserManagement() {
                                                 <div className="user-info">
                                                     <span className="user-email">{user.email}</span>
                                                     <span className="user-name">{user.displayName || 'No display name'}</span>
+                                                    {user.companyId && (
+                                                        <span className="user-company-badge" style={{
+                                                            fontSize: '10px',
+                                                            backgroundColor: '#f3f4f6',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            color: '#6b7280',
+                                                            marginLeft: '8px'
+                                                        }}>
+                                                            {companies.find(c => c.id === user.companyId)?.legalName || 'Unknown Company'}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>

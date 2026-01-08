@@ -5,3 +5,4 @@ export { LeaveService } from './leaveService';
 export { PayrollService } from './payrollService';
 export { IRService } from './irService';
 export { ReportService } from './reportService';
+export { Seeder } from './seeder';

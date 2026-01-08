@@ -58,6 +58,15 @@ export const CompanyService = {
         return null;
     },
 
+    async getAllCompanies(): Promise<Company[]> {
+        const q = query(
+            collection(db, "companies"),
+            orderBy("legalName", "asc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Company));
+    },
+
     async createCompany(company: Omit<Company, 'id' | 'createdAt'>): Promise<string> {
         const docRef = doc(collection(db, "companies"));
         await setDoc(docRef, {
