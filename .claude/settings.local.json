@@ -14,7 +14,8 @@
       "Bash(git push:*)",
       "Bash(firebase --version:*)",
       "Bash(firebase deploy:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd tenant management and seed data functionality\n\nFeatures:\n- Tenant Management page for creating and managing companies\n- Seeder service for populating demo data \\(3 tenants: Speccon, Megro, Andebe\\)\n- Each tenant gets: branches, departments, job titles, employees, users\n- Leave types seeded per tenant\n- Firebase configuration for hosting\n\nAll data is properly tenant-scoped using companyId isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd tenant management and seed data functionality\n\nFeatures:\n- Tenant Management page for creating and managing companies\n- Seeder service for populating demo data \\(3 tenants: Speccon, Megro, Andebe\\)\n- Each tenant gets: branches, departments, job titles, employees, users\n- Leave types seeded per tenant\n- Firebase configuration for hosting\n\nAll data is properly tenant-scoped using companyId isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Firestore indexes for tenant-scoped queries\n\nIndexes added for:\n- leaveTypes, employees, departments, branches, jobTitles\n- jobGrades, costCentres, payElements, publicHolidays\n- workSchedules, payrollPeriods, leaveRequests, leaveBalances\n- irCases, warnings, hearings, payRuns, companies\n\nAll indexes support companyId-based tenant isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
