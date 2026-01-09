@@ -5,6 +5,9 @@ import { auth } from '../../firebase';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { UserService } from '../../services/userService';
 import type { Permission } from '../../types/user';
+import { RoleSwitcherDropdown } from '../RoleSwitcher/RoleSwitcherDropdown';
+import { PreviewModeBanner } from '../RoleSwitcher/PreviewModeBanner';
+import { usePreviewMode } from '../../contexts/PreviewModeContext';
 import './MainLayout.css';
 
 interface NavItem {
@@ -24,6 +27,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     const location = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { exitPreviewMode, isPreviewMode } = usePreviewMode();
 
     const handleLogout = async () => {
         await auth.signOut();
@@ -48,6 +52,13 @@ export function MainLayout({ children }: MainLayoutProps) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // Reset preview mode when navigating away from dashboard
+    useEffect(() => {
+        if (location.pathname !== '/' && isPreviewMode) {
+            exitPreviewMode();
+        }
+    }, [location.pathname, isPreviewMode, exitPreviewMode]);
 
     // Check if user is System Admin
     const isSystemAdmin = userProfile?.role?.toString().trim().toLowerCase() === 'system admin';
@@ -110,58 +121,67 @@ export function MainLayout({ children }: MainLayoutProps) {
                         </nav>
                     </div>
 
-                    {/* Right: User Profile Dropdown */}
-                    <div className="layout-header-right" ref={dropdownRef}>
-                        <button
-                            className="layout-user-profile"
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            aria-expanded={isDropdownOpen}
-                            aria-haspopup="true"
-                        >
-                            <div className="layout-user-avatar">
-                                {userInitials}
-                            </div>
-                            <span className="layout-user-role">{userProfile?.role}</span>
-                        </button>
+                    {/* Right: Role Switcher & User Profile Dropdown */}
+                    <div className="layout-header-right">
+                        {/* Role Switcher Dropdown - Only for System Admin */}
+                        {isSystemAdmin && <RoleSwitcherDropdown />}
 
-                        {/* Dropdown Menu */}
-                        {isDropdownOpen && (
-                            <div className="layout-dropdown animate-scale-in">
-                                <div className="layout-dropdown-header">
-                                    <div className="layout-dropdown-avatar">
-                                        {userInitials}
-                                    </div>
-                                    <div className="layout-dropdown-info">
-                                        <span className="layout-dropdown-name">
-                                            {userProfile?.displayName || currentUser?.email?.split('@')[0]}
-                                        </span>
-                                        <span className="layout-dropdown-email">
-                                            {currentUser?.email}
-                                        </span>
-                                    </div>
+                        {/* User Profile Dropdown */}
+                        <div className="layout-user-dropdown-wrapper" ref={dropdownRef}>
+                            <button
+                                className="layout-user-profile"
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                aria-expanded={isDropdownOpen}
+                                aria-haspopup="true"
+                            >
+                                <div className="layout-user-avatar">
+                                    {userInitials}
                                 </div>
+                                <span className="layout-user-role">{userProfile?.role}</span>
+                            </button>
 
-                                <div className="layout-dropdown-divider" />
+                            {/* Dropdown Menu */}
+                            {isDropdownOpen && (
+                                <div className="layout-dropdown animate-scale-in">
+                                    <div className="layout-dropdown-header">
+                                        <div className="layout-dropdown-avatar">
+                                            {userInitials}
+                                        </div>
+                                        <div className="layout-dropdown-info">
+                                            <span className="layout-dropdown-name">
+                                                {userProfile?.displayName || currentUser?.email?.split('@')[0]}
+                                            </span>
+                                            <span className="layout-dropdown-email">
+                                                {currentUser?.email}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                <div className="layout-dropdown-role">
-                                    <span className="layout-dropdown-role-label">Role</span>
-                                    <span className="layout-dropdown-role-value">{userProfile?.role}</span>
+                                    <div className="layout-dropdown-divider" />
+
+                                    <div className="layout-dropdown-role">
+                                        <span className="layout-dropdown-role-label">Role</span>
+                                        <span className="layout-dropdown-role-value">{userProfile?.role}</span>
+                                    </div>
+
+                                    <div className="layout-dropdown-divider" />
+
+                                    <button
+                                        className="layout-dropdown-item layout-dropdown-item--danger"
+                                        onClick={handleLogout}
+                                    >
+                                        <LogoutIcon />
+                                        <span>Sign out</span>
+                                    </button>
                                 </div>
-
-                                <div className="layout-dropdown-divider" />
-
-                                <button
-                                    className="layout-dropdown-item layout-dropdown-item--danger"
-                                    onClick={handleLogout}
-                                >
-                                    <LogoutIcon />
-                                    <span>Sign out</span>
-                                </button>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
+
+            {/* Preview Mode Banner - Positioned after header, before main content */}
+            <PreviewModeBanner />
 
             {/* Main Content */}
             <main className="layout-main">

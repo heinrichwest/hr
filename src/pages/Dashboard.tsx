@@ -1,32 +1,80 @@
 import { useAuth } from "../contexts/AuthContext";
+import { usePreviewMode } from "../contexts/PreviewModeContext";
 import { MainLayout } from "../components/Layout/MainLayout";
 import { Button } from "../components/Button/Button";
 import { Link } from "react-router-dom";
+import {
+    EmployeeDashboardPreview,
+    HRDashboardPreview,
+    PayrollDashboardPreview,
+    FinanceDashboardPreview,
+    LineManagerDashboardPreview,
+    IRDashboardPreview,
+} from "../components/DashboardPreviews";
 import "./Dashboard.css";
 
 export function Dashboard() {
     const { userProfile, currentUser } = useAuth();
+    const { isPreviewMode, previewRole } = usePreviewMode();
 
     const getRoleBadgeClass = (role: string | undefined) => {
         switch (role) {
-            case 'System Admin':
-                return 'badge-primary';
-            case 'Manager':
-                return 'badge-success';
-            case 'Admin':
-                return 'badge-warning';
+            case "System Admin":
+                return "badge-primary";
+            case "Manager":
+                return "badge-success";
+            case "Admin":
+                return "badge-warning";
             default:
-                return 'badge-neutral';
+                return "badge-neutral";
         }
     };
 
+    // Render preview dashboard content based on previewRole
+    const renderPreviewContent = () => {
+        if (!isPreviewMode || !previewRole) {
+            return null;
+        }
+
+        switch (previewRole) {
+            case "HR Admin":
+            case "HR Manager":
+                return <HRDashboardPreview />;
+            case "Payroll Admin":
+            case "Payroll Manager":
+                return <PayrollDashboardPreview />;
+            case "Finance Approver":
+            case "Finance Read-Only":
+                return <FinanceDashboardPreview />;
+            case "Line Manager":
+                return <LineManagerDashboardPreview />;
+            case "IR Officer":
+            case "IR Manager":
+                return <IRDashboardPreview />;
+            case "Employee":
+                return <EmployeeDashboardPreview />;
+            default:
+                return null;
+        }
+    };
+
+    // If in preview mode, render the preview content
+    if (isPreviewMode && previewRole) {
+        return (
+            <MainLayout>
+                {renderPreviewContent()}
+            </MainLayout>
+        );
+    }
+
+    // Original System Admin dashboard content
     return (
         <MainLayout>
             {/* Page Header */}
             <div className="dashboard-header animate-slide-down">
                 <div className="dashboard-header-content">
                     <h1 className="dashboard-title">Dashboard</h1>
-                    <p className="dashboard-subtitle">Welcome back! Here's an overview of your HR activities.</p>
+                    <p className="dashboard-subtitle">Welcome back! Here is an overview of your HR activities.</p>
                 </div>
                 <div className="dashboard-header-actions">
                     <span className={`badge ${getRoleBadgeClass(userProfile?.role)}`}>

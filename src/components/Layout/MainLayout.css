@@ -108,11 +108,17 @@
   opacity: 1;
 }
 
-/* User Section */
+/* User Section - Updated for Role Switcher Integration */
 .layout-header-right {
   position: relative;
   display: flex;
   align-items: center;
+  gap: var(--space-4);
+}
+
+/* User Profile Dropdown Wrapper */
+.layout-user-dropdown-wrapper {
+  position: relative;
 }
 
 .layout-user-profile {
@@ -327,10 +333,20 @@
   .layout-main {
     padding: var(--space-4);
   }
+
+  /* Role Switcher responsive */
+  .layout-header-right {
+    gap: var(--space-2);
+  }
 }
 
 @media (max-width: 480px) {
   .layout-logo-link img {
     height: 24px;
+  }
+
+  /* Smaller gap on very small screens */
+  .layout-header-right {
+    gap: var(--space-1);
   }
 }
