@@ -27,7 +27,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (user && user.email) {
                 // Fetch or Create Profile
                 try {
-                    const profile = await UserService.syncUserRoleOnLogin(user.uid, user.email);
+                    const profile = await UserService.syncUserRoleOnLogin(
+                        user.uid,
+                        user.email,
+                        user.displayName
+                    );
                     setUserProfile(profile);
                 } catch (e) {
                     console.error("Error fetching user profile", e);

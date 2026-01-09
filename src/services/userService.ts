@@ -247,14 +247,33 @@ export const UserService = {
         console.log("System initialized with expanded Roles and User Setup entries.");
     },
 
-    async syncUserRoleOnLogin(uid: string, email: string): Promise<UserProfile | null> {
+    async syncUserRoleOnLogin(uid: string, email: string, firebaseDisplayName?: string | null): Promise<UserProfile | null> {
         const profile = await this.getUserProfile(uid);
         if (profile) {
-            // Update last login
-            await updateDoc(doc(db, "users", uid), {
+            // Update last login and displayName if missing
+            const updates: Record<string, unknown> = {
                 lastLogin: serverTimestamp()
-            });
-            return profile;
+            };
+
+            // If displayName is missing, try to set it from Firebase Auth or email
+            if (!profile.displayName) {
+                if (firebaseDisplayName) {
+                    updates.displayName = firebaseDisplayName;
+                } else {
+                    // Derive from email: john.smith@company.com -> John Smith
+                    const namePart = email.split('@')[0];
+                    const displayName = namePart
+                        .split(/[._-]/)
+                        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+                        .join(' ');
+                    updates.displayName = displayName;
+                }
+            }
+
+            await updateDoc(doc(db, "users", uid), updates);
+
+            // Return updated profile
+            return await this.getUserProfile(uid);
         }
 
         const setupRef = doc(db, "user_setup", email);
@@ -270,6 +289,14 @@ export const UserService = {
         }
 
         await this.createUserProfile(uid, email, role, companyId);
+
+        // Set displayName for new user
+        const displayName = firebaseDisplayName || email.split('@')[0]
+            .split(/[._-]/)
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+            .join(' ');
+        await this.updateUserProfile(uid, { displayName });
+
         return await this.getUserProfile(uid);
     }
 };

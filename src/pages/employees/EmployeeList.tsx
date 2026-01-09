@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../../components/Layout/MainLayout';
 import { Button } from '../../components/Button/Button';
 import { EmployeeService } from '../../services/employeeService';
@@ -101,13 +101,13 @@ export function EmployeeList() {
 
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
-            case 'active': return 'status-badge--active';
-            case 'probation': return 'status-badge--probation';
-            case 'suspended': return 'status-badge--suspended';
+            case 'active': return 'emp-status--active';
+            case 'probation': return 'emp-status--probation';
+            case 'suspended': return 'emp-status--suspended';
             case 'terminated':
             case 'resigned':
-            case 'retrenched': return 'status-badge--terminated';
-            case 'on_leave': return 'status-badge--leave';
+            case 'retrenched': return 'emp-status--terminated';
+            case 'on_leave': return 'emp-status--leave';
             default: return '';
         }
     };
@@ -122,14 +122,8 @@ export function EmployeeList() {
 
     const getAvatarColor = (name: string) => {
         const colors = [
-            'var(--speccon-brand-primary)',
-            'var(--speccon-info)',
-            'var(--speccon-success)',
-            'var(--speccon-warning)',
-            '#8B5CF6',
-            '#EC4899',
-            '#14B8A6',
-            '#F97316'
+            '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+            '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'
         ];
         const index = name.charCodeAt(0) % colors.length;
         return colors[index];
@@ -141,11 +135,15 @@ export function EmployeeList() {
         return dept?.name || '-';
     };
 
+    const handleRowClick = (employeeId: string) => {
+        navigate(`/employees/${employeeId}`);
+    };
+
     if (!companyId && !loading) {
         return (
             <MainLayout>
-                <div className="employees-empty-company">
-                    <div className="empty-icon">
+                <div className="emp-empty-state">
+                    <div className="emp-empty-icon">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <circle cx="12" cy="12" r="10" />
                             <line x1="12" y1="8" x2="12" y2="12" />
@@ -164,20 +162,15 @@ export function EmployeeList() {
 
     return (
         <MainLayout>
-            {/* Page Header */}
-            <div className="employees-header animate-slide-down">
-                <div className="employees-header-content">
-                    <h1 className="employees-title">Employees</h1>
-                    <p className="employees-subtitle">Manage your workforce</p>
-                </div>
-                <div className="employees-header-actions">
-                    <Button variant="secondary" onClick={loadEmployees}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="23 4 23 10 17 10" />
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                        </svg>
-                        Refresh
-                    </Button>
+            <div className="emp-page">
+                {/* Header */}
+                <div className="emp-header">
+                    <div>
+                        <h1 className="emp-title">Employees</h1>
+                        <p className="emp-subtitle">
+                            {stats.total} total employees • {stats.active} active
+                        </p>
+                    </div>
                     <Button variant="primary" onClick={() => navigate('/employees/new')}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <line x1="12" y1="5" x2="12" y2="19" />
@@ -186,226 +179,168 @@ export function EmployeeList() {
                         Add Employee
                     </Button>
                 </div>
-            </div>
 
-            {/* Stats Cards */}
-            <div className="employees-stats animate-scale-in">
-                <div className="stat-card">
-                    <div className="stat-value">{stats.total}</div>
-                    <div className="stat-label">Total Employees</div>
-                </div>
-                <div className="stat-card stat-card--active">
-                    <div className="stat-value">{stats.active}</div>
-                    <div className="stat-label">Active</div>
-                </div>
-                <div className="stat-card stat-card--probation">
-                    <div className="stat-value">{stats.probation}</div>
-                    <div className="stat-label">On Probation</div>
-                </div>
-                <div className="stat-card stat-card--leave">
-                    <div className="stat-value">{stats.onLeave}</div>
-                    <div className="stat-label">On Leave</div>
-                </div>
-                <div className="stat-card stat-card--suspended">
-                    <div className="stat-value">{stats.suspended}</div>
-                    <div className="stat-label">Suspended</div>
-                </div>
-            </div>
+                {/* Filters Bar */}
+                <div className="emp-filters">
+                    <div className="emp-search">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search employees..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
 
-            {/* Filters */}
-            <div className="employees-filters animate-fade-in">
-                <div className="filter-search">
-                    <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input
-                        type="text"
-                        placeholder="Search by name, employee number, or email..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="filter-search-input"
-                    />
+                    <div className="emp-filter-group">
+                        <select
+                            value={statusFilter}
+                            onChange={e => setStatusFilter(e.target.value as FilterStatus)}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="probation">Probation</option>
+                            <option value="on_leave">On Leave</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+
+                        <select
+                            value={departmentFilter}
+                            onChange={e => setDepartmentFilter(e.target.value)}
+                        >
+                            <option value="all">All Departments</option>
+                            {departments.map(dept => (
+                                <option key={dept.id} value={dept.id}>{dept.name}</option>
+                            ))}
+                        </select>
+
+                        <select
+                            value={branchFilter}
+                            onChange={e => setBranchFilter(e.target.value)}
+                        >
+                            <option value="all">All Branches</option>
+                            {branches.map(branch => (
+                                <option key={branch.id} value={branch.id}>{branch.name}</option>
+                            ))}
+                        </select>
+
+                        <button className="emp-refresh-btn" onClick={loadEmployees} title="Refresh">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="23 4 23 10 17 10" />
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div className="filter-selects">
-                    <select
-                        value={statusFilter}
-                        onChange={e => setStatusFilter(e.target.value as FilterStatus)}
-                        className="filter-select"
-                    >
-                        <option value="all">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="probation">Probation</option>
-                        <option value="on_leave">On Leave</option>
-                        <option value="suspended">Suspended</option>
-                        <option value="terminated">Terminated</option>
-                    </select>
+                {/* Employee List */}
+                <div className="emp-list">
+                    {/* Table Header */}
+                    <div className="emp-list-header">
+                        <div className="emp-col emp-col--name">Employee</div>
+                        <div className="emp-col emp-col--id">ID</div>
+                        <div className="emp-col emp-col--dept">Department</div>
+                        <div className="emp-col emp-col--status">Status</div>
+                        <div className="emp-col emp-col--date">Start Date</div>
+                    </div>
 
-                    <select
-                        value={departmentFilter}
-                        onChange={e => setDepartmentFilter(e.target.value)}
-                        className="filter-select"
-                    >
-                        <option value="all">All Departments</option>
-                        {departments.map(dept => (
-                            <option key={dept.id} value={dept.id}>{dept.name}</option>
-                        ))}
-                    </select>
-
-                    <select
-                        value={branchFilter}
-                        onChange={e => setBranchFilter(e.target.value)}
-                        className="filter-select"
-                    >
-                        <option value="all">All Branches</option>
-                        {branches.map(branch => (
-                            <option key={branch.id} value={branch.id}>{branch.name}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-
-            {/* Employee Table */}
-            <div className="employees-table-container animate-scale-in">
-                <div className="employees-table-wrapper">
-                    <table className="employees-table">
-                        <thead>
-                            <tr>
-                                <th>Employee</th>
-                                <th>Employee No.</th>
-                                <th>Department</th>
-                                <th>Job Title</th>
-                                <th>Status</th>
-                                <th>Start Date</th>
-                                <th className="text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <>
-                                    {[1, 2, 3, 4, 5].map(i => (
-                                        <tr key={i} className="loading-row">
-                                            <td>
-                                                <div className="employee-cell">
-                                                    <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 'var(--radius-lg)' }} />
-                                                    <div>
-                                                        <div className="skeleton" style={{ width: 150, height: 16, marginBottom: 4 }} />
-                                                        <div className="skeleton" style={{ width: 180, height: 12 }} />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><div className="skeleton" style={{ width: 80, height: 16 }} /></td>
-                                            <td><div className="skeleton" style={{ width: 100, height: 16 }} /></td>
-                                            <td><div className="skeleton" style={{ width: 120, height: 16 }} /></td>
-                                            <td><div className="skeleton" style={{ width: 70, height: 24 }} /></td>
-                                            <td><div className="skeleton" style={{ width: 80, height: 16 }} /></td>
-                                            <td><div className="skeleton" style={{ width: 60, height: 32, marginLeft: 'auto' }} /></td>
-                                        </tr>
-                                    ))}
-                                </>
-                            ) : filteredEmployees.length === 0 ? (
-                                <tr>
-                                    <td colSpan={7}>
-                                        <div className="empty-state">
-                                            <div className="empty-state-icon">
-                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                    <circle cx="9" cy="7" r="4" />
-                                                    <line x1="17" y1="11" x2="23" y2="11" />
-                                                </svg>
-                                            </div>
-                                            <p className="empty-state-text">
-                                                {searchTerm || statusFilter !== 'all' || departmentFilter !== 'all'
-                                                    ? 'No employees match your filters'
-                                                    : 'No employees yet'}
-                                            </p>
-                                            <p className="empty-state-hint">
-                                                {searchTerm || statusFilter !== 'all' || departmentFilter !== 'all'
-                                                    ? 'Try adjusting your search or filter criteria'
-                                                    : 'Click "Add Employee" to create your first employee'}
-                                            </p>
+                    {/* Loading State */}
+                    {loading ? (
+                        <div className="emp-loading">
+                            {[1, 2, 3, 4, 5].map(i => (
+                                <div key={i} className="emp-row emp-row--loading">
+                                    <div className="emp-col emp-col--name">
+                                        <div className="emp-skeleton emp-skeleton--avatar" />
+                                        <div className="emp-skeleton-text">
+                                            <div className="emp-skeleton emp-skeleton--name" />
+                                            <div className="emp-skeleton emp-skeleton--email" />
                                         </div>
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredEmployees.map(employee => (
-                                    <tr key={employee.id}>
-                                        <td>
-                                            <Link to={`/employees/${employee.id}`} className="employee-cell">
-                                                <div
-                                                    className="employee-avatar"
-                                                    style={{ backgroundColor: getAvatarColor(`${employee.firstName}${employee.lastName}`) }}
-                                                >
-                                                    {employee.avatar ? (
-                                                        <img src={employee.avatar} alt="" />
-                                                    ) : (
-                                                        getInitials(employee.firstName, employee.lastName)
-                                                    )}
-                                                </div>
-                                                <div className="employee-info">
-                                                    <span className="employee-name">
-                                                        {employee.firstName} {employee.lastName}
-                                                    </span>
-                                                    <span className="employee-email">{employee.email}</span>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td>
-                                            <code className="employee-number">{employee.employeeNumber}</code>
-                                        </td>
-                                        <td>{getDepartmentName(employee.departmentId)}</td>
-                                        <td>{employee.jobTitle || '-'}</td>
-                                        <td>
-                                            <span className={`status-badge ${getStatusBadgeClass(employee.status)}`}>
-                                                {formatStatus(employee.status)}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            {new Date(employee.startDate).toLocaleDateString('en-ZA', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric'
-                                            })}
-                                        </td>
-                                        <td className="text-right">
-                                            <div className="action-buttons">
-                                                <Link
-                                                    to={`/employees/${employee.id}`}
-                                                    className="action-btn"
-                                                    title="View details"
-                                                >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                                        <circle cx="12" cy="12" r="3" />
-                                                    </svg>
-                                                    View
-                                                </Link>
-                                                <Link
-                                                    to={`/employees/${employee.id}/edit`}
-                                                    className="action-btn action-btn--icon"
-                                                    title="Edit"
-                                                >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                    </svg>
-                                                </Link>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                    </div>
+                                    <div className="emp-col emp-col--id">
+                                        <div className="emp-skeleton emp-skeleton--id" />
+                                    </div>
+                                    <div className="emp-col emp-col--dept">
+                                        <div className="emp-skeleton emp-skeleton--dept" />
+                                    </div>
+                                    <div className="emp-col emp-col--status">
+                                        <div className="emp-skeleton emp-skeleton--status" />
+                                    </div>
+                                    <div className="emp-col emp-col--date">
+                                        <div className="emp-skeleton emp-skeleton--date" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : filteredEmployees.length === 0 ? (
+                        <div className="emp-no-results">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <line x1="17" y1="11" x2="23" y2="11" />
+                            </svg>
+                            <p>No employees found</p>
+                            <span>
+                                {searchTerm || statusFilter !== 'all' || departmentFilter !== 'all'
+                                    ? 'Try adjusting your filters'
+                                    : 'Click "Add Employee" to get started'}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="emp-rows">
+                            {filteredEmployees.map(employee => (
+                                <div
+                                    key={employee.id}
+                                    className="emp-row"
+                                    onClick={() => handleRowClick(employee.id)}
+                                >
+                                    <div className="emp-col emp-col--name">
+                                        <div
+                                            className="emp-avatar"
+                                            style={{ backgroundColor: getAvatarColor(`${employee.firstName}${employee.lastName}`) }}
+                                        >
+                                            {getInitials(employee.firstName, employee.lastName)}
+                                        </div>
+                                        <div className="emp-info">
+                                            <span className="emp-name">{employee.firstName} {employee.lastName}</span>
+                                            <span className="emp-email">{employee.email}</span>
+                                        </div>
+                                    </div>
+                                    <div className="emp-col emp-col--id">
+                                        <span className="emp-id">{employee.employeeNumber}</span>
+                                    </div>
+                                    <div className="emp-col emp-col--dept">
+                                        {getDepartmentName(employee.departmentId)}
+                                    </div>
+                                    <div className="emp-col emp-col--status">
+                                        <span className={`emp-status ${getStatusBadgeClass(employee.status)}`}>
+                                            {formatStatus(employee.status)}
+                                        </span>
+                                    </div>
+                                    <div className="emp-col emp-col--date">
+                                        {new Date(employee.startDate).toLocaleDateString('en-ZA', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })}
+                                    </div>
+                                    <div className="emp-col emp-col--arrow">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="9 18 15 12 9 6" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                {/* Table Footer */}
+                {/* Footer */}
                 {!loading && filteredEmployees.length > 0 && (
-                    <div className="table-footer">
-                        <span className="table-count">
-                            Showing <strong>{filteredEmployees.length}</strong> of <strong>{employees.length}</strong> employee{employees.length !== 1 ? 's' : ''}
-                        </span>
+                    <div className="emp-footer">
+                        Showing {filteredEmployees.length} of {employees.length} employees
                     </div>
                 )}
             </div>
