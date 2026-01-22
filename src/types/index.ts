@@ -9,3 +9,6 @@ export * from './leave';
 export * from './ir';
 export * from './payroll';
 export * from './reports';
+export * from './accessRequest';
+export * from './notification';
+export * from './takeOnSheet';

@@ -1,0 +1,83 @@
+/* ============================================================
+   CREATE TAKE-ON SHEET PAGE STYLES
+   ============================================================ */
+
+.create-tos-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.create-tos-page--loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.create-tos-page__loader {
+    font-size: var(--text-base);
+    color: var(--speccon-text-muted);
+}
+
+.create-tos-page__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.create-tos-page__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: var(--text-sm);
+    color: var(--speccon-text-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    width: fit-content;
+}
+
+.create-tos-page__back:hover {
+    color: var(--speccon-brand-primary);
+}
+
+.create-tos-page__title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--speccon-text-main);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.create-tos-page__subtitle {
+    font-size: var(--text-base);
+    color: var(--speccon-text-muted);
+    margin: 0;
+}
+
+.create-tos-page__error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: hsl(0, 70%, 95%);
+    border: 1px solid hsl(0, 70%, 85%);
+    border-radius: var(--radius-md);
+    color: hsl(0, 70%, 40%);
+    font-size: var(--text-sm);
+}
+
+.create-tos-page__error button {
+    background: none;
+    border: none;
+    font-size: var(--text-lg);
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}

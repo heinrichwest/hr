@@ -6,3 +6,7 @@ export { PayrollService } from './payrollService';
 export { IRService } from './irService';
 export { ReportService } from './reportService';
 export { Seeder } from './seeder';
+export { AccessRequestService } from './accessRequestService';
+export { NotificationService } from './notificationService';
+export { TakeOnSheetService } from './takeOnSheetService';
+export { TakeOnSheetDocumentService } from './takeOnSheetDocumentService';

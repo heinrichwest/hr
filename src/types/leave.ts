@@ -13,7 +13,8 @@ export type LeaveTypeCode =
     | 'study'
     | 'unpaid'
     | 'special'
-    | 'compassionate';
+    | 'compassionate'
+    | 'birthday';
 
 export type AccrualMethod =
     | 'annual'       // Full entitlement at start of cycle

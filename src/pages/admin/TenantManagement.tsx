@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CompanyService } from '../../services/companyService';
 import { UserService } from '../../services/userService';
 import { EmployeeService } from '../../services/employeeService';
+import { LeaveService } from '../../services/leaveService';
 import { Seeder } from '../../services/seeder';
 import type { Company } from '../../types/company';
 import type { UserProfile, UserRole } from '../../types/user';
@@ -27,6 +28,10 @@ export function TenantManagement() {
     const [newAdminEmail, setNewAdminEmail] = useState('');
     const [newAdminRole, setNewAdminRole] = useState<UserRole>('HR Admin');
     const [addingAdmin, setAddingAdmin] = useState(false);
+
+    // Migration state
+    const [migratingLeaveTypes, setMigratingLeaveTypes] = useState(false);
+    const [migrationResult, setMigrationResult] = useState<string | null>(null);
 
     // Form State
     const [newCompany, setNewCompany] = useState({
@@ -99,6 +104,7 @@ export function TenantManagement() {
         setSelectedTenant(null);
         setTenantUsers([]);
         setTenantStats({ employees: 0, admins: 0 });
+        setMigrationResult(null);
     };
 
     const handleCreateCompany = async (e: React.FormEvent) => {
@@ -178,6 +184,61 @@ export function TenantManagement() {
         }
     };
 
+    const handleAddMissingLeaveTypes = async () => {
+        if (!selectedTenant) return;
+
+        setMigratingLeaveTypes(true);
+        setMigrationResult(null);
+        try {
+            const addedTypes = await LeaveService.addMissingLeaveTypes(selectedTenant.id);
+            if (addedTypes.length > 0) {
+                setMigrationResult(`Added: ${addedTypes.join(', ')}`);
+            } else {
+                setMigrationResult('All leave types already exist for this tenant.');
+            }
+        } catch (error) {
+            console.error('Failed to add missing leave types:', error);
+            setMigrationResult('Failed to add leave types. Please try again.');
+        } finally {
+            setMigratingLeaveTypes(false);
+        }
+    };
+
+    const handleRemoveDuplicates = async () => {
+        if (!confirm('This will remove duplicate tenants, keeping only the first occurrence of each company name. Continue?')) return;
+
+        setLoading(true);
+        try {
+            // Group companies by legalName
+            const groupedByName = new Map<string, Company[]>();
+            for (const company of companies) {
+                const existing = groupedByName.get(company.legalName) || [];
+                existing.push(company);
+                groupedByName.set(company.legalName, existing);
+            }
+
+            // Delete duplicates (keep the first one, delete the rest)
+            let deletedCount = 0;
+            for (const [, companiesWithSameName] of groupedByName) {
+                if (companiesWithSameName.length > 1) {
+                    // Keep the first, delete the rest
+                    for (let i = 1; i < companiesWithSameName.length; i++) {
+                        await CompanyService.deleteCompany(companiesWithSameName[i].id);
+                        deletedCount++;
+                    }
+                }
+            }
+
+            await loadCompanies();
+            alert(`Removed ${deletedCount} duplicate tenant(s).`);
+        } catch (error) {
+            console.error('Failed to remove duplicates:', error);
+            alert('Failed to remove duplicates. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const getInitials = (email: string, displayName?: string) => {
         if (displayName) {
             return displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -193,6 +254,9 @@ export function TenantManagement() {
                     <p className="tenants-subtitle">Manage system tenants (companies)</p>
                 </div>
                 <div className="tenants-header-actions">
+                    <Button variant="secondary" onClick={handleRemoveDuplicates} disabled={loading}>
+                        Remove Duplicates
+                    </Button>
                     <Button variant="secondary" onClick={handleSeedData} disabled={isSeeding}>
                         {isSeeding ? 'Seeding...' : 'Seed Data'}
                     </Button>
@@ -252,6 +316,35 @@ export function TenantManagement() {
                             <div className="tenant-stat">
                                 <div className="tenant-stat-value">{tenantStats.admins}</div>
                                 <div className="tenant-stat-label">Admin Users</div>
+                            </div>
+                        </div>
+
+                        {/* Tenant Actions Section */}
+                        <div className="tenant-actions-section">
+                            <h3>
+                                <SettingsIcon />
+                                Tenant Actions
+                            </h3>
+                            <div className="tenant-action-item">
+                                <div className="tenant-action-info">
+                                    <span className="tenant-action-name">Add Missing Leave Types</span>
+                                    <span className="tenant-action-description">
+                                        Adds Paternity Leave and Birthday Leave if not already present
+                                    </span>
+                                    {migrationResult && (
+                                        <span className={`tenant-action-result ${migrationResult.startsWith('Failed') ? 'tenant-action-result--error' : 'tenant-action-result--success'}`}>
+                                            {migrationResult}
+                                        </span>
+                                    )}
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={handleAddMissingLeaveTypes}
+                                    disabled={migratingLeaveTypes}
+                                >
+                                    {migratingLeaveTypes ? 'Adding...' : 'Run Migration'}
+                                </Button>
                             </div>
                         </div>
 
@@ -381,6 +474,15 @@ function CloseIcon() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+    );
+}
+
+function SettingsIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
     );
 }

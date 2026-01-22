@@ -20,6 +20,8 @@ import type { DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
 import type {
     LeaveType,
+    LeaveTypeCode,
+    AccrualMethod,
     LeaveRequest,
     LeaveBalance,
     LeaveRequestStatus,
@@ -84,6 +86,43 @@ export const LeaveService = {
     async deleteLeaveType(leaveTypeId: string): Promise<void> {
         const docRef = doc(db, 'leaveTypes', leaveTypeId);
         await deleteDoc(docRef);
+    },
+
+    // Add missing leave types to existing companies (for migrations)
+    async addMissingLeaveTypes(companyId: string): Promise<string[]> {
+        const existing = await this.getLeaveTypes(companyId);
+        const existingCodes = existing.map(t => t.code);
+        const addedTypes: string[] = [];
+
+        const missingTypes: Array<{ code: LeaveTypeCode; name: string; description: string; defaultDaysPerYear: number; isPaid: boolean; accrualMethod: AccrualMethod; color: string; sortOrder: number; requiresAttachment: boolean; minConsecutiveDays?: number; maxConsecutiveDays?: number }> = [
+            { code: 'paternity', name: 'Paternity Leave', description: 'Paternity leave for fathers (10 consecutive days)', defaultDaysPerYear: 10, isPaid: false, accrualMethod: 'none', color: '#3B82F6', sortOrder: 5, requiresAttachment: true, minConsecutiveDays: 1, maxConsecutiveDays: 10 },
+            { code: 'birthday', name: 'Birthday Leave', description: 'Paid day off on your birthday', defaultDaysPerYear: 1, isPaid: true, accrualMethod: 'annual', color: '#A855F7', sortOrder: 8, requiresAttachment: false }
+        ];
+
+        for (const type of missingTypes) {
+            if (!existingCodes.includes(type.code)) {
+                await this.createLeaveType({
+                    companyId,
+                    code: type.code,
+                    name: type.name,
+                    description: type.description,
+                    defaultDaysPerYear: type.defaultDaysPerYear,
+                    isPaid: type.isPaid,
+                    accrualMethod: type.accrualMethod,
+                    maxCarryOver: 0,
+                    requiresApproval: true,
+                    requiresAttachment: type.requiresAttachment,
+                    minConsecutiveDays: type.minConsecutiveDays,
+                    maxConsecutiveDays: type.maxConsecutiveDays,
+                    color: type.color,
+                    sortOrder: type.sortOrder,
+                    isActive: true
+                });
+                addedTypes.push(type.name);
+            }
+        }
+
+        return addedTypes;
     },
 
     // Seed default South African leave types
@@ -158,9 +197,26 @@ export const LeaveService = {
             },
             {
                 companyId,
+                code: 'paternity',
+                name: 'Paternity Leave',
+                description: 'Paternity leave for fathers (10 consecutive days)',
+                defaultDaysPerYear: 10,
+                isPaid: false, // Paid via UIF
+                accrualMethod: 'none',
+                maxCarryOver: 0,
+                requiresApproval: true,
+                requiresAttachment: true,
+                minConsecutiveDays: 1,
+                maxConsecutiveDays: 10,
+                color: '#3B82F6',
+                sortOrder: 5,
+                isActive: true
+            },
+            {
+                companyId,
                 code: 'parental',
                 name: 'Parental Leave',
-                description: 'Parental leave for fathers/adoptive parents',
+                description: 'Parental leave for adoptive parents',
                 defaultDaysPerYear: 10,
                 isPaid: false, // Paid via UIF
                 accrualMethod: 'none',
@@ -168,7 +224,7 @@ export const LeaveService = {
                 requiresApproval: true,
                 requiresAttachment: true,
                 color: '#06B6D4',
-                sortOrder: 5,
+                sortOrder: 6,
                 isActive: true
             },
             {
@@ -183,7 +239,22 @@ export const LeaveService = {
                 requiresApproval: true,
                 requiresAttachment: true,
                 color: '#F59E0B',
-                sortOrder: 6,
+                sortOrder: 7,
+                isActive: true
+            },
+            {
+                companyId,
+                code: 'birthday',
+                name: 'Birthday Leave',
+                description: 'Paid day off on your birthday',
+                defaultDaysPerYear: 1,
+                isPaid: true,
+                accrualMethod: 'annual',
+                maxCarryOver: 0,
+                requiresApproval: true,
+                requiresAttachment: false,
+                color: '#A855F7',
+                sortOrder: 8,
                 isActive: true
             },
             {
@@ -198,7 +269,7 @@ export const LeaveService = {
                 requiresApproval: true,
                 requiresAttachment: false,
                 color: '#6B7280',
-                sortOrder: 7,
+                sortOrder: 9,
                 isActive: true
             }
         ];

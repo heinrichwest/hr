@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { MainLayout } from '../components/layout/MainLayout';
+import { MainLayout } from '../components/Layout/MainLayout';
 import { Dashboard } from '../pages/Dashboard';
 import { PreviewModeProvider } from '../contexts/PreviewModeContext';
 

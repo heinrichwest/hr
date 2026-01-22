@@ -1,0 +1,49 @@
+/* ============================================================
+   TAKE-ON SHEET LIST PAGE STYLES
+   ============================================================ */
+
+.tos-list-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.tos-list-page__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.tos-list-page__header-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.tos-list-page__title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--speccon-text-main);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.tos-list-page__subtitle {
+    font-size: var(--text-base);
+    color: var(--speccon-text-muted);
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .tos-list-page__header {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .tos-list-page__header .sc-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

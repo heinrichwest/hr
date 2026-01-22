@@ -4,9 +4,13 @@ import { BrandProvider } from './brand/BrandProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { PreviewModeProvider } from './contexts/PreviewModeContext';
 import { Login } from './pages/Login';
+import { SignUp } from './pages/SignUp';
+import { PendingApproval } from './pages/PendingApproval';
 import { Dashboard } from './pages/Dashboard';
 import { UserManagement } from './pages/admin/UserManagement';
 import { TenantManagement } from './pages/admin/TenantManagement';
+import { PendingApprovals } from './pages/admin/PendingApprovals';
+import { Notifications } from './pages/admin/Notifications';
 import { Settings } from './pages/settings/Settings';
 import { EmployeeList, EmployeeForm, EmployeeDetail } from './pages/employees';
 import { LeaveList, LeaveRequestForm, LeaveBalances } from './pages/leave';
@@ -14,6 +18,9 @@ import { PayRunList, PayRunDetail, PayRunForm, PayElements } from './pages/payro
 import { IRCaseList, IRCaseDetail, IRCaseForm, WarningsList } from './pages/ir';
 import { ESSHome, MyPayslips, PayslipDetail, MyProfile, MyLeave, LeaveApplication } from './pages/ess';
 import { ReportsHome, EmployeeReports, LeaveReports, IRReports } from './pages/reports';
+import { TakeOnSheetListPage } from './pages/TakeOnSheetListPage';
+import { CreateTakeOnSheetPage } from './pages/CreateTakeOnSheetPage';
+import ViewTakeOnSheetPage from './pages/ViewTakeOnSheetPage';
 import './App.css';
 
 // Protected Route Component
@@ -33,6 +40,8 @@ function App() {
           <PreviewModeProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/pending-approval" element={<PendingApproval />} />
               <Route
                 path="/"
                 element={
@@ -54,6 +63,22 @@ function App() {
                 element={
                   <PrivateRoute>
                     <TenantManagement />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/pending-approvals"
+                element={
+                  <PrivateRoute>
+                    <PendingApprovals />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/notifications"
+                element={
+                  <PrivateRoute>
+                    <Notifications />
                   </PrivateRoute>
                 }
               />
@@ -94,6 +119,31 @@ function App() {
                 element={
                   <PrivateRoute>
                     <EmployeeForm />
+                  </PrivateRoute>
+                }
+              />
+              {/* Take-On Sheet Routes */}
+              <Route
+                path="/take-on-sheets"
+                element={
+                  <PrivateRoute>
+                    <TakeOnSheetListPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/take-on-sheets/new"
+                element={
+                  <PrivateRoute>
+                    <CreateTakeOnSheetPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/take-on-sheets/:id"
+                element={
+                  <PrivateRoute>
+                    <ViewTakeOnSheetPage />
                   </PrivateRoute>
                 }
               />

@@ -108,6 +108,23 @@
   opacity: 1;
 }
 
+/* Navigation Badge */
+.layout-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--speccon-white);
+  background: linear-gradient(135deg, var(--speccon-brand-accent) 0%, #ff8800 100%);
+  border-radius: var(--radius-full);
+  margin-left: var(--space-1);
+  box-shadow: 0 1px 3px rgba(255, 166, 0, 0.4);
+}
+
 /* User Section - Updated for Role Switcher Integration */
 .layout-header-right {
   position: relative;
@@ -319,6 +336,16 @@
 
   .layout-nav-link {
     padding: var(--space-3);
+  }
+
+  .layout-nav-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+    margin-left: 0;
   }
 
   .layout-user-role {

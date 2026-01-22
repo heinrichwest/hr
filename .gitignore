@@ -25,4 +25,15 @@ dist-ssr
 
 agent-os
 .claude
-.agent
+!.agent
+
+# Cloud Functions
+functions/lib
+functions/.env
+functions/node_modules
+
+# Environment files (keep examples)
+.env
+!.env.example
+functions/.env
+!functions/.env.example

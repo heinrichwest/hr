@@ -1,0 +1,336 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================================
+    // HELPER FUNCTIONS
+    // ============================================================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Get user profile from users collection
+    function getUserProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Check if user has one of the specified roles
+    function hasRole(roles) {
+      return isAuthenticated() && getUserProfile().role in roles;
+    }
+
+    // Check if user belongs to the specified company
+    function belongsToCompany(companyId) {
+      return isAuthenticated() && getUserProfile().companyId == companyId;
+    }
+
+    // Check if user has role AND belongs to company (for tenant isolation)
+    function hasRoleInCompany(roles, companyId) {
+      return hasRole(roles) && belongsToCompany(companyId);
+    }
+
+    // Check if user is system admin (global access)
+    function isSystemAdmin() {
+      return hasRole(['system_admin']);
+    }
+
+    // Check if user is HR Admin or above
+    function isHRAdminOrAbove() {
+      return hasRole(['system_admin', 'hr_admin', 'hr_manager']);
+    }
+
+    // ============================================================
+    // EMAIL NOTIFICATION COLLECTIONS
+    // ============================================================
+
+    // mail collection - Firebase Trigger Email Extension
+    // Only Cloud Functions can write, no client-side access
+    match /mail/{mailId} {
+      // Deny all client-side reads - emails are handled by the extension
+      allow read: if false;
+
+      // Deny all client-side writes - only Cloud Functions can write
+      // Cloud Functions have admin SDK access which bypasses these rules
+      allow write: if false;
+    }
+
+    // emailLogs collection - Email audit trail
+    // Cloud Functions write, HR Admin+ read with tenant isolation
+    match /emailLogs/{logId} {
+      // Allow read for system_admin (all logs), hr_admin/hr_manager (own company only)
+      allow read: if isSystemAdmin() ||
+                     (hasRole(['hr_admin', 'hr_manager']) &&
+                      resource.data.companyId == getUserProfile().companyId);
+
+      // Deny all client-side writes - only Cloud Functions can write
+      // Cloud Functions have admin SDK access which bypasses these rules
+      allow write: if false;
+    }
+
+    // ============================================================
+    // TENANT-SCOPED COLLECTIONS
+    // ============================================================
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own profile
+      // HR Admin+ can read users in their company
+      // System admin can read all users
+      allow read: if isAuthenticated() &&
+                    (request.auth.uid == userId ||
+                     isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager'], resource.data.companyId));
+
+      // Users can update their own profile (limited fields)
+      // HR Admin+ can manage users in their company
+      // System admin can manage all users
+      allow write: if isAuthenticated() &&
+                     (isSystemAdmin() ||
+                      hasRoleInCompany(['hr_admin'], resource.data.companyId));
+    }
+
+    // Employees collection
+    match /employees/{employeeId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager'], resource.data.companyId);
+    }
+
+    // Departments collection
+    match /departments/{departmentId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Branches collection
+    match /branches/{branchId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Job Titles collection
+    match /jobTitles/{jobTitleId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Job Grades collection
+    match /jobGrades/{jobGradeId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Cost Centres collection
+    match /costCentres/{costCentreId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'finance_approver'], resource.data.companyId);
+    }
+
+    // ============================================================
+    // LEAVE MANAGEMENT COLLECTIONS
+    // ============================================================
+
+    // Leave Types collection
+    match /leaveTypes/{leaveTypeId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Leave Requests collection
+    match /leaveRequests/{requestId} {
+      // Employees can read their own leave requests
+      // Line managers can read requests they need to approve
+      // HR Admin+ can read all requests in their company
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     (belongsToCompany(resource.data.companyId) &&
+                      (resource.data.employeeId == getUserProfile().employeeId ||
+                       resource.data.currentApprover == request.auth.uid ||
+                       hasRole(['hr_admin', 'hr_manager', 'line_manager']))));
+
+      // Employees can create leave requests
+      // Line managers and HR Admin+ can update (approve/reject)
+      allow create: if isAuthenticated() &&
+                      belongsToCompany(request.resource.data.companyId);
+
+      allow update: if isAuthenticated() &&
+                      (isSystemAdmin() ||
+                       (belongsToCompany(resource.data.companyId) &&
+                        (resource.data.currentApprover == request.auth.uid ||
+                         hasRole(['hr_admin', 'hr_manager']))));
+
+      allow delete: if isSystemAdmin() ||
+                      hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Leave Balances collection
+    match /leaveBalances/{balanceId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager'], resource.data.companyId);
+    }
+
+    // ============================================================
+    // PAYROLL COLLECTIONS
+    // ============================================================
+
+    // Payroll Periods collection
+    match /payrollPeriods/{periodId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['payroll_admin', 'payroll_manager'], resource.data.companyId);
+    }
+
+    // Pay Runs collection
+    match /payRuns/{payRunId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['payroll_admin', 'payroll_manager'], resource.data.companyId);
+    }
+
+    // Payslips collection
+    match /payslips/{payslipId} {
+      // Employees can read their own payslips
+      // Payroll Admin+ can read all payslips in their company
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     (belongsToCompany(resource.data.companyId) &&
+                      (resource.data.employeeId == getUserProfile().employeeId ||
+                       hasRole(['payroll_admin', 'payroll_manager', 'hr_admin']))));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['payroll_admin', 'payroll_manager'], resource.data.companyId);
+    }
+
+    // Pay Elements collection
+    match /payElements/{payElementId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['payroll_admin'], resource.data.companyId);
+    }
+
+    // ============================================================
+    // INDUSTRIAL RELATIONS COLLECTIONS
+    // ============================================================
+
+    // IR Cases collection
+    match /irCases/{caseId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager', 'ir_manager'], resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'ir_manager'], resource.data.companyId);
+    }
+
+    // Warnings collection
+    match /warnings/{warningId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager', 'ir_manager'], resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager', 'ir_manager'], resource.data.companyId);
+    }
+
+    // Hearings collection
+    match /hearings/{hearingId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'hr_manager', 'ir_manager'], resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin', 'ir_manager'], resource.data.companyId);
+    }
+
+    // ============================================================
+    // COMPANY/TENANT MANAGEMENT
+    // ============================================================
+
+    // Companies collection
+    match /companies/{companyId} {
+      // HR Admin+ can read their own company
+      // System admin can read all companies
+      allow read: if isSystemAdmin() ||
+                    (isAuthenticated() && getUserProfile().companyId == companyId);
+
+      // Only system admin can manage companies
+      allow write: if isSystemAdmin();
+    }
+
+    // Public Holidays collection
+    match /publicHolidays/{holidayId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // Work Schedules collection
+    match /workSchedules/{scheduleId} {
+      allow read: if isAuthenticated() &&
+                    (isSystemAdmin() ||
+                     belongsToCompany(resource.data.companyId));
+
+      allow write: if isSystemAdmin() ||
+                     hasRoleInCompany(['hr_admin'], resource.data.companyId);
+    }
+
+    // ============================================================
+    // ACCESS REQUESTS (Sign Up Flow)
+    // ============================================================
+
+    // Access Requests collection
+    match /access_requests/{requestId} {
+      // Anyone can create an access request (sign up)
+      allow create: if true;
+
+      // Only system admin can read/update/delete access requests
+      allow read, update, delete: if isSystemAdmin();
+    }
+  }
+}

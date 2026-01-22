@@ -6,8 +6,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RoleSwitcherDropdown } from '../components/RoleSwitcher/RoleSwitcherDropdown';
-import { PreviewModeProvider } from '../contexts/PreviewModeContext';
-import { AuthProvider } from '../contexts/AuthContext';
 
 // Mock useAuth hook
 const mockUseAuth = vi.fn();

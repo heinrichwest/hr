@@ -1,22 +1,30 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { MainLayout } from '../../components/Layout/MainLayout';
 import { Button } from '../../components/Button/Button';
 import { EmployeeService } from '../../services/employeeService';
 import { CompanyService } from '../../services/companyService';
 import type { Employee } from '../../types/employee';
-import type { Department, Branch } from '../../types/company';
+import type { Department, Branch, Company } from '../../types/company';
 import './Employees.css';
 
 type FilterStatus = 'all' | 'active' | 'probation' | 'suspended' | 'terminated' | 'on_leave';
 
 export function EmployeeList() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const { userProfile } = useAuth();
+
     const [loading, setLoading] = useState(true);
     const [companyId, setCompanyId] = useState<string | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
     const [branches, setBranches] = useState<Branch[]>([]);
+
+    // System Admin specific state
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const isSystemAdmin = userProfile?.role === 'System Admin' || userProfile?.role?.toLowerCase() === 'system admin';
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -41,20 +49,35 @@ export function EmployeeList() {
     useEffect(() => {
         if (companyId) {
             loadEmployees();
+            loadCompanyData(companyId);
         }
     }, [companyId, statusFilter, departmentFilter, branchFilter]);
 
     const loadInitialData = async () => {
         try {
-            const company = await CompanyService.getDefaultCompany();
-            if (company) {
-                setCompanyId(company.id);
-                const [depts, branchList] = await Promise.all([
-                    CompanyService.getDepartments(company.id),
-                    CompanyService.getBranches(company.id)
-                ]);
-                setDepartments(depts);
-                setBranches(branchList);
+            // Check for URL companyId parameter (for System Admin)
+            const urlCompanyId = searchParams.get('companyId');
+
+            if (isSystemAdmin) {
+                // Load all companies for System Admin dropdown
+                const allCompanies = await CompanyService.getAllCompanies();
+                setCompanies(allCompanies);
+
+                // If URL param exists, use it; otherwise use default company
+                if (urlCompanyId) {
+                    setCompanyId(urlCompanyId);
+                } else {
+                    const company = await CompanyService.getDefaultCompany();
+                    if (company) {
+                        setCompanyId(company.id);
+                    }
+                }
+            } else {
+                // Non-System Admin: use default company behavior
+                const company = await CompanyService.getDefaultCompany();
+                if (company) {
+                    setCompanyId(company.id);
+                }
             }
         } catch (error) {
             console.error('Failed to load initial data:', error);
@@ -63,11 +86,24 @@ export function EmployeeList() {
         }
     };
 
+    const loadCompanyData = async (targetCompanyId: string) => {
+        try {
+            const [depts, branchList] = await Promise.all([
+                CompanyService.getDepartments(targetCompanyId),
+                CompanyService.getBranches(targetCompanyId)
+            ]);
+            setDepartments(depts);
+            setBranches(branchList);
+        } catch (error) {
+            console.error('Failed to load company data:', error);
+        }
+    };
+
     const loadEmployees = async () => {
         if (!companyId) return;
         setLoading(true);
         try {
-            const options: any = {};
+            const options: Record<string, string> = {};
             if (statusFilter !== 'all') {
                 options.status = statusFilter;
             }
@@ -88,6 +124,16 @@ export function EmployeeList() {
             console.error('Failed to load employees:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCompanyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newCompanyId = e.target.value;
+        if (newCompanyId) {
+            setCompanyId(newCompanyId);
+            // Reset filters when company changes
+            setDepartmentFilter('all');
+            setBranchFilter('all');
         }
     };
 
@@ -168,16 +214,43 @@ export function EmployeeList() {
                     <div>
                         <h1 className="emp-title">Employees</h1>
                         <p className="emp-subtitle">
-                            {stats.total} total employees • {stats.active} active
+                            {stats.total} total employees {stats.active > 0 && `\u2022 ${stats.active} active`}
                         </p>
                     </div>
-                    <Button variant="primary" onClick={() => navigate('/employees/new')}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        Add Employee
-                    </Button>
+                    <div className="emp-header-actions">
+                        {/* Company Selector for System Admin */}
+                        {isSystemAdmin && companies.length > 0 && (
+                            <div className="company-selector">
+                                <select
+                                    value={companyId || ''}
+                                    onChange={handleCompanyChange}
+                                    className="company-select-input"
+                                    style={{
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--speccon-gray-200)',
+                                        marginRight: '12px',
+                                        backgroundColor: 'white',
+                                        fontSize: '14px',
+                                        minWidth: '180px'
+                                    }}
+                                >
+                                    {companies.map(company => (
+                                        <option key={company.id} value={company.id}>
+                                            {company.legalName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <Button variant="primary" onClick={() => navigate('/employees/new')}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Add Employee
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Filters Bar */}

@@ -1,0 +1,146 @@
+/* ============================================================
+   TAKE-ON SHEET FORM STYLES
+   ============================================================ */
+
+.tos-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.tos-form--loading,
+.tos-form--error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: var(--space-4);
+}
+
+.tos-form__loader {
+    font-size: var(--text-base);
+    color: var(--speccon-text-muted);
+}
+
+.tos-form__error-message {
+    font-size: var(--text-base);
+    color: hsl(0, 70%, 45%);
+    text-align: center;
+}
+
+.tos-form__error-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: hsl(0, 70%, 95%);
+    border: 1px solid hsl(0, 70%, 85%);
+    border-radius: var(--radius-md);
+    color: hsl(0, 70%, 40%);
+    font-size: var(--text-sm);
+}
+
+.tos-form__error-banner button {
+    background: none;
+    border: none;
+    font-size: var(--text-lg);
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Tabs */
+.tos-form__tabs {
+    display: flex;
+    gap: var(--space-1);
+    border-bottom: 1px solid var(--border-default);
+    padding-bottom: var(--space-1);
+}
+
+.tos-form__tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--speccon-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.tos-form__tab:hover {
+    background: hsl(0, 0%, 97%);
+    color: var(--speccon-text-main);
+}
+
+.tos-form__tab--active {
+    background: var(--speccon-white);
+    color: var(--speccon-brand-primary);
+    border-bottom: 2px solid var(--speccon-brand-primary);
+    margin-bottom: -1px;
+}
+
+.tos-form__tab-badge {
+    font-size: var(--text-xs);
+    padding: 2px 6px;
+    background: hsl(45, 80%, 90%);
+    color: hsl(45, 80%, 30%);
+    border-radius: var(--radius-full);
+}
+
+/* Content */
+.tos-form__content {
+    min-height: 400px;
+}
+
+/* Actions */
+.tos-form__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-default);
+}
+
+.tos-form__actions-left,
+.tos-form__actions-right {
+    display: flex;
+    gap: var(--space-3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tos-form__tabs {
+        flex-wrap: wrap;
+    }
+
+    .tos-form__tab {
+        flex: 1 1 45%;
+        justify-content: center;
+    }
+
+    .tos-form__actions {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .tos-form__actions-left,
+    .tos-form__actions-right {
+        width: 100%;
+    }
+
+    .tos-form__actions-right {
+        flex-direction: column;
+    }
+
+    .tos-form__actions .sc-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

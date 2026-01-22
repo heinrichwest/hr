@@ -33,9 +33,18 @@ export const Seeder = {
     },
 
     async seedTenant(tenant: typeof TENANTS[0]) {
-        // 1. Create Company
+        // 1. Check if company already exists
+        const legalName = `${tenant.name} Holdings ${tenant.suffix}`;
+        const existingCompany = await CompanyService.getCompanyByName(legalName);
+
+        if (existingCompany) {
+            console.log(`Tenant ${tenant.name} already exists, skipping...`);
+            return;
+        }
+
+        // 2. Create Company
         const companyData: Omit<Company, 'id' | 'createdAt'> = {
-            legalName: `${tenant.name} Holdings ${tenant.suffix}`,
+            legalName,
             tradingName: `${tenant.name} ${tenant.suffix}`,
             registrationNumber: `2024/${Math.floor(Math.random() * 100000)}/07 ${tenant.suffix}`,
             physicalAddress: {

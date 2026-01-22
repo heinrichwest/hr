@@ -16,7 +16,13 @@
       "Bash(firebase deploy:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd tenant management and seed data functionality\n\nFeatures:\n- Tenant Management page for creating and managing companies\n- Seeder service for populating demo data \\(3 tenants: Speccon, Megro, Andebe\\)\n- Each tenant gets: branches, departments, job titles, employees, users\n- Leave types seeded per tenant\n- Firebase configuration for hosting\n\nAll data is properly tenant-scoped using companyId isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Firestore indexes for tenant-scoped queries\n\nIndexes added for:\n- leaveTypes, employees, departments, branches, jobTitles\n- jobGrades, costCentres, payElements, publicHolidays\n- workSchedules, payrollPeriods, leaveRequests, leaveBalances\n- irCases, warnings, hearings, payRuns, companies\n\nAll indexes support companyId-based tenant isolation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate System Admin navigation and add tenant admin management\n\nChanges:\n- System Admin now only sees Tenants and Settings in navigation\n- Regular users see full navigation based on permissions\n- Tenant Management page now allows managing admin users per tenant\n- Click \"Manage Admins\" on a tenant to see and add admin users\n- Shows tenant stats \\(employees, admin count\\)\n- Add admin form with email and role selection\n\nAdmin roles available: HR Admin, HR Manager, Payroll Admin, \nPayroll Manager, Finance Approver\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate System Admin navigation and add tenant admin management\n\nChanges:\n- System Admin now only sees Tenants and Settings in navigation\n- Regular users see full navigation based on permissions\n- Tenant Management page now allows managing admin users per tenant\n- Click \"Manage Admins\" on a tenant to see and add admin users\n- Shows tenant stats \\(employees, admin count\\)\n- Add admin form with email and role selection\n\nAdmin roles available: HR Admin, HR Manager, Payroll Admin, \nPayroll Manager, Finance Approver\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm test:*)",
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)"
     ]
   }
 }

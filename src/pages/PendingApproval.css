@@ -1,0 +1,220 @@
+/* ============================================================
+   PENDING APPROVAL PAGE STYLES
+   Centered card layout for pending/rejected status display
+   ============================================================ */
+
+.pending-approval-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    background: var(--speccon-bg);
+    position: relative;
+}
+
+.pending-approval-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(rgba(18, 38, 94, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
+
+.pending-approval-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Logo */
+.pending-approval-logo {
+    margin-bottom: var(--space-8);
+}
+
+/* Status Card */
+.pending-approval-card {
+    width: 100%;
+    background: var(--speccon-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-10);
+    text-align: center;
+    border: 1px solid var(--border-default);
+}
+
+/* Icon Styles */
+.pending-approval-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    margin: 0 auto var(--space-6);
+}
+
+.pending-approval-icon--pending {
+    background: var(--speccon-warning-light);
+    color: var(--speccon-warning);
+}
+
+.pending-approval-icon--rejected {
+    background: var(--speccon-error-light);
+    color: var(--speccon-error);
+}
+
+/* Title */
+.pending-approval-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--speccon-brand-primary);
+    margin: 0 0 var(--space-4) 0;
+    letter-spacing: -0.02em;
+}
+
+.pending-approval-title--rejected {
+    color: var(--speccon-error-dark);
+}
+
+/* Message */
+.pending-approval-message {
+    font-size: var(--text-base);
+    color: var(--speccon-text-muted);
+    margin: 0 0 var(--space-6) 0;
+    line-height: 1.6;
+}
+
+/* Info Box */
+.pending-approval-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--speccon-info-light);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.pending-approval-info svg {
+    color: var(--speccon-info);
+    flex-shrink: 0;
+}
+
+.pending-approval-info span {
+    font-size: var(--text-sm);
+    color: var(--speccon-info-dark);
+}
+
+/* Contact Section */
+.pending-approval-contact {
+    margin-bottom: var(--space-6);
+}
+
+.pending-approval-contact p {
+    font-size: var(--text-sm);
+    color: var(--speccon-text-muted);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.pending-approval-contact a {
+    color: var(--speccon-brand-primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.pending-approval-contact a:hover {
+    color: var(--speccon-brand-primary-dark);
+    text-decoration: underline;
+}
+
+/* Button */
+.pending-approval-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--space-4) var(--space-6);
+    background: var(--speccon-brand-primary);
+    color: var(--speccon-white);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.pending-approval-button:hover {
+    background: var(--speccon-brand-primary-dark);
+    transform: translateY(-1px);
+}
+
+.pending-approval-button:active {
+    transform: translateY(0);
+}
+
+/* Footer */
+.pending-approval-footer {
+    margin-top: var(--space-8);
+    text-align: center;
+}
+
+.pending-approval-footer p {
+    font-size: var(--text-xs);
+    color: var(--speccon-text-disabled);
+    margin: 0;
+}
+
+/* Animations */
+.animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .pending-approval-page {
+        padding: var(--space-4);
+    }
+
+    .pending-approval-card {
+        padding: var(--space-6);
+    }
+
+    .pending-approval-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .pending-approval-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .pending-approval-title {
+        font-size: var(--text-xl);
+    }
+
+    .pending-approval-message {
+        font-size: var(--text-sm);
+    }
+}

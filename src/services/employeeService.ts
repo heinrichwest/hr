@@ -16,8 +16,14 @@ import {
     limit,
     Timestamp
 } from 'firebase/firestore';
+import {
+    ref,
+    getDownloadURL,
+    uploadBytes,
+    getBlob,
+} from 'firebase/storage';
 import type { DocumentData } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import type {
     Employee,
     EmploymentHistory,
@@ -26,8 +32,11 @@ import type {
     EmployeePayElement,
     EmployeeLoan,
     Garnishee,
-    OnboardingChecklist
+    OnboardingChecklist,
+    ContractType,
+    DocumentCategory
 } from '../types/employee';
+import type { TakeOnSheet, EmploymentType, TakeOnDocumentType } from '../types/takeOnSheet';
 
 // Helper to convert Firestore timestamps
 const convertTimestamps = <T extends DocumentData>(data: T): T => {
@@ -41,6 +50,32 @@ const convertTimestamps = <T extends DocumentData>(data: T): T => {
         }
     });
     return converted;
+};
+
+/**
+ * Maps take-on sheet document types to employee document categories
+ */
+const DOCUMENT_TYPE_TO_CATEGORY: Record<TakeOnDocumentType, DocumentCategory> = {
+    sarsLetter: 'tax',
+    bankProof: 'bank_proof',
+    certifiedId: 'identity',
+    signedContract: 'contract',
+    cvQualifications: 'qualification',
+    marisit: 'tax',
+    eaa1Form: 'tax',
+};
+
+/**
+ * Human-readable names for document types
+ */
+const DOCUMENT_TYPE_NAMES: Record<TakeOnDocumentType, string> = {
+    sarsLetter: 'SARS Letter',
+    bankProof: 'Proof of Bank Account',
+    certifiedId: 'Certified ID Copy',
+    signedContract: 'Signed Contract',
+    cvQualifications: 'CV and Qualifications',
+    marisit: 'MARISIT',
+    eaa1Form: 'EAA1 Form',
 };
 
 export const EmployeeService = {
@@ -548,5 +583,252 @@ export const EmployeeService = {
             id: doc.id,
             ...convertTimestamps(doc.data())
         })) as Employee[];
+    },
+
+    // ============================================================
+    // TAKE-ON SHEET INTEGRATION
+    // ============================================================
+
+    /**
+     * Map take-on sheet employment type to employee contract type
+     */
+    mapEmploymentTypeToContractType(employmentType: EmploymentType): ContractType {
+        const mapping: Record<EmploymentType, ContractType> = {
+            'permanent': 'permanent',
+            'fixed': 'fixed_term',
+            'pwe': 'temporary'
+        };
+        return mapping[employmentType] || 'permanent';
+    },
+
+    /**
+     * Create an employee record from a completed take-on sheet
+     * @param takeOnSheet - The completed take-on sheet
+     * @param createdBy - The user ID creating the employee
+     * @returns The created employee ID
+     * @throws Error if take-on sheet is not complete
+     */
+    async createEmployeeFromTakeOnSheet(
+        takeOnSheet: TakeOnSheet,
+        createdBy: string
+    ): Promise<string> {
+        // Validate take-on sheet status
+        if (takeOnSheet.status !== 'complete') {
+            throw new Error('Cannot create employee from incomplete take-on sheet. Status must be "complete".');
+        }
+
+        const { employmentInfo, personalDetails } = takeOnSheet;
+
+        // Generate employee number
+        const employeeNumber = await this.generateEmployeeNumber(takeOnSheet.companyId);
+
+        // Build residential address from the Address type
+        const residentialAddress = {
+            line1: personalDetails.physicalAddress.line1,
+            line2: personalDetails.physicalAddress.line2,
+            city: personalDetails.physicalAddress.city,
+            province: personalDetails.physicalAddress.province,
+            postalCode: personalDetails.physicalAddress.postalCode,
+            country: personalDetails.physicalAddress.country || 'South Africa'
+        };
+
+        // Build postal address if different
+        let postalAddress;
+        if (!personalDetails.postalSameAsPhysical && personalDetails.postalAddress) {
+            postalAddress = {
+                line1: personalDetails.postalAddress.line1,
+                line2: personalDetails.postalAddress.line2,
+                city: personalDetails.postalAddress.city,
+                province: personalDetails.postalAddress.province,
+                postalCode: personalDetails.postalAddress.postalCode,
+                country: personalDetails.postalAddress.country || 'South Africa'
+            };
+        }
+
+        // Prepare employee data
+        const employeeData: Omit<Employee, 'id' | 'createdAt'> = {
+            companyId: takeOnSheet.companyId,
+            employeeNumber,
+
+            // Personal Details
+            firstName: personalDetails.firstName,
+            lastName: personalDetails.lastName,
+            idType: 'sa_id',
+            idNumber: personalDetails.idNumber,
+            dateOfBirth: new Date(), // Not in TakeOnSheet, will need to be updated later
+            gender: 'male', // Not in TakeOnSheet, will need to be updated later
+            nationality: 'South African',
+            maritalStatus: 'single',
+
+            // Contact Details
+            email: `${employeeNumber.toLowerCase()}@${takeOnSheet.companyId}.local`,
+            phone: personalDetails.contactNumber || '',
+            residentialAddress,
+            postalAddress,
+
+            // Employment Details
+            startDate: employmentInfo.dateOfEmployment,
+            status: 'active',
+            contractType: this.mapEmploymentTypeToContractType(employmentInfo.employmentType),
+            jobTitleId: employmentInfo.jobTitleId || '',
+            departmentId: employmentInfo.departmentId || '',
+            managerId: employmentInfo.reportsTo,
+
+            // Probation
+            probationStartDate: employmentInfo.dateOfEmployment,
+
+            // Payroll Details
+            payFrequency: 'monthly',
+            salaryType: 'monthly',
+            basicSalary: employmentInfo.salary,
+            isUifApplicable: true,
+
+            // System fields
+            isActive: true,
+            createdBy
+        };
+
+        // Create the employee
+        const employeeId = await this.createEmployee(employeeData);
+
+        // Create initial employment history record
+        await this.createEmploymentHistory({
+            employeeId,
+            changeType: 'hire',
+            effectiveDate: employmentInfo.dateOfEmployment,
+            newJobTitleId: employmentInfo.jobTitleId,
+            newDepartmentId: employmentInfo.departmentId,
+            newSalary: employmentInfo.salary,
+            reason: 'New hire from take-on sheet',
+            notes: `Created from take-on sheet ${takeOnSheet.id}`,
+            createdBy,
+            approvedBy: createdBy,
+            approvalDate: new Date()
+        });
+
+        return employeeId;
+    },
+
+    /**
+     * Transfer documents from take-on sheet to employee records
+     * Copies files in Firebase Storage and creates employee document records
+     * @param takeOnSheet - The take-on sheet with documents
+     * @param employeeId - The target employee ID
+     * @param createdBy - User ID performing the transfer
+     * @returns Array of created document IDs
+     */
+    async transferDocumentsFromTakeOnSheet(
+        takeOnSheet: TakeOnSheet,
+        employeeId: string,
+        createdBy: string
+    ): Promise<string[]> {
+        const documentIds: string[] = [];
+        const { documents, companyId } = takeOnSheet;
+
+        // Process each document in the take-on sheet
+        for (const [docType, docData] of Object.entries(documents)) {
+            if (!docData) continue;
+
+            const documentType = docType as TakeOnDocumentType;
+            const category = DOCUMENT_TYPE_TO_CATEGORY[documentType];
+            const documentName = DOCUMENT_TYPE_NAMES[documentType];
+
+            try {
+                // Get the source file from storage
+                const sourceRef = ref(storage, docData.storagePath);
+
+                // Download the file as blob
+                const blob = await getBlob(sourceRef);
+
+                // Create new storage path for employee documents
+                const newStoragePath = `tenants/${companyId}/employees/${employeeId}/documents/${documentType}/${docData.fileName}`;
+                const destRef = ref(storage, newStoragePath);
+
+                // Upload to new location
+                await uploadBytes(destRef, blob);
+
+                // Get new download URL
+                const newDownloadUrl = await getDownloadURL(destRef);
+
+                // Create employee document record
+                const employeeDocument: Omit<EmployeeDocument, 'id' | 'uploadedAt'> = {
+                    employeeId,
+                    companyId,
+                    name: documentName,
+                    description: `Transferred from take-on sheet ${takeOnSheet.id}`,
+                    category,
+                    accessLevel: category === 'bank_proof' || category === 'tax' ? 'payroll' : 'hr',
+                    fileName: docData.fileName,
+                    fileType: docData.mimeType,
+                    fileSize: docData.fileSize,
+                    fileUrl: newDownloadUrl,
+                    hasExpiry: false,
+                    isVerified: false,
+                    uploadedBy: createdBy,
+                    notes: `Original upload: ${docData.uploadedAt instanceof Date
+                        ? docData.uploadedAt.toISOString()
+                        : new Date(docData.uploadedAt).toISOString()} by ${docData.uploadedBy}`
+                };
+
+                const docId = await this.createEmployeeDocument(employeeDocument);
+                documentIds.push(docId);
+            } catch (error) {
+                // Log error but continue with other documents
+                console.error(`Failed to transfer document ${documentType}:`, error);
+            }
+        }
+
+        return documentIds;
+    },
+
+    /**
+     * Complete employee creation from take-on sheet with document transfer
+     * This is the main entry point for creating an employee from a completed take-on sheet
+     * @param takeOnSheet - The completed take-on sheet
+     * @param createdBy - User ID creating the employee
+     * @returns Object containing employee ID and transferred document IDs
+     */
+    async createEmployeeWithDocumentsFromTakeOnSheet(
+        takeOnSheet: TakeOnSheet,
+        createdBy: string
+    ): Promise<{ employeeId: string; documentIds: string[] }> {
+        // Create the employee record
+        const employeeId = await this.createEmployeeFromTakeOnSheet(takeOnSheet, createdBy);
+
+        // Transfer documents
+        const documentIds = await this.transferDocumentsFromTakeOnSheet(
+            takeOnSheet,
+            employeeId,
+            createdBy
+        );
+
+        return { employeeId, documentIds };
+    },
+
+    /**
+     * Check if an employee already exists for a take-on sheet
+     * Uses ID number to match
+     * @param takeOnSheet - The take-on sheet to check
+     * @returns The existing employee or null
+     */
+    async findExistingEmployeeForTakeOnSheet(takeOnSheet: TakeOnSheet): Promise<Employee | null> {
+        if (!takeOnSheet.personalDetails.idNumber) {
+            return null;
+        }
+
+        const q = query(
+            collection(db, 'employees'),
+            where('companyId', '==', takeOnSheet.companyId),
+            where('idNumber', '==', takeOnSheet.personalDetails.idNumber),
+            limit(1)
+        );
+
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+            return null;
+        }
+
+        const docData = snapshot.docs[0];
+        return { id: docData.id, ...convertTimestamps(docData.data()) } as Employee;
     }
 };

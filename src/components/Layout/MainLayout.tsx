@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { auth } from '../../firebase';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { UserService } from '../../services/userService';
+import { AccessRequestService } from '../../services/accessRequestService';
 import type { Permission } from '../../types/user';
 import { RoleSwitcherDropdown } from '../RoleSwitcher/RoleSwitcherDropdown';
 import { PreviewModeBanner } from '../RoleSwitcher/PreviewModeBanner';
@@ -15,6 +16,7 @@ interface NavItem {
     path: string;
     icon: React.ComponentType;
     permissions?: Permission[];
+    badge?: number;
 }
 
 interface MainLayoutProps {
@@ -26,6 +28,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [pendingCount, setPendingCount] = useState<number>(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { exitPreviewMode, isPreviewMode } = usePreviewMode();
 
@@ -63,10 +66,33 @@ export function MainLayout({ children }: MainLayoutProps) {
     // Check if user is System Admin
     const isSystemAdmin = userProfile?.role?.toString().trim().toLowerCase() === 'system admin';
 
+    // Fetch pending access requests count for System Admin
+    useEffect(() => {
+        const fetchPendingCount = async () => {
+            if (isSystemAdmin) {
+                try {
+                    const count = await AccessRequestService.getPendingRequestsCount();
+                    setPendingCount(count);
+                } catch (error) {
+                    console.error('Failed to fetch pending requests count:', error);
+                    setPendingCount(0);
+                }
+            }
+        };
+
+        fetchPendingCount();
+
+        // Refresh count when navigating to pending approvals page or on interval
+        const intervalId = setInterval(fetchPendingCount, 60000); // Refresh every minute
+
+        return () => clearInterval(intervalId);
+    }, [isSystemAdmin, location.pathname]);
+
     // Build navigation items based on role
-    // System Admin only sees Tenants and Settings
+    // System Admin sees Tenants, Pending Approvals, and Settings
     const systemAdminNavItems: NavItem[] = [
         { label: 'Tenants', path: '/admin/tenants', icon: TenantsIcon },
+        { label: 'Pending Approvals', path: '/admin/pending-approvals', icon: PendingApprovalsIcon, badge: pendingCount },
         { label: 'Settings', path: '/settings', icon: SettingsIcon },
     ];
 
@@ -74,6 +100,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     const regularNavItems: NavItem[] = [
         { label: 'Dashboard', path: '/', icon: DashboardIcon },
         { label: 'Employees', path: '/employees', icon: EmployeesIcon, permissions: ['employees.view', 'employees.view_team'] },
+        { label: 'Take-On Sheets', path: '/take-on-sheets', icon: TakeOnSheetIcon, permissions: ['employees.create', 'employees.view'] },
         { label: 'Leave', path: '/leave', icon: LeaveIcon, permissions: ['leave.view_all', 'leave.view_team', 'leave.approve'] },
         { label: 'Payroll', path: '/payroll', icon: PayrollIcon, permissions: ['payroll.view', 'payroll.create_run'] },
         { label: 'IR Cases', path: '/ir', icon: IRIcon, permissions: ['ir.view_cases', 'ir.create_case'] },
@@ -116,6 +143,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                                 >
                                     <item.icon />
                                     <span>{item.label}</span>
+                                    {item.badge !== undefined && item.badge > 0 && (
+                                        <span className="layout-nav-badge">{item.badge > 99 ? '99+' : item.badge}</span>
+                                    )}
                                 </Link>
                             ))}
                         </nav>
@@ -268,6 +298,15 @@ function TenantsIcon() {
     );
 }
 
+function PendingApprovalsIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+        </svg>
+    );
+}
+
 function UsersIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -294,6 +333,17 @@ function LogoutIcon() {
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+    );
+}
+
+function TakeOnSheetIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <line x1="9" y1="15" x2="15" y2="15" />
         </svg>
     );
 }
