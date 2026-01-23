@@ -47,7 +47,7 @@ function CheckCircleIcon({ size = 16 }: { size?: number }) {
 export default function ViewTakeOnSheetPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { userProfile, user } = useAuth();
+    const { userProfile, currentUser } = useAuth();
 
     const [sheet, setSheet] = useState<TakeOnSheet | null>(null);
     const [loading, setLoading] = useState(true);
@@ -119,7 +119,7 @@ export default function ViewTakeOnSheetPage() {
 
     // Handle employee creation
     const handleCreateEmployee = async () => {
-        if (!sheet || !user) return;
+        if (!sheet || !currentUser) return;
 
         setCreatingEmployee(true);
         setCreateEmployeeError(null);
@@ -134,14 +134,14 @@ export default function ViewTakeOnSheetPage() {
             // Create employee with document transfer
             const result = await EmployeeService.createEmployeeWithDocumentsFromTakeOnSheet(
                 sheet,
-                user.uid
+                currentUser.uid
             );
 
             // Link take-on sheet to created employee
             const updatedSheet = await TakeOnSheetService.linkToEmployee(
                 sheet.id,
                 result.employeeId,
-                user.uid
+                currentUser.uid
             );
 
             setSheet(updatedSheet);

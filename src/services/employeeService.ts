@@ -595,8 +595,7 @@ export const EmployeeService = {
     mapEmploymentTypeToContractType(employmentType: EmploymentType): ContractType {
         const mapping: Record<EmploymentType, ContractType> = {
             'permanent': 'permanent',
-            'fixed': 'fixed_term',
-            'pwe': 'temporary'
+            'fixed': 'fixed_term'
         };
         return mapping[employmentType] || 'permanent';
     },

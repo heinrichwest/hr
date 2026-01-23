@@ -210,7 +210,6 @@ describe('Take-On Sheet Comprehensive Tests', () => {
     // ========================================
     describe('Permission Matrix: Role-based section editing', () => {
         const sections: TakeOnSheetSection[] = ['employment', 'personal', 'documents', 'systemAccess'];
-        const statuses: TakeOnSheetStatus[] = ['draft', 'pending_hr_review', 'pending_it_setup', 'complete'];
 
         it('should allow Line Manager to edit only employment section in draft', () => {
             const role: UserRole = 'Line Manager';
@@ -486,7 +485,6 @@ describe('Take-On Sheet Comprehensive Tests', () => {
         it('should correctly map all employment types to contract types', () => {
             expect(EmployeeService.mapEmploymentTypeToContractType('permanent')).toBe('permanent');
             expect(EmployeeService.mapEmploymentTypeToContractType('fixed')).toBe('fixed_term');
-            expect(EmployeeService.mapEmploymentTypeToContractType('pwe')).toBe('temporary');
         });
     });
 

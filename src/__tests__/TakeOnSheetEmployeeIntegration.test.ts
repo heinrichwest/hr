@@ -124,11 +124,6 @@ describe('EmployeeService - Take-On Sheet Integration', () => {
             const result = EmployeeService.mapEmploymentTypeToContractType('fixed');
             expect(result).toBe('fixed_term');
         });
-
-        it('maps pwe to temporary', () => {
-            const result = EmployeeService.mapEmploymentTypeToContractType('pwe');
-            expect(result).toBe('temporary');
-        });
     });
 
     describe('createEmployeeFromTakeOnSheet', () => {
