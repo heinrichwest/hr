@@ -297,8 +297,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                     <div className="settings-modal-body">
                         <div className="settings-form-grid">
                             <div className="settings-field">
-                                <label className="settings-field-label">Name<span>*</span></label>
+                                <label htmlFor="schedule-name" className="settings-field-label">Name<span>*</span></label>
                                 <input
+                                    id="schedule-name"
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.name || ''}
@@ -308,8 +309,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                                 />
                             </div>
                             <div className="settings-field">
-                                <label className="settings-field-label">Code<span>*</span></label>
+                                <label htmlFor="schedule-code" className="settings-field-label">Code<span>*</span></label>
                                 <input
+                                    id="schedule-code"
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.code || ''}
@@ -319,8 +321,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                                 />
                             </div>
                             <div className="settings-field settings-form-grid--full">
-                                <label className="settings-field-label">Description</label>
+                                <label htmlFor="schedule-description" className="settings-field-label">Description</label>
                                 <textarea
+                                    id="schedule-description"
                                     className="settings-field-input settings-field-textarea"
                                     value={formData.description || ''}
                                     onChange={e => handleChange('description', e.target.value)}
@@ -339,8 +342,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                                     const field = `${day.toLowerCase()}Hours` as keyof WorkSchedule;
                                     return (
                                         <div key={day} className="schedule-hours-input">
-                                            <label>{day.slice(0, 3)}</label>
+                                            <label htmlFor={`schedule-${day.toLowerCase()}-hours`}>{day.slice(0, 3)}</label>
                                             <input
+                                                id={`schedule-${day.toLowerCase()}-hours`}
                                                 type="number"
                                                 min="0"
                                                 max="24"
@@ -361,8 +365,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                             </label>
                             <div className="settings-form-grid settings-form-grid--3col">
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Standard Overtime</label>
+                                    <label htmlFor="schedule-overtime-multiplier" className="settings-field-label">Standard Overtime</label>
                                     <input
+                                        id="schedule-overtime-multiplier"
                                         type="number"
                                         step="0.1"
                                         min="1"
@@ -372,8 +377,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                                     />
                                 </div>
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Sunday Rate</label>
+                                    <label htmlFor="schedule-sunday-multiplier" className="settings-field-label">Sunday Rate</label>
                                     <input
+                                        id="schedule-sunday-multiplier"
                                         type="number"
                                         step="0.1"
                                         min="1"
@@ -383,8 +389,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                                     />
                                 </div>
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Public Holiday Rate</label>
+                                    <label htmlFor="schedule-public-holiday-multiplier" className="settings-field-label">Public Holiday Rate</label>
                                     <input
+                                        id="schedule-public-holiday-multiplier"
                                         type="number"
                                         step="0.1"
                                         min="1"
@@ -397,8 +404,9 @@ function ScheduleModal({ item, onSave, onClose }: {
                         </div>
 
                         <div style={{ marginTop: 'var(--space-4)' }}>
-                            <label className="pay-element-checkbox">
+                            <label htmlFor="schedule-is-default" className="pay-element-checkbox">
                                 <input
+                                    id="schedule-is-default"
                                     type="checkbox"
                                     checked={formData.isDefault || false}
                                     onChange={e => handleChange('isDefault', e.target.checked)}

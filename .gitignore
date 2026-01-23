@@ -37,3 +37,4 @@ functions/node_modules
 !.env.example
 functions/.env
 !functions/.env.example
+hr-system-9dfae-firebase-adminsdk-fbsvc-d4924f9775.json

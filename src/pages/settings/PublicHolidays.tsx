@@ -255,8 +255,9 @@ function HolidayModal({ year, onSave, onClose }: {
                 <form onSubmit={handleSubmit}>
                     <div className="settings-modal-body">
                         <div className="settings-field" style={{ marginBottom: 'var(--space-4)' }}>
-                            <label className="settings-field-label">Holiday Name<span>*</span></label>
+                            <label htmlFor="holiday-name" className="settings-field-label">Holiday Name<span>*</span></label>
                             <input
+                                id="holiday-name"
                                 type="text"
                                 className="settings-field-input"
                                 value={formData.name || ''}
@@ -266,8 +267,9 @@ function HolidayModal({ year, onSave, onClose }: {
                             />
                         </div>
                         <div className="settings-field" style={{ marginBottom: 'var(--space-4)' }}>
-                            <label className="settings-field-label">Date<span>*</span></label>
+                            <label htmlFor="holiday-date" className="settings-field-label">Date<span>*</span></label>
                             <input
+                                id="holiday-date"
                                 type="date"
                                 className="settings-field-input"
                                 value={formData.date instanceof Date
@@ -278,8 +280,9 @@ function HolidayModal({ year, onSave, onClose }: {
                             />
                         </div>
                         <div className="settings-field">
-                            <label className="pay-element-checkbox">
+                            <label htmlFor="holiday-is-national" className="pay-element-checkbox">
                                 <input
+                                    id="holiday-is-national"
                                     type="checkbox"
                                     checked={formData.isNational || false}
                                     onChange={e => setFormData(prev => ({ ...prev, isNational: e.target.checked }))}

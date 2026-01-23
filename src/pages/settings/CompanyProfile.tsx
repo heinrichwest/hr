@@ -163,10 +163,11 @@ export function CompanyProfile() {
                 </div>
                 <div className="settings-form-grid">
                     <div className="settings-field">
-                        <label className="settings-field-label">
+                        <label htmlFor="company-legal-name" className="settings-field-label">
                             Legal Name<span>*</span>
                         </label>
                         <input
+                            id="company-legal-name"
                             type="text"
                             className="settings-field-input"
                             value={company.legalName || ''}
@@ -175,8 +176,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Trading Name</label>
+                        <label htmlFor="company-trading-name" className="settings-field-label">Trading Name</label>
                         <input
+                            id="company-trading-name"
                             type="text"
                             className="settings-field-input"
                             value={company.tradingName || ''}
@@ -185,10 +187,11 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">
+                        <label htmlFor="company-registration-number" className="settings-field-label">
                             Registration Number<span>*</span>
                         </label>
                         <input
+                            id="company-registration-number"
                             type="text"
                             className="settings-field-input"
                             value={company.registrationNumber || ''}
@@ -209,8 +212,9 @@ export function CompanyProfile() {
                 </div>
                 <div className="settings-form-grid settings-form-grid--3col">
                     <div className="settings-field">
-                        <label className="settings-field-label">PAYE Reference</label>
+                        <label htmlFor="company-paye-reference" className="settings-field-label">PAYE Reference</label>
                         <input
+                            id="company-paye-reference"
                             type="text"
                             className="settings-field-input"
                             value={company.payeReference || ''}
@@ -220,8 +224,9 @@ export function CompanyProfile() {
                         <span className="settings-field-hint">10-digit SARS employer code</span>
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">UIF Reference</label>
+                        <label htmlFor="company-uif-reference" className="settings-field-label">UIF Reference</label>
                         <input
+                            id="company-uif-reference"
                             type="text"
                             className="settings-field-input"
                             value={company.uifReference || ''}
@@ -231,8 +236,9 @@ export function CompanyProfile() {
                         <span className="settings-field-hint">UIF employer number</span>
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">SDL Reference</label>
+                        <label htmlFor="company-sdl-reference" className="settings-field-label">SDL Reference</label>
                         <input
+                            id="company-sdl-reference"
                             type="text"
                             className="settings-field-input"
                             value={company.sdlReference || ''}
@@ -254,8 +260,9 @@ export function CompanyProfile() {
                 </div>
                 <div className="settings-form-grid">
                     <div className="settings-field settings-form-grid--full">
-                        <label className="settings-field-label">Street Address</label>
+                        <label htmlFor="physical-address-line1" className="settings-field-label">Street Address</label>
                         <input
+                            id="physical-address-line1"
                             type="text"
                             className="settings-field-input"
                             value={company.physicalAddress?.line1 || ''}
@@ -264,8 +271,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field settings-form-grid--full">
-                        <label className="settings-field-label">Address Line 2</label>
+                        <label htmlFor="physical-address-line2" className="settings-field-label">Address Line 2</label>
                         <input
+                            id="physical-address-line2"
                             type="text"
                             className="settings-field-input"
                             value={company.physicalAddress?.line2 || ''}
@@ -274,8 +282,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">City</label>
+                        <label htmlFor="physical-address-city" className="settings-field-label">City</label>
                         <input
+                            id="physical-address-city"
                             type="text"
                             className="settings-field-input"
                             value={company.physicalAddress?.city || ''}
@@ -284,8 +293,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Province</label>
+                        <label htmlFor="physical-address-province" className="settings-field-label">Province</label>
                         <select
+                            id="physical-address-province"
                             className="settings-field-input settings-field-select"
                             value={company.physicalAddress?.province || ''}
                             onChange={(e) => handleAddressChange('physicalAddress', 'province', e.target.value)}
@@ -297,8 +307,9 @@ export function CompanyProfile() {
                         </select>
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Postal Code</label>
+                        <label htmlFor="physical-address-postal-code" className="settings-field-label">Postal Code</label>
                         <input
+                            id="physical-address-postal-code"
                             type="text"
                             className="settings-field-input"
                             value={company.physicalAddress?.postalCode || ''}
@@ -319,8 +330,9 @@ export function CompanyProfile() {
                 </div>
                 <div className="settings-form-grid settings-form-grid--3col">
                     <div className="settings-field">
-                        <label className="settings-field-label">Phone</label>
+                        <label htmlFor="company-phone" className="settings-field-label">Phone</label>
                         <input
+                            id="company-phone"
                             type="tel"
                             className="settings-field-input"
                             value={company.phone || ''}
@@ -329,8 +341,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Email</label>
+                        <label htmlFor="company-email" className="settings-field-label">Email</label>
                         <input
+                            id="company-email"
                             type="email"
                             className="settings-field-input"
                             value={company.email || ''}
@@ -339,8 +352,9 @@ export function CompanyProfile() {
                         />
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Website</label>
+                        <label htmlFor="company-website" className="settings-field-label">Website</label>
                         <input
+                            id="company-website"
                             type="url"
                             className="settings-field-input"
                             value={company.website || ''}
@@ -361,8 +375,9 @@ export function CompanyProfile() {
                 </div>
                 <div className="settings-form-grid settings-form-grid--3col">
                     <div className="settings-field">
-                        <label className="settings-field-label">Default Pay Frequency</label>
+                        <label htmlFor="company-pay-frequency" className="settings-field-label">Default Pay Frequency</label>
                         <select
+                            id="company-pay-frequency"
                             className="settings-field-input settings-field-select"
                             value={company.defaultPayFrequency || 'monthly'}
                             onChange={(e) => handleChange('defaultPayFrequency', e.target.value as PayFrequency)}
@@ -373,8 +388,9 @@ export function CompanyProfile() {
                         </select>
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Financial Year End</label>
+                        <label htmlFor="company-financial-year-end" className="settings-field-label">Financial Year End</label>
                         <select
+                            id="company-financial-year-end"
                             className="settings-field-input settings-field-select"
                             value={company.financialYearEnd || 2}
                             onChange={(e) => handleChange('financialYearEnd', parseInt(e.target.value))}
@@ -386,8 +402,9 @@ export function CompanyProfile() {
                         <span className="settings-field-hint">SA tax year ends in February</span>
                     </div>
                     <div className="settings-field">
-                        <label className="settings-field-label">Currency</label>
+                        <label htmlFor="company-currency" className="settings-field-label">Currency</label>
                         <input
+                            id="company-currency"
                             type="text"
                             className="settings-field-input"
                             value={company.defaultCurrency || 'ZAR'}

@@ -334,8 +334,9 @@ function PayElementModal({ item, onSave, onClose }: {
                     <div className="settings-modal-body">
                         <div className="settings-form-grid">
                             <div className="settings-field">
-                                <label className="settings-field-label">Name<span>*</span></label>
+                                <label htmlFor="pay-element-name" className="settings-field-label">Name<span>*</span></label>
                                 <input
+                                    id="pay-element-name"
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.name || ''}
@@ -345,8 +346,9 @@ function PayElementModal({ item, onSave, onClose }: {
                                 />
                             </div>
                             <div className="settings-field">
-                                <label className="settings-field-label">Code<span>*</span></label>
+                                <label htmlFor="pay-element-code" className="settings-field-label">Code<span>*</span></label>
                                 <input
+                                    id="pay-element-code"
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.code || ''}
@@ -356,8 +358,9 @@ function PayElementModal({ item, onSave, onClose }: {
                                 />
                             </div>
                             <div className="settings-field">
-                                <label className="settings-field-label">Type<span>*</span></label>
+                                <label htmlFor="pay-element-type" className="settings-field-label">Type<span>*</span></label>
                                 <select
+                                    id="pay-element-type"
                                     className="settings-field-input settings-field-select"
                                     value={formData.type || 'earning'}
                                     onChange={e => handleChange('type', e.target.value)}
@@ -369,8 +372,9 @@ function PayElementModal({ item, onSave, onClose }: {
                                 </select>
                             </div>
                             <div className="settings-field">
-                                <label className="settings-field-label">Calculation Method<span>*</span></label>
+                                <label htmlFor="pay-element-calculation-method" className="settings-field-label">Calculation Method<span>*</span></label>
                                 <select
+                                    id="pay-element-calculation-method"
                                     className="settings-field-input settings-field-select"
                                     value={formData.calculationMethod || 'fixed'}
                                     onChange={e => handleChange('calculationMethod', e.target.value)}
@@ -384,8 +388,9 @@ function PayElementModal({ item, onSave, onClose }: {
 
                             {formData.calculationMethod === 'fixed' && (
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Default Amount</label>
+                                    <label htmlFor="pay-element-default-amount" className="settings-field-label">Default Amount</label>
                                     <input
+                                        id="pay-element-default-amount"
                                         type="number"
                                         className="settings-field-input"
                                         value={formData.defaultAmount || ''}
@@ -397,8 +402,9 @@ function PayElementModal({ item, onSave, onClose }: {
 
                             {formData.calculationMethod === 'percentage' && (
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Default Percentage</label>
+                                    <label htmlFor="pay-element-default-percentage" className="settings-field-label">Default Percentage</label>
                                     <input
+                                        id="pay-element-default-percentage"
                                         type="number"
                                         step="0.01"
                                         className="settings-field-input"
@@ -410,8 +416,9 @@ function PayElementModal({ item, onSave, onClose }: {
                             )}
 
                             <div className="settings-field">
-                                <label className="settings-field-label">GL Code</label>
+                                <label htmlFor="pay-element-gl-code" className="settings-field-label">GL Code</label>
                                 <input
+                                    id="pay-element-gl-code"
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.glCode || ''}
@@ -427,40 +434,45 @@ function PayElementModal({ item, onSave, onClose }: {
                                 Tax & Statutory Applicability
                             </label>
                             <div className="pay-element-checkboxes">
-                                <label className="pay-element-checkbox">
+                                <label htmlFor="pay-element-taxable" className="pay-element-checkbox">
                                     <input
+                                        id="pay-element-taxable"
                                         type="checkbox"
                                         checked={formData.isTaxable || false}
                                         onChange={e => handleChange('isTaxable', e.target.checked)}
                                     />
                                     <span>Taxable (PAYE)</span>
                                 </label>
-                                <label className="pay-element-checkbox">
+                                <label htmlFor="pay-element-uif" className="pay-element-checkbox">
                                     <input
+                                        id="pay-element-uif"
                                         type="checkbox"
                                         checked={formData.isUifApplicable || false}
                                         onChange={e => handleChange('isUifApplicable', e.target.checked)}
                                     />
                                     <span>UIF Applicable</span>
                                 </label>
-                                <label className="pay-element-checkbox">
+                                <label htmlFor="pay-element-sdl" className="pay-element-checkbox">
                                     <input
+                                        id="pay-element-sdl"
                                         type="checkbox"
                                         checked={formData.isSdlApplicable || false}
                                         onChange={e => handleChange('isSdlApplicable', e.target.checked)}
                                     />
                                     <span>SDL Applicable</span>
                                 </label>
-                                <label className="pay-element-checkbox">
+                                <label htmlFor="pay-element-pension" className="pay-element-checkbox">
                                     <input
+                                        id="pay-element-pension"
                                         type="checkbox"
                                         checked={formData.isPensionApplicable || false}
                                         onChange={e => handleChange('isPensionApplicable', e.target.checked)}
                                     />
                                     <span>Pension Applicable</span>
                                 </label>
-                                <label className="pay-element-checkbox">
+                                <label htmlFor="pay-element-recurring" className="pay-element-checkbox">
                                     <input
+                                        id="pay-element-recurring"
                                         type="checkbox"
                                         checked={formData.isRecurring || false}
                                         onChange={e => handleChange('isRecurring', e.target.checked)}

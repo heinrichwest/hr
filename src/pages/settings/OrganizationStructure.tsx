@@ -608,8 +608,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                     <div className="settings-modal-body">
                         <div className="settings-form-grid">
                             <div className="settings-field">
-                                <label className="settings-field-label">Name<span>*</span></label>
+                                <label htmlFor={`org-${type}-name`} className="settings-field-label">Name<span>*</span></label>
                                 <input
+                                    id={`org-${type}-name`}
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.name || ''}
@@ -618,8 +619,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                                 />
                             </div>
                             <div className="settings-field">
-                                <label className="settings-field-label">Code<span>*</span></label>
+                                <label htmlFor={`org-${type}-code`} className="settings-field-label">Code<span>*</span></label>
                                 <input
+                                    id={`org-${type}-code`}
                                     type="text"
                                     className="settings-field-input"
                                     value={formData.code || ''}
@@ -630,8 +632,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
 
                             {type === 'departments' && (
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Branch</label>
+                                    <label htmlFor="org-department-branch" className="settings-field-label">Branch</label>
                                     <select
+                                        id="org-department-branch"
                                         className="settings-field-input settings-field-select"
                                         value={formData.branchId || ''}
                                         onChange={e => handleChange('branchId', e.target.value)}
@@ -646,8 +649,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
 
                             {type === 'branches' && (
                                 <div className="settings-field">
-                                    <label className="settings-field-label">
+                                    <label htmlFor="org-branch-head-office" className="settings-field-label">
                                         <input
+                                            id="org-branch-head-office"
                                             type="checkbox"
                                             checked={formData.isHeadOffice || false}
                                             onChange={e => handleChange('isHeadOffice', e.target.checked)}
@@ -660,8 +664,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
 
                             {type === 'jobTitles' && (
                                 <div className="settings-field">
-                                    <label className="settings-field-label">Job Grade</label>
+                                    <label htmlFor="org-job-title-grade" className="settings-field-label">Job Grade</label>
                                     <select
+                                        id="org-job-title-grade"
                                         className="settings-field-input settings-field-select"
                                         value={formData.gradeId || ''}
                                         onChange={e => handleChange('gradeId', e.target.value)}
@@ -677,8 +682,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                             {type === 'jobGrades' && (
                                 <>
                                     <div className="settings-field">
-                                        <label className="settings-field-label">Level<span>*</span></label>
+                                        <label htmlFor="org-job-grade-level" className="settings-field-label">Level<span>*</span></label>
                                         <input
+                                            id="org-job-grade-level"
                                             type="number"
                                             className="settings-field-input"
                                             value={formData.level || ''}
@@ -687,8 +693,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                                         />
                                     </div>
                                     <div className="settings-field">
-                                        <label className="settings-field-label">Min Salary</label>
+                                        <label htmlFor="org-job-grade-min-salary" className="settings-field-label">Min Salary</label>
                                         <input
+                                            id="org-job-grade-min-salary"
                                             type="number"
                                             className="settings-field-input"
                                             value={formData.minSalary || ''}
@@ -696,8 +703,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                                         />
                                     </div>
                                     <div className="settings-field">
-                                        <label className="settings-field-label">Max Salary</label>
+                                        <label htmlFor="org-job-grade-max-salary" className="settings-field-label">Max Salary</label>
                                         <input
+                                            id="org-job-grade-max-salary"
                                             type="number"
                                             className="settings-field-input"
                                             value={formData.maxSalary || ''}
@@ -710,8 +718,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                             {type === 'costCentres' && (
                                 <>
                                     <div className="settings-field">
-                                        <label className="settings-field-label">GL Code</label>
+                                        <label htmlFor="org-cost-centre-gl-code" className="settings-field-label">GL Code</label>
                                         <input
+                                            id="org-cost-centre-gl-code"
                                             type="text"
                                             className="settings-field-input"
                                             value={formData.glCode || ''}
@@ -719,8 +728,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                                         />
                                     </div>
                                     <div className="settings-field">
-                                        <label className="settings-field-label">Department</label>
+                                        <label htmlFor="org-cost-centre-department" className="settings-field-label">Department</label>
                                         <select
+                                            id="org-cost-centre-department"
                                             className="settings-field-input settings-field-select"
                                             value={formData.departmentId || ''}
                                             onChange={e => handleChange('departmentId', e.target.value)}
@@ -735,8 +745,9 @@ function OrgModal({ type, item, branches, departments, grades, onSave, onClose }
                             )}
 
                             <div className="settings-field settings-form-grid--full">
-                                <label className="settings-field-label">Description</label>
+                                <label htmlFor={`org-${type}-description`} className="settings-field-label">Description</label>
                                 <textarea
+                                    id={`org-${type}-description`}
                                     className="settings-field-input settings-field-textarea"
                                     value={formData.description || ''}
                                     onChange={e => handleChange('description', e.target.value)}

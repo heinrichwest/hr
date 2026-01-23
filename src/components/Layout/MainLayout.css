@@ -336,6 +336,9 @@
 
   .layout-nav-link {
     padding: var(--space-3);
+    /* Mobile touch targets - minimum 44x44px */
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .layout-nav-badge {

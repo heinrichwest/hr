@@ -22,7 +22,24 @@
       "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(dir:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "mcp__chrome-devtools__resize_page",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__new_page",
+      "mcp__plugin_playwright_playwright__browser_install",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/createUser.js:*)",
+      "Bash(move scriptscreateUser.js scriptscreateUser.cjs)",
+      "Bash(node scripts/createUser.cjs:*)",
+      "mcp__firebase__firestore_get_documents",
+      "Bash(node scripts/createUser2.cjs:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "shadcn",
+    "firebase",
+    "chrome-devtools"
+  ]
 }

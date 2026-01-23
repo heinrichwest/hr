@@ -26,7 +26,6 @@ interface EmploymentInfoSectionProps {
 const EMPLOYMENT_TYPES: { value: EmploymentType; label: string }[] = [
     { value: 'permanent', label: 'Permanent' },
     { value: 'fixed', label: 'Fixed Term' },
-    { value: 'pwe', label: 'PWE (Probation with Extension)' },
 ];
 
 export function EmploymentInfoSection({

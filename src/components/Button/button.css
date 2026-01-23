@@ -139,6 +139,30 @@
   transform: translateY(0);
 }
 
+/* Tertiary Button */
+.sc-btn--tertiary {
+  background: var(--speccon-bg-subtle);
+  color: var(--speccon-text-main);
+  border: 1px solid var(--border-default);
+  box-shadow: none;
+}
+
+.sc-btn--tertiary:hover:not(:disabled) {
+  background: var(--border-light);
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-xs);
+  transform: translateY(-1px);
+}
+
+.sc-btn--tertiary:active {
+  transform: translateY(0);
+  background: var(--border-default);
+}
+
+.sc-btn--tertiary::before {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 /* Size Variants */
 .sc-btn--sm {
   padding: var(--space-2) var(--space-3);

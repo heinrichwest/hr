@@ -182,6 +182,7 @@
     margin-left: 2px;
 }
 
+/* Sajid Formula: Inset shadows for sunken input effect */
 .settings-field-input {
     padding: var(--space-3) var(--space-4);
     font-size: var(--text-sm);
@@ -190,6 +191,10 @@
     border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
+    /* Sajid Formula: Inset shadows for sunken effect */
+    box-shadow: 
+        inset 0 1px 2px rgba(0, 0, 0, 0.05),
+        inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .settings-field-input:hover {
@@ -199,7 +204,11 @@
 .settings-field-input:focus {
     outline: none;
     border-color: var(--speccon-brand-primary);
-    box-shadow: 0 0 0 3px rgba(18, 38, 94, 0.1);
+    /* Combined inset and outer shadow for focus */
+    box-shadow: 
+        inset 0 1px 2px rgba(0, 0, 0, 0.05),
+        inset 0 2px 4px rgba(0, 0, 0, 0.02),
+        0 0 0 3px rgba(18, 38, 94, 0.1);
 }
 
 .settings-field-input::placeholder {
@@ -224,6 +233,10 @@
     background-position: right var(--space-3) center;
     padding-right: var(--space-10);
     cursor: pointer;
+    /* Sajid Formula: Inset shadows for sunken effect */
+    box-shadow: 
+        inset 0 1px 2px rgba(0, 0, 0, 0.05),
+        inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .settings-field-hint {

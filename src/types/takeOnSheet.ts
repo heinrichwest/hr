@@ -18,7 +18,7 @@ export type TakeOnSheetStatus = 'draft' | 'pending_hr_review' | 'pending_it_setu
 /**
  * Employment type for the new employee
  */
-export type EmploymentType = 'fixed' | 'pwe' | 'permanent';
+export type EmploymentType = 'fixed' | 'permanent';
 
 /**
  * Document types required for payroll/HR

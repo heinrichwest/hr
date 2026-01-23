@@ -254,10 +254,10 @@ export function TenantManagement() {
                     <p className="tenants-subtitle">Manage system tenants (companies)</p>
                 </div>
                 <div className="tenants-header-actions">
-                    <Button variant="secondary" onClick={handleRemoveDuplicates} disabled={loading}>
+                    <Button variant="tertiary" onClick={handleRemoveDuplicates} disabled={loading}>
                         Remove Duplicates
                     </Button>
-                    <Button variant="secondary" onClick={handleSeedData} disabled={isSeeding}>
+                    <Button variant="tertiary" onClick={handleSeedData} disabled={isSeeding}>
                         {isSeeding ? 'Seeding...' : 'Seed Data'}
                     </Button>
                     <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
@@ -271,7 +271,35 @@ export function TenantManagement() {
             </div>
 
             {loading ? (
-                <div>Loading...</div>
+                <div className="tenants-grid">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="tenant-card tenant-card--loading">
+                            <div className="tenant-card-header">
+                                <div>
+                                    <div className="skeleton tenant-skeleton--name" />
+                                    <div className="skeleton tenant-skeleton--reg" />
+                                </div>
+                                <div className="skeleton tenant-skeleton--status" />
+                            </div>
+                            <div className="tenant-actions">
+                                <div className="skeleton tenant-skeleton--button" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : companies.length === 0 ? (
+                <div className="empty-state">
+                    <div className="empty-state-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                    </div>
+                    <h3 className="empty-state-text">No Tenants Yet</h3>
+                    <p className="empty-state-hint">Get started by adding your first tenant (company) to the system.</p>
+                </div>
             ) : (
                 <div className="tenants-grid animate-scale-in">
                     {companies.map(company => (
@@ -387,14 +415,22 @@ export function TenantManagement() {
 
                             {/* Add Admin Form */}
                             <form className="add-admin-form" onSubmit={handleAddAdmin}>
+                                <label htmlFor="admin-email" className="form-label">
+                                    Email Address<span>*</span>
+                                </label>
                                 <input
+                                    id="admin-email"
                                     type="email"
                                     placeholder="Email address"
                                     value={newAdminEmail}
                                     onChange={e => setNewAdminEmail(e.target.value)}
                                     required
                                 />
+                                <label htmlFor="admin-role" className="form-label">
+                                    Role<span>*</span>
+                                </label>
                                 <select
+                                    id="admin-role"
                                     value={newAdminRole}
                                     onChange={e => setNewAdminRole(e.target.value as UserRole)}
                                 >
@@ -426,8 +462,9 @@ export function TenantManagement() {
                         </div>
                         <form onSubmit={handleCreateCompany}>
                             <div className="form-group">
-                                <label>Company Name</label>
+                                <label htmlFor="company-legal-name">Company Name<span>*</span></label>
                                 <input
+                                    id="company-legal-name"
                                     type="text"
                                     required
                                     value={newCompany.legalName}
@@ -436,8 +473,9 @@ export function TenantManagement() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Registration Number</label>
+                                <label htmlFor="company-registration-number">Registration Number<span>*</span></label>
                                 <input
+                                    id="company-registration-number"
                                     type="text"
                                     required
                                     value={newCompany.registrationNumber}
