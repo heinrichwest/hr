@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { PayFrequency, Address } from './company';
+import type { TerminationReasonCode, NonContributorReasonCode } from './ui19';
 
 export type EmploymentStatus =
     | 'active'
@@ -95,6 +96,14 @@ export interface Employee {
     standardHoursPerWeek?: number;
     taxNumber?: string;
     isUifApplicable: boolean;
+
+    // UIF Tracking (for UI-19 reporting)
+    uifContributor?: boolean; // Whether employee contributes to UIF
+    uifNonContributorReason?: NonContributorReasonCode; // Reason code if not contributing
+    terminationReasonCode?: TerminationReasonCode; // Termination reason code for UI-19
+
+    // Race for Employment Equity reporting
+    race?: 'african' | 'coloured' | 'indian' | 'white' | 'asian' | 'other' | 'prefer_not_to_say';
 
     // Bank Details (Sensitive)
     bankDetails?: BankDetails;

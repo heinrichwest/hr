@@ -16,7 +16,12 @@ export interface Company {
     postalAddress?: Address;
     phone?: string;
     email?: string;
+    fax?: string; // Added for UI-19 requirements
     website?: string;
+    // Authorised person for UIF declarations (UI-19)
+    authorisedPersonName?: string;
+    authorisedPersonIdNumber?: string;
+    authorisedPersonTitle?: string;
     // Settings
     defaultCurrency: string; // Default: ZAR
     defaultPayFrequency: PayFrequency;
@@ -209,7 +214,7 @@ export interface AuditLog {
     userId: string;
     userEmail: string;
     action: AuditAction;
-    entityType: string; // e.g., 'employee', 'payroll', 'ir_case'
+    entityType: string; // e.g., 'employee', 'payroll', 'ir_case', 'report'
     entityId: string;
     description: string;
     previousValue?: Record<string, unknown>;
@@ -231,7 +236,8 @@ export type AuditAction =
     | 'reopen'
     | 'login'
     | 'logout'
-    | 'export';
+    | 'export'
+    | 'generate_report'; // Added for report generation tracking
 
 // ============================================================
 // SOUTH AFRICAN TAX TABLES (Configurable)

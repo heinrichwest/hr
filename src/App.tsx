@@ -11,6 +11,7 @@ import { UserManagement } from './pages/admin/UserManagement';
 import { TenantManagement } from './pages/admin/TenantManagement';
 import { PendingApprovals } from './pages/admin/PendingApprovals';
 import { Notifications } from './pages/admin/Notifications';
+import { ReportsManagement } from './pages/admin/ReportsManagement';
 import { Settings } from './pages/settings/Settings';
 import { EmployeeList, EmployeeForm, EmployeeDetail } from './pages/employees';
 import { LeaveList, LeaveRequestForm, LeaveBalances } from './pages/leave';
@@ -79,6 +80,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Notifications />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/reports"
+                element={
+                  <PrivateRoute>
+                    <ReportsManagement />
                   </PrivateRoute>
                 }
               />
