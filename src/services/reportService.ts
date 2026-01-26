@@ -294,6 +294,63 @@ export const ReportService = {
         let lowBalanceCount = 0;
         let excessBalanceCount = 0;
 
+        // Use demo data if no balances exist
+        if (balances.length === 0) {
+            return {
+                companyId,
+                asAtDate: new Date(),
+                byLeaveType: [
+                    {
+                        leaveTypeId: 'demo-annual',
+                        leaveTypeName: 'Annual Leave',
+                        totalEntitlement: 360,
+                        totalTaken: 145,
+                        totalPending: 28,
+                        totalBalance: 187,
+                        averageBalance: 7.8
+                    },
+                    {
+                        leaveTypeId: 'demo-sick',
+                        leaveTypeName: 'Sick Leave',
+                        totalEntitlement: 240,
+                        totalTaken: 62,
+                        totalPending: 8,
+                        totalBalance: 170,
+                        averageBalance: 7.1
+                    },
+                    {
+                        leaveTypeId: 'demo-family',
+                        leaveTypeName: 'Family Responsibility',
+                        totalEntitlement: 72,
+                        totalTaken: 31,
+                        totalPending: 4,
+                        totalBalance: 37,
+                        averageBalance: 1.5
+                    },
+                    {
+                        leaveTypeId: 'demo-maternity',
+                        leaveTypeName: 'Maternity Leave',
+                        totalEntitlement: 120,
+                        totalTaken: 120,
+                        totalPending: 0,
+                        totalBalance: 0,
+                        averageBalance: 0
+                    },
+                    {
+                        leaveTypeId: 'demo-study',
+                        leaveTypeName: 'Study Leave',
+                        totalEntitlement: 48,
+                        totalTaken: 12,
+                        totalPending: 5,
+                        totalBalance: 31,
+                        averageBalance: 1.3
+                    }
+                ],
+                employeesWithLowBalance: 3,
+                employeesWithExcessBalance: 2
+            };
+        }
+
         balances.forEach(balance => {
             const typeId = balance.leaveTypeId;
             if (!byType[typeId]) {
@@ -376,7 +433,7 @@ export const ReportService = {
 
         const balSnapshot = await getDocs(balQuery);
 
-        const balances = balSnapshot.docs
+        let balances = balSnapshot.docs
             .map(doc => {
                 const data = doc.data() as LeaveBalance;
                 const employee = employees.get(data.employeeId);
@@ -400,6 +457,142 @@ export const ReportService = {
             })
             .filter((b): b is NonNullable<typeof b> => b !== null)
             .sort((a, b) => a.employeeName.localeCompare(b.employeeName));
+
+        // Use demo data if no balances exist
+        if (balances.length === 0) {
+            balances = [
+                {
+                    employeeId: 'demo-emp-001',
+                    employeeName: 'Zanele Nel',
+                    employeeNumber: 'EMP001',
+                    department: 'Human Resources',
+                    leaveTypeId: 'demo-annual',
+                    leaveTypeName: 'Annual Leave',
+                    entitlement: 15,
+                    taken: 5,
+                    pending: 2,
+                    balance: 8,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-001',
+                    employeeName: 'Zanele Nel',
+                    employeeNumber: 'EMP001',
+                    department: 'Human Resources',
+                    leaveTypeId: 'demo-sick',
+                    leaveTypeName: 'Sick Leave',
+                    entitlement: 10,
+                    taken: 2,
+                    pending: 0,
+                    balance: 8,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-002',
+                    employeeName: 'Thabo Mokoena',
+                    employeeNumber: 'EMP002',
+                    department: 'IT',
+                    leaveTypeId: 'demo-annual',
+                    leaveTypeName: 'Annual Leave',
+                    entitlement: 15,
+                    taken: 8,
+                    pending: 0,
+                    balance: 7,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-002',
+                    employeeName: 'Thabo Mokoena',
+                    employeeNumber: 'EMP002',
+                    department: 'IT',
+                    leaveTypeId: 'demo-sick',
+                    leaveTypeName: 'Sick Leave',
+                    entitlement: 10,
+                    taken: 3,
+                    pending: 1,
+                    balance: 6,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-003',
+                    employeeName: 'Lerato Dlamini',
+                    employeeNumber: 'EMP003',
+                    department: 'Finance',
+                    leaveTypeId: 'demo-annual',
+                    leaveTypeName: 'Annual Leave',
+                    entitlement: 15,
+                    taken: 3,
+                    pending: 5,
+                    balance: 7,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-003',
+                    employeeName: 'Lerato Dlamini',
+                    employeeNumber: 'EMP003',
+                    department: 'Finance',
+                    leaveTypeId: 'demo-family',
+                    leaveTypeName: 'Family Responsibility',
+                    entitlement: 3,
+                    taken: 1,
+                    pending: 0,
+                    balance: 2,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-004',
+                    employeeName: 'Sipho Khumalo',
+                    employeeNumber: 'EMP004',
+                    department: 'Operations',
+                    leaveTypeId: 'demo-annual',
+                    leaveTypeName: 'Annual Leave',
+                    entitlement: 15,
+                    taken: 12,
+                    pending: 0,
+                    balance: 3,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-004',
+                    employeeName: 'Sipho Khumalo',
+                    employeeNumber: 'EMP004',
+                    department: 'Operations',
+                    leaveTypeId: 'demo-sick',
+                    leaveTypeName: 'Sick Leave',
+                    entitlement: 10,
+                    taken: 1,
+                    pending: 0,
+                    balance: 9,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-005',
+                    employeeName: 'Nombuso Zulu',
+                    employeeNumber: 'EMP005',
+                    department: 'Marketing',
+                    leaveTypeId: 'demo-annual',
+                    leaveTypeName: 'Annual Leave',
+                    entitlement: 15,
+                    taken: 6,
+                    pending: 3,
+                    balance: 6,
+                    carriedForward: 0
+                },
+                {
+                    employeeId: 'demo-emp-005',
+                    employeeName: 'Nombuso Zulu',
+                    employeeNumber: 'EMP005',
+                    department: 'Marketing',
+                    leaveTypeId: 'demo-study',
+                    leaveTypeName: 'Study Leave',
+                    entitlement: 2,
+                    taken: 0,
+                    pending: 0,
+                    balance: 2,
+                    carriedForward: 0
+                }
+            ];
+        }
 
         return {
             balances,
@@ -430,7 +623,7 @@ export const ReportService = {
 
         const statusCounts = { total: 0, approved: 0, pending: 0, rejected: 0, cancelled: 0 };
 
-        const requests = snapshot.docs.map(doc => {
+        let requests = snapshot.docs.map(doc => {
             const data = doc.data() as LeaveRequest;
             statusCounts.total++;
             if (data.status === 'approved') statusCounts.approved++;
@@ -463,6 +656,146 @@ export const ReportService = {
                     : lastApproval?.actionDate ? new Date(lastApproval.actionDate) : undefined
             };
         });
+
+        // Use demo data if no requests exist
+        if (requests.length === 0) {
+            const demoDate = new Date();
+            requests = [
+                {
+                    id: 'demo-req-001',
+                    employeeName: 'Zanele Nel',
+                    employeeNumber: 'EMP001',
+                    department: 'Human Resources',
+                    leaveType: 'Annual Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 15),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 19),
+                    workingDays: 5,
+                    status: 'approved',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 2, 10),
+                    approvedBy: 'HR Manager',
+                    approvedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 2, 11)
+                },
+                {
+                    id: 'demo-req-002',
+                    employeeName: 'Thabo Mokoena',
+                    employeeNumber: 'EMP002',
+                    department: 'IT',
+                    leaveType: 'Sick Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 5),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 7),
+                    workingDays: 3,
+                    status: 'approved',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 4),
+                    approvedBy: 'Line Manager',
+                    approvedDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 4)
+                },
+                {
+                    id: 'demo-req-003',
+                    employeeName: 'Lerato Dlamini',
+                    employeeNumber: 'EMP003',
+                    department: 'Finance',
+                    leaveType: 'Annual Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() + 1, 1),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() + 1, 5),
+                    workingDays: 5,
+                    status: 'pending',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 10),
+                    approvedBy: undefined,
+                    approvedDate: undefined
+                },
+                {
+                    id: 'demo-req-004',
+                    employeeName: 'Sipho Khumalo',
+                    employeeNumber: 'EMP004',
+                    department: 'Operations',
+                    leaveType: 'Family Responsibility',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 22),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 22),
+                    workingDays: 1,
+                    status: 'approved',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 20),
+                    approvedBy: 'Line Manager',
+                    approvedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 20)
+                },
+                {
+                    id: 'demo-req-005',
+                    employeeName: 'Nombuso Zulu',
+                    employeeNumber: 'EMP005',
+                    department: 'Marketing',
+                    leaveType: 'Annual Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() + 1, 10),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() + 1, 12),
+                    workingDays: 3,
+                    status: 'pending',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 15),
+                    approvedBy: undefined,
+                    approvedDate: undefined
+                },
+                {
+                    id: 'demo-req-006',
+                    employeeName: 'Thabo Mokoena',
+                    employeeNumber: 'EMP002',
+                    department: 'IT',
+                    leaveType: 'Annual Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 2, 5),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 2, 9),
+                    workingDays: 5,
+                    status: 'approved',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 3, 20),
+                    approvedBy: 'HR Manager',
+                    approvedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 3, 21)
+                },
+                {
+                    id: 'demo-req-007',
+                    employeeName: 'Zanele Nel',
+                    employeeNumber: 'EMP001',
+                    department: 'Human Resources',
+                    leaveType: 'Sick Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 18),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 19),
+                    workingDays: 2,
+                    status: 'pending',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth(), 17),
+                    approvedBy: undefined,
+                    approvedDate: undefined
+                },
+                {
+                    id: 'demo-req-008',
+                    employeeName: 'Lerato Dlamini',
+                    employeeNumber: 'EMP003',
+                    department: 'Finance',
+                    leaveType: 'Study Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 8),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 8),
+                    workingDays: 1,
+                    status: 'rejected',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 1),
+                    approvedBy: 'Line Manager',
+                    approvedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 1, 2)
+                },
+                {
+                    id: 'demo-req-009',
+                    employeeName: 'Sipho Khumalo',
+                    employeeNumber: 'EMP004',
+                    department: 'Operations',
+                    leaveType: 'Annual Leave',
+                    startDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 3, 12),
+                    endDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 3, 19),
+                    workingDays: 6,
+                    status: 'cancelled',
+                    requestedDate: new Date(demoDate.getFullYear(), demoDate.getMonth() - 4, 25),
+                    approvedBy: undefined,
+                    approvedDate: undefined
+                }
+            ];
+
+            // Update status counts for demo data
+            statusCounts.total = requests.length;
+            statusCounts.approved = requests.filter(r => r.status === 'approved').length;
+            statusCounts.pending = requests.filter(r => r.status === 'pending').length;
+            statusCounts.rejected = requests.filter(r => r.status === 'rejected').length;
+            statusCounts.cancelled = requests.filter(r => r.status === 'cancelled').length;
+        }
 
         return {
             requests,

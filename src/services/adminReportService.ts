@@ -673,7 +673,7 @@ export const AdminReportService = {
         }));
 
         // Process leave taken records
-        const leaveTakenRecords: LeaveTakenRecord[] = leaveRequests.map(request => {
+        let leaveTakenRecords: LeaveTakenRecord[] = leaveRequests.map(request => {
             const employee = employees.get(request.employeeId);
             const leaveType = leaveTypes.get(request.leaveTypeId);
 
@@ -687,9 +687,145 @@ export const AdminReportService = {
                 startDate: request.startDate instanceof Timestamp ? request.startDate.toDate() : new Date(request.startDate),
                 endDate: request.endDate instanceof Timestamp ? request.endDate.toDate() : new Date(request.endDate),
                 workingDays: request.workingDays,
-                status: request.status
+                status: request.status,
+                submittedDate: request.submittedDate instanceof Timestamp ? request.submittedDate.toDate() : request.createdAt instanceof Timestamp ? request.createdAt.toDate() : new Date(request.createdAt),
+                isHalfDay: request.isHalfDay || false,
+                halfDayType: request.halfDayType
             };
         });
+
+        // Use demo data if no real leave requests exist
+        if (leaveTakenRecords.length === 0) {
+            leaveTakenRecords = [
+                {
+                    employeeId: 'demo-emp-1',
+                    employeeNumber: 'EMP001',
+                    employeeName: 'Thabo Mokoena',
+                    department: 'Operations',
+                    leaveTypeId: 'demo-lt-1',
+                    leaveTypeName: 'Annual Leave',
+                    startDate: new Date('2026-01-27'),
+                    endDate: new Date('2026-01-31'),
+                    workingDays: 5,
+                    status: 'pending',
+                    submittedDate: new Date('2026-01-15'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-2',
+                    employeeNumber: 'EMP002',
+                    employeeName: 'Naledi Dlamini',
+                    department: 'Human Resources',
+                    leaveTypeId: 'demo-lt-2',
+                    leaveTypeName: 'Sick Leave',
+                    startDate: new Date('2026-01-20'),
+                    endDate: new Date('2026-01-21'),
+                    workingDays: 2,
+                    status: 'approved',
+                    submittedDate: new Date('2026-01-18'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-3',
+                    employeeNumber: 'EMP003',
+                    employeeName: 'Sipho Ndlovu',
+                    department: 'Finance',
+                    leaveTypeId: 'demo-lt-3',
+                    leaveTypeName: 'Family Responsibility',
+                    startDate: new Date('2026-01-22'),
+                    endDate: new Date('2026-01-22'),
+                    workingDays: 1,
+                    status: 'pending',
+                    submittedDate: new Date('2026-01-17'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-4',
+                    employeeNumber: 'EMP004',
+                    employeeName: 'Lindiwe Zulu',
+                    department: 'Marketing',
+                    leaveTypeId: 'demo-lt-4',
+                    leaveTypeName: 'Maternity Leave',
+                    startDate: new Date('2026-02-01'),
+                    endDate: new Date('2026-05-31'),
+                    workingDays: 120,
+                    status: 'approved',
+                    submittedDate: new Date('2026-01-10'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-5',
+                    employeeNumber: 'EMP005',
+                    employeeName: 'Bongani Khumalo',
+                    department: 'IT',
+                    leaveTypeId: 'demo-lt-5',
+                    leaveTypeName: 'Paternity Leave',
+                    startDate: new Date('2026-01-28'),
+                    endDate: new Date('2026-02-10'),
+                    workingDays: 10,
+                    status: 'pending',
+                    submittedDate: new Date('2026-01-16'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-6',
+                    employeeNumber: 'EMP006',
+                    employeeName: 'Nomvula Mthembu',
+                    department: 'Sales',
+                    leaveTypeId: 'demo-lt-6',
+                    leaveTypeName: 'Study Leave',
+                    startDate: new Date('2026-01-23'),
+                    endDate: new Date('2026-01-24'),
+                    workingDays: 2,
+                    status: 'rejected',
+                    submittedDate: new Date('2026-01-14'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-7',
+                    employeeNumber: 'EMP007',
+                    employeeName: 'Mandla Sithole',
+                    department: 'Logistics',
+                    leaveTypeId: 'demo-lt-1',
+                    leaveTypeName: 'Annual Leave',
+                    startDate: new Date('2026-02-14'),
+                    endDate: new Date('2026-02-14'),
+                    workingDays: 0.5,
+                    status: 'approved',
+                    submittedDate: new Date('2026-01-19'),
+                    isHalfDay: true,
+                    halfDayType: 'morning'
+                },
+                {
+                    employeeId: 'demo-emp-8',
+                    employeeNumber: 'EMP008',
+                    employeeName: 'Precious Molefe',
+                    department: 'Customer Service',
+                    leaveTypeId: 'demo-lt-7',
+                    leaveTypeName: 'Birthday Leave',
+                    startDate: new Date('2026-02-05'),
+                    endDate: new Date('2026-02-05'),
+                    workingDays: 1,
+                    status: 'pending',
+                    submittedDate: new Date('2026-01-20'),
+                    isHalfDay: false
+                },
+                {
+                    employeeId: 'demo-emp-9',
+                    employeeNumber: 'EMP009',
+                    employeeName: 'Johannes van der Merwe',
+                    department: 'Engineering',
+                    leaveTypeId: 'demo-lt-2',
+                    leaveTypeName: 'Sick Leave',
+                    startDate: new Date('2026-01-13'),
+                    endDate: new Date('2026-01-17'),
+                    workingDays: 5,
+                    status: 'taken',
+                    submittedDate: new Date('2026-01-13'),
+                    isHalfDay: false
+                }
+            ];
+        }
 
         // Process employee balances
         const employeeBalanceMap = new Map<string, EmployeeLeaveBalance>();

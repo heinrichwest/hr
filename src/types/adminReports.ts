@@ -269,6 +269,9 @@ export interface LeaveTakenRecord {
     endDate: Date;
     workingDays: number;
     status: string;
+    submittedDate: Date;
+    isHalfDay?: boolean;
+    halfDayType?: 'morning' | 'afternoon';
 }
 
 /**

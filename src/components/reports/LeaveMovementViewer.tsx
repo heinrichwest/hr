@@ -230,6 +230,147 @@ export function LeaveMovementViewer({ report, onExportExcel, onExportCSV }: Leav
                     </div>
                 </section>
 
+                {/* Leave Requests */}
+                {report.leaveTakenRecords && report.leaveTakenRecords.length > 0 && (
+                    <section className="report-section">
+                        <h3 className="section-title">Leave Requests</h3>
+                        <div className="data-table-container">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Leave Type</th>
+                                        <th>Dates</th>
+                                        <th>Days</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {report.leaveTakenRecords.map((record, index) => {
+                                        const getInitials = (name: string): string => {
+                                            return name
+                                                .split(' ')
+                                                .map(n => n[0])
+                                                .join('')
+                                                .toUpperCase()
+                                                .slice(0, 2);
+                                        };
+
+                                        const getAvatarColor = (name: string): string => {
+                                            const colors = [
+                                                'hsl(220, 70%, 50%)', 'hsl(140, 50%, 45%)', 'hsl(35, 100%, 50%)',
+                                                'hsl(0, 60%, 50%)', 'hsl(280, 60%, 55%)', 'hsl(330, 60%, 55%)',
+                                                'hsl(190, 60%, 50%)', 'hsl(80, 50%, 45%)', 'hsl(20, 100%, 55%)',
+                                                'hsl(250, 60%, 60%)'
+                                            ];
+                                            const charCode = name.charCodeAt(0);
+                                            const colorIndex = charCode % colors.length;
+                                            return colors[colorIndex];
+                                        };
+
+                                        const getStatusBadgeClass = (status: string): string => {
+                                            const statusMap: Record<string, string> = {
+                                                pending: 'badge badge-pending',
+                                                approved: 'badge badge-approved',
+                                                rejected: 'badge badge-rejected',
+                                                taken: 'badge badge-taken',
+                                                cancelled: 'badge badge-cancelled'
+                                            };
+                                            return statusMap[status.toLowerCase()] || 'badge';
+                                        };
+
+                                        const getStatusText = (status: string): string => {
+                                            return status.charAt(0).toUpperCase() + status.slice(1);
+                                        };
+
+                                        const formatDateRange = (start: Date, end: Date): string => {
+                                            const startStr = new Date(start).toLocaleDateString('en-ZA', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            });
+                                            const endStr = new Date(end).toLocaleDateString('en-ZA', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            });
+                                            return `${startStr} - ${endStr}`;
+                                        };
+
+                                        return (
+                                            <tr key={`${record.employeeId}-${index}`}>
+                                                <td>
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '12px'
+                                                    }}>
+                                                        <div style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            borderRadius: '50%',
+                                                            backgroundColor: getAvatarColor(record.employeeName),
+                                                            color: 'white',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontWeight: 600,
+                                                            fontSize: '14px',
+                                                            flexShrink: 0
+                                                        }}>
+                                                            {getInitials(record.employeeName)}
+                                                        </div>
+                                                        <span style={{ fontWeight: 500 }}>{record.employeeName}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span style={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '6px'
+                                                    }}>
+                                                        <span style={{
+                                                            width: '8px',
+                                                            height: '8px',
+                                                            borderRadius: '50%',
+                                                            backgroundColor: 'hsl(220, 30%, 70%)'
+                                                        }}></span>
+                                                        {record.leaveTypeName}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        {formatDateRange(record.startDate, record.endDate)}
+                                                        {record.isHalfDay && (
+                                                            <div style={{
+                                                                fontSize: '12px',
+                                                                color: 'hsl(0, 0%, 60%)',
+                                                                marginTop: '2px'
+                                                            }}>
+                                                                Half day ({record.halfDayType})
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="numeric">
+                                                    {record.workingDays} {record.workingDays === 1 ? 'day' : 'days'}
+                                                </td>
+                                                <td>
+                                                    <span className={getStatusBadgeClass(record.status)}>
+                                                        {getStatusText(record.status)}
+                                                    </span>
+                                                </td>
+                                                <td>{formatDate(record.submittedDate)}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                )}
+
                 {/* Employee Balances with Negative Balance Warnings */}
                 <section className="report-section">
                     <h3 className="section-title">

@@ -229,6 +229,31 @@
     color: hsl(35, 100%, 35%);
 }
 
+.badge-pending {
+    background: hsl(35, 100%, 95%);
+    color: hsl(35, 100%, 35%);
+}
+
+.badge-approved {
+    background: hsl(140, 50%, 95%);
+    color: hsl(140, 50%, 30%);
+}
+
+.badge-rejected {
+    background: hsl(0, 60%, 95%);
+    color: hsl(0, 60%, 35%);
+}
+
+.badge-taken {
+    background: hsl(220, 70%, 95%);
+    color: hsl(220, 70%, 35%);
+}
+
+.badge-cancelled {
+    background: hsl(0, 0%, 90%);
+    color: hsl(0, 0%, 40%);
+}
+
 /* Footer Actions */
 .leave-movement-viewer .report-footer-actions {
     display: flex;

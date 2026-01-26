@@ -34,7 +34,25 @@
       "Bash(move scriptscreateUser.js scriptscreateUser.cjs)",
       "Bash(node scripts/createUser.cjs:*)",
       "mcp__firebase__firestore_get_documents",
-      "Bash(node scripts/createUser2.cjs:*)"
+      "Bash(node scripts/createUser2.cjs:*)",
+      "Bash(wc:*)",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "Bash(timeout:*)",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "mcp__plugin_playwright_playwright__browser_handle_dialog",
+      "mcp__chrome-devtools__handle_dialog",
+      "mcp__chrome-devtools__list_network_requests"
     ]
   },
   "enabledMcpjsonServers": [
