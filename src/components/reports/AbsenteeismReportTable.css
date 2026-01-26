@@ -1,0 +1,254 @@
+/* ============================================================
+   ABSENTEEISM REPORT TABLE STYLES
+   ============================================================ */
+
+.absenteeism-table-container {
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 90%);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* Table Styles */
+.absenteeism-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+.absenteeism-table thead {
+    background: hsl(220, 10%, 98%);
+    border-bottom: 2px solid hsl(0, 0%, 88%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.absenteeism-table thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: hsl(220, 10%, 40%);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.absenteeism-table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.absenteeism-table thead th.sortable:hover {
+    color: hsl(220, 70%, 50%);
+}
+
+.absenteeism-table thead th.sorted {
+    color: hsl(220, 70%, 50%);
+}
+
+.absenteeism-table tbody tr {
+    border-bottom: 1px solid hsl(0, 0%, 93%);
+    transition: background-color 0.15s ease;
+}
+
+.absenteeism-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.absenteeism-table tbody tr:hover {
+    background: hsl(220, 70%, 98%);
+}
+
+.absenteeism-table tbody tr.row-unauthorized {
+    background: hsl(0, 60%, 95%);
+}
+
+.absenteeism-table tbody tr.row-unauthorized:hover {
+    background: hsl(0, 60%, 92%);
+}
+
+.absenteeism-table tbody td {
+    padding: 16px;
+    font-size: 16px;
+    color: hsl(220, 10%, 20%);
+}
+
+/* Cell Styles */
+.cell-employee-number {
+    font-family: monospace;
+    font-weight: 500;
+}
+
+.cell-number {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Employee Cell */
+.employee-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.employee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: hsl(0, 0%, 100%);
+    flex-shrink: 0;
+}
+
+.employee-name {
+    font-weight: 500;
+    color: hsl(220, 10%, 20%);
+}
+
+/* Cycle Info */
+.cycle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cycle-days {
+    font-weight: 500;
+    color: hsl(220, 10%, 20%);
+}
+
+.cycle-reset {
+    font-size: 13px;
+    color: hsl(220, 10%, 60%);
+}
+
+/* Loading State */
+.absenteeism-table-loading {
+    padding: 40px;
+}
+
+.table-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skeleton-row {
+    height: 60px;
+    background: linear-gradient(
+        90deg,
+        hsl(0, 0%, 95%) 0%,
+        hsl(0, 0%, 92%) 50%,
+        hsl(0, 0%, 95%) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Empty State */
+.absenteeism-table-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: hsl(220, 10%, 96%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: hsl(220, 10%, 60%);
+}
+
+.empty-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(220, 10%, 30%);
+    margin: 0 0 8px 0;
+}
+
+.empty-hint {
+    font-size: 16px;
+    color: hsl(220, 10%, 60%);
+    margin: 0;
+}
+
+/* Pagination */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    border-top: 1px solid hsl(0, 0%, 90%);
+    background: hsl(220, 10%, 98%);
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 70%, 50%);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(220, 70%, 80%);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: hsl(220, 70%, 50%);
+    color: hsl(0, 0%, 100%);
+}
+
+.pagination-btn:disabled {
+    color: hsl(220, 10%, 60%);
+    border-color: hsl(0, 0%, 90%);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: hsl(220, 10%, 40%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table-wrapper {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .absenteeism-table {
+        min-width: 1200px;
+    }
+}

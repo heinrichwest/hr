@@ -9,6 +9,7 @@ import { Button } from '../../components/Button/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import { ReportService } from '../../services/reportService';
 import { LeaveService } from '../../services/leaveService';
+import { AbsenteeismReportContent } from '../../components/reports/AbsenteeismReportContent';
 import type {
     LeaveBalanceSummary,
     LeaveBalanceReport,
@@ -68,6 +69,11 @@ export function LeaveReports() {
     };
 
     const loadReport = async () => {
+        // Skip loading for absenteeism report (it has its own loader)
+        if (activeReport === 'absenteeism') {
+            return;
+        }
+
         // Use demo-company for System Admin users without companyId
         const companyId = userProfile?.companyId || 'demo-company';
 
@@ -109,15 +115,16 @@ export function LeaveReports() {
         });
     };
 
-    const formatStatus = (status: string) => {
-        return status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    };
+    // Format status string - currently unused
+    // const formatStatus = (status: string) => {
+    //     return status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    // };
 
     const reports = [
         { id: 'balances', name: 'Leave Balances', description: 'Current leave balances' },
         { id: 'requests', name: 'Leave Requests', description: 'Leave requests for period' },
         { id: 'utilization', name: 'Leave Utilization', description: 'Leave usage analysis' },
-        { id: 'absenteeism', name: 'Absenteeism Report', description: 'Absenteeism patterns' }
+        { id: 'absenteeism', name: 'Absenteeism Report', description: 'BCEA compliance tracking' }
     ];
 
     const setQuickDateRange = (preset: string) => {
@@ -162,6 +169,8 @@ export function LeaveReports() {
                 return renderBalancesReport();
             case 'requests':
                 return renderRequestsReport();
+            case 'absenteeism':
+                return <AbsenteeismReportContent companyId={userProfile?.companyId || 'demo-company'} />;
             default:
                 return (
                     <div className="report-empty">
@@ -440,89 +449,95 @@ export function LeaveReports() {
                         {reports.find(r => r.id === activeReport)?.name || 'Report'}
                     </h2>
                     <div className="report-viewer-actions">
-                        <Button variant="secondary" size="sm" onClick={loadReport}>
-                            <RefreshIcon />
-                            Refresh
-                        </Button>
-                        <Button variant="secondary" size="sm">
-                            <DownloadIcon />
-                            Export
-                        </Button>
+                        {activeReport !== 'absenteeism' && (
+                            <>
+                                <Button variant="secondary" size="sm" onClick={loadReport}>
+                                    <RefreshIcon />
+                                    Refresh
+                                </Button>
+                                <Button variant="secondary" size="sm">
+                                    <DownloadIcon />
+                                    Export
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
 
                 {/* Filters */}
-                <div className="report-filters">
-                    <div className="report-filter">
-                        <label className="report-filter-label">Leave Type</label>
-                        <select
-                            className="report-filter-input"
-                            value={leaveTypeFilter}
-                            onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                        >
-                            <option value="all">All Leave Types</option>
-                            {leaveTypes.map(lt => (
-                                <option key={lt.id} value={lt.id}>{lt.name}</option>
-                            ))}
-                        </select>
-                    </div>
+                {activeReport !== 'absenteeism' && (
+                    <div className="report-filters">
+                        <div className="report-filter">
+                            <label className="report-filter-label">Leave Type</label>
+                            <select
+                                className="report-filter-input"
+                                value={leaveTypeFilter}
+                                onChange={(e) => setLeaveTypeFilter(e.target.value)}
+                            >
+                                <option value="all">All Leave Types</option>
+                                {leaveTypes.map(lt => (
+                                    <option key={lt.id} value={lt.id}>{lt.name}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {activeReport === 'requests' && (
-                        <>
-                            <div className="report-filter">
-                                <label className="report-filter-label">Date Range</label>
-                                <div className="date-range-picker">
-                                    <input
-                                        type="date"
-                                        value={dateRange.start.toISOString().split('T')[0]}
-                                        onChange={(e) => setDateRange(prev => ({
-                                            ...prev,
-                                            start: new Date(e.target.value)
-                                        }))}
-                                    />
-                                    <span className="date-range-separator">to</span>
-                                    <input
-                                        type="date"
-                                        value={dateRange.end.toISOString().split('T')[0]}
-                                        onChange={(e) => setDateRange(prev => ({
-                                            ...prev,
-                                            end: new Date(e.target.value)
-                                        }))}
-                                    />
+                        {activeReport === 'requests' && (
+                            <>
+                                <div className="report-filter">
+                                    <label className="report-filter-label">Date Range</label>
+                                    <div className="date-range-picker">
+                                        <input
+                                            type="date"
+                                            value={dateRange.start.toISOString().split('T')[0]}
+                                            onChange={(e) => setDateRange(prev => ({
+                                                ...prev,
+                                                start: new Date(e.target.value)
+                                            }))}
+                                        />
+                                        <span className="date-range-separator">to</span>
+                                        <input
+                                            type="date"
+                                            value={dateRange.end.toISOString().split('T')[0]}
+                                            onChange={(e) => setDateRange(prev => ({
+                                                ...prev,
+                                                end: new Date(e.target.value)
+                                            }))}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="report-filter">
-                                <label className="report-filter-label">Quick Select</label>
-                                <div className="quick-date-buttons">
-                                    <button
-                                        className="quick-date-btn"
-                                        onClick={() => setQuickDateRange('this_month')}
-                                    >
-                                        This Month
-                                    </button>
-                                    <button
-                                        className="quick-date-btn"
-                                        onClick={() => setQuickDateRange('last_month')}
-                                    >
-                                        Last Month
-                                    </button>
-                                    <button
-                                        className="quick-date-btn"
-                                        onClick={() => setQuickDateRange('this_quarter')}
-                                    >
-                                        This Quarter
-                                    </button>
-                                    <button
-                                        className="quick-date-btn"
-                                        onClick={() => setQuickDateRange('this_year')}
-                                    >
-                                        This Year
-                                    </button>
+                                <div className="report-filter">
+                                    <label className="report-filter-label">Quick Select</label>
+                                    <div className="quick-date-buttons">
+                                        <button
+                                            className="quick-date-btn"
+                                            onClick={() => setQuickDateRange('this_month')}
+                                        >
+                                            This Month
+                                        </button>
+                                        <button
+                                            className="quick-date-btn"
+                                            onClick={() => setQuickDateRange('last_month')}
+                                        >
+                                            Last Month
+                                        </button>
+                                        <button
+                                            className="quick-date-btn"
+                                            onClick={() => setQuickDateRange('this_quarter')}
+                                        >
+                                            This Quarter
+                                        </button>
+                                        <button
+                                            className="quick-date-btn"
+                                            onClick={() => setQuickDateRange('this_year')}
+                                        >
+                                            This Year
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </>
-                    )}
-                </div>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 <div className="report-viewer-content">
                     {renderReportContent()}

@@ -1,0 +1,73 @@
+/* ============================================================
+   COMPLIANCE INDICATORS STYLES
+   ============================================================ */
+
+.compliance-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.compliance-indicator-wrapper {
+    display: inline-block;
+}
+
+.compliance-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.compliance-indicator--warning {
+    background: hsl(35, 100%, 95%);
+    color: hsl(35, 100%, 40%);
+    border: 1px solid hsl(35, 100%, 80%);
+}
+
+.compliance-indicator--warning:hover {
+    background: hsl(35, 100%, 90%);
+    box-shadow: 0 1px 3px hsl(35, 100%, 70%, 0.3);
+}
+
+.compliance-indicator--error {
+    background: hsl(0, 60%, 95%);
+    color: hsl(0, 60%, 40%);
+    border: 1px solid hsl(0, 60%, 80%);
+}
+
+.compliance-indicator--error:hover {
+    background: hsl(0, 60%, 90%);
+    box-shadow: 0 1px 3px hsl(0, 60%, 70%, 0.3);
+}
+
+.compliance-indicator--info {
+    background: hsl(220, 70%, 95%);
+    color: hsl(220, 70%, 40%);
+    border: 1px solid hsl(220, 70%, 80%);
+}
+
+.compliance-indicator--info:hover {
+    background: hsl(220, 70%, 90%);
+    box-shadow: 0 1px 3px hsl(220, 70%, 70%, 0.3);
+}
+
+.compliance-indicator-text {
+    white-space: nowrap;
+}
+
+.compliance-indicator-none {
+    font-size: 14px;
+    color: hsl(140, 50%, 40%);
+    font-weight: 500;
+}
+
+/* Icon Styling */
+.compliance-indicator svg {
+    flex-shrink: 0;
+}

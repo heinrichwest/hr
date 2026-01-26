@@ -1,0 +1,164 @@
+/* ============================================================
+   ABSENTEEISM FILTERS STYLES
+   ============================================================ */
+
+.absenteeism-filters {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: hsl(0, 0%, 98%);
+    border-bottom: 1px solid hsl(0, 0%, 90%);
+    flex-wrap: wrap;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: hsl(220, 10%, 40%);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.filter-input {
+    padding: 8px 12px;
+    border: 1px solid hsl(0, 0%, 85%);
+    border-radius: 6px;
+    background: hsl(0, 0%, 100%);
+    color: hsl(220, 10%, 20%);
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: hsl(220, 70%, 50%);
+    box-shadow: 0 0 0 3px hsl(220, 70%, 95%);
+}
+
+.filter-input:disabled {
+    background: hsl(0, 0%, 95%);
+    color: hsl(220, 10%, 60%);
+    cursor: not-allowed;
+}
+
+/* Quick Date Buttons */
+.quick-date-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.quick-date-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 10%, 40%);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 85%);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-date-btn:hover {
+    border-color: hsl(220, 70%, 50%);
+    color: hsl(220, 70%, 50%);
+    background: hsl(220, 70%, 98%);
+}
+
+.quick-date-btn.active {
+    background: hsl(220, 70%, 50%);
+    border-color: hsl(220, 70%, 50%);
+    color: hsl(0, 0%, 100%);
+}
+
+/* Date Range Picker */
+.date-range-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-range-separator {
+    color: hsl(220, 10%, 60%);
+    font-size: 14px;
+}
+
+/* Leave Type Toggles */
+.leave-type-toggles {
+    display: flex;
+    gap: 8px;
+}
+
+.leave-type-toggle {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 10%, 40%);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 85%);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.leave-type-toggle:hover {
+    border-color: hsl(220, 70%, 50%);
+    color: hsl(220, 70%, 50%);
+}
+
+.leave-type-toggle.active {
+    background: hsl(220, 70%, 50%);
+    border-color: hsl(220, 70%, 50%);
+    color: hsl(0, 0%, 100%);
+}
+
+/* Clear Filters Button */
+.clear-filters-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(0, 60%, 50%);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 60%, 80%);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: auto;
+}
+
+.clear-filters-btn:hover {
+    background: hsl(0, 60%, 50%);
+    border-color: hsl(0, 60%, 50%);
+    color: hsl(0, 0%, 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .absenteeism-filters {
+        flex-direction: column;
+    }
+
+    .filter-section {
+        min-width: 100%;
+    }
+
+    .date-range-picker {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .leave-type-toggles {
+        flex-direction: column;
+    }
+}
