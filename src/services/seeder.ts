@@ -16,7 +16,93 @@ const TENANTS = [
 const DEPARTMENTS = ['Executive', 'HR', 'Finance', 'Operations', 'IT'];
 const JOB_TITLES = ['Manager', 'Specialist', 'Assistant', 'Officer'];
 
+// Realistic South African employee names
+const SA_FIRST_NAMES = [
+    'Thabo', 'Nomsa', 'Sipho', 'Zanele', 'Mpho', 'Lindiwe', 'Bongani', 'Thandi',
+    'Karabo', 'Lerato', 'Tshepo', 'Naledi', 'Kagiso', 'Palesa', 'Mandla', 'Noma',
+    'Trevor', 'Sarah', 'David', 'Michelle', 'James', 'Nicole', 'Andrew', 'Jessica',
+    'Fatima', 'Ahmed', 'Zainab', 'Ibrahim', 'Ayesha', 'Muhammad',
+    'Priya', 'Raj', 'Anita', 'Kumar', 'Deepak', 'Sanjay'
+];
+
+const SA_LAST_NAMES = [
+    'Khumalo', 'Nkosi', 'Dlamini', 'Ndlovu', 'Mthembu', 'Sithole', 'Zulu', 'Mokoena',
+    'Molefe', 'Nhlapo', 'Maseko', 'Mabaso', 'Cele', 'Buthelezi', 'Radebe', 'Naidoo',
+    'Van der Merwe', 'Botha', 'De Klerk', 'Pretorius', 'Du Plessis', 'Swart', 'Nel',
+    'Patel', 'Pillay', 'Govender', 'Chetty', 'Reddy', 'Naicker',
+    'Abrahams', 'Jacobs', 'Williams', 'Adams', 'Peterson', 'Smith'
+];
+
 export const Seeder = {
+    async clearAllData() {
+        console.log("Clearing all existing data...");
+
+        try {
+            // Import Firestore functions
+            const { collection, getDocs, deleteDoc, doc } = await import('firebase/firestore');
+            const { db } = await import('../firebase');
+
+            // Delete all employees
+            console.log("Deleting all employees...");
+            const employeesSnapshot = await getDocs(collection(db, 'employees'));
+            for (const empDoc of employeesSnapshot.docs) {
+                await deleteDoc(doc(db, 'employees', empDoc.id));
+            }
+            console.log(`Deleted ${employeesSnapshot.size} employees`);
+
+            // Delete all job titles
+            console.log("Deleting all job titles...");
+            const jobTitlesSnapshot = await getDocs(collection(db, 'jobTitles'));
+            for (const jobDoc of jobTitlesSnapshot.docs) {
+                await deleteDoc(doc(db, 'jobTitles', jobDoc.id));
+            }
+            console.log(`Deleted ${jobTitlesSnapshot.size} job titles`);
+
+            // Delete all departments
+            console.log("Deleting all departments...");
+            const departmentsSnapshot = await getDocs(collection(db, 'departments'));
+            for (const deptDoc of departmentsSnapshot.docs) {
+                await deleteDoc(doc(db, 'departments', deptDoc.id));
+            }
+            console.log(`Deleted ${departmentsSnapshot.size} departments`);
+
+            // Delete all branches
+            console.log("Deleting all branches...");
+            const branchesSnapshot = await getDocs(collection(db, 'branches'));
+            for (const branchDoc of branchesSnapshot.docs) {
+                await deleteDoc(doc(db, 'branches', branchDoc.id));
+            }
+            console.log(`Deleted ${branchesSnapshot.size} branches`);
+
+            // Delete all companies
+            console.log("Deleting all companies...");
+            const companies = await CompanyService.getAllCompanies();
+            for (const company of companies) {
+                console.log(`Deleting company: ${company.legalName}...`);
+                await CompanyService.deleteCompany(company.id);
+            }
+            console.log(`Deleted ${companies.length} companies`);
+
+            console.log("All data cleared successfully!");
+        } catch (error) {
+            console.error("Failed to clear data:", error);
+            throw error;
+        }
+    },
+
+    async clearAndReseed() {
+        console.log("Starting clear and reseed process...");
+
+        try {
+            await this.clearAllData();
+            await this.seedDatabase();
+            console.log("Clear and reseed completed successfully!");
+        } catch (error) {
+            console.error("Clear and reseed failed:", error);
+            throw error;
+        }
+    },
+
     async seedDatabase() {
         console.log("Starting database seed...");
 
@@ -105,36 +191,62 @@ export const Seeder = {
 
         // 5. Create Employees & Users
         // We'll create:
-        // - 1 Admin (HR Manager)
-        // - 1 Manager (Line Manager)
-        // - 3 Employees
+        // - 2 HR Managers
+        // - 3 Line Managers
+        // - 2 Payroll Managers
+        // - 8 Employees (regular staff)
 
         const roles: { role: UserRole; count: number; prefix: string }[] = [
-            { role: 'HR Manager', count: 1, prefix: 'Admin' },
-            { role: 'Line Manager', count: 1, prefix: 'Manager' },
-            { role: 'Employee', count: 3, prefix: 'User' }
+            { role: 'HR Manager', count: 2, prefix: 'HR' },
+            { role: 'Line Manager', count: 3, prefix: 'Manager' },
+            { role: 'Payroll Manager', count: 2, prefix: 'Payroll' },
+            { role: 'Employee', count: 8, prefix: 'Staff' }
         ];
+
+        // Keep track of used names to avoid duplicates
+        const usedNames = new Set<string>();
+        let employeeCounter = 0;
 
         for (const roleConfig of roles) {
             for (let i = 1; i <= roleConfig.count; i++) {
-                const firstName = `${roleConfig.prefix}${i}`;
-                const lastName = `${tenant.name}${tenant.suffix}`; // e.g. Admin1 Speccon(S)
-                const email = `${firstName.toLowerCase()}.${i}@${tenant.domain}`;
+                // Get unique first and last name combination
+                let firstName = '';
+                let lastName = '';
+                let fullName = '';
+
+                do {
+                    firstName = SA_FIRST_NAMES[Math.floor(Math.random() * SA_FIRST_NAMES.length)];
+                    lastName = SA_LAST_NAMES[Math.floor(Math.random() * SA_LAST_NAMES.length)];
+                    fullName = `${firstName} ${lastName}`;
+                } while (usedNames.has(fullName));
+
+                usedNames.add(fullName);
+                employeeCounter++;
+
+                const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${tenant.domain}`;
 
                 // Randomly assign dept and job
                 const deptId = deptIds[Math.floor(Math.random() * deptIds.length)];
                 const jobId = jobIds[Math.floor(Math.random() * jobIds.length)];
 
+                // Random gender and birth date
+                const genders = ['Male', 'Female', 'Other'];
+                const randomGender = genders[Math.floor(Math.random() * genders.length)];
+                const randomYear = 1980 + Math.floor(Math.random() * 25); // Birth years 1980-2004
+                const randomMonth = 1 + Math.floor(Math.random() * 12);
+                const randomDay = 1 + Math.floor(Math.random() * 28);
+                const birthDate = new Date(randomYear, randomMonth - 1, randomDay);
+
                 const empData: Omit<Employee, 'id' | 'createdAt'> = {
                     companyId,
-                    firstName: `${firstName} ${tenant.suffix}`,
+                    firstName: firstName,
                     lastName: lastName,
-                    initials: firstName[0],
+                    initials: `${firstName[0]}${lastName[0]}`,
                     email,
-                    employeeNumber: `${tenant.name.substring(0, 2).toUpperCase()}${Math.floor(Math.random() * 10000)}`,
-                    idNumber: `${9001015000080 + Math.floor(Math.random() * 1000)}`,
-                    dateOfBirth: new Date('1990-01-01'),
-                    gender: 'Male',
+                    employeeNumber: `${tenant.name.substring(0, 2).toUpperCase()}${String(employeeCounter).padStart(4, '0')}`,
+                    idNumber: `${String(randomYear).slice(-2)}${String(randomMonth).padStart(2, '0')}${String(randomDay).padStart(2, '0')}${String(5000 + Math.floor(Math.random() * 5000))}080`,
+                    dateOfBirth: birthDate,
+                    gender: randomGender,
                     departmentId: deptId,
                     jobTitleId: jobId,
                     branchId,

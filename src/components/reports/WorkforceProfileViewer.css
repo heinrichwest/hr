@@ -1,0 +1,262 @@
+/* ============================================================
+   WORKFORCE PROFILE VIEWER STYLES
+   Task Group 6: Field Guide Protocol compliant styling with charts
+   ============================================================ */
+
+.workforce-profile-viewer {
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    box-shadow:
+        0 1px 3px hsl(0, 0%, 0%, 0.1),
+        0 4px 6px hsl(0, 0%, 0%, 0.05);
+}
+
+/* Report Header */
+.workforce-profile-viewer .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px;
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.workforce-profile-viewer .report-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(220, 70%, 30%);
+    margin: 0 0 12px 0;
+}
+
+.workforce-profile-viewer .report-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.workforce-profile-viewer .meta-item {
+    display: flex;
+    gap: 8px;
+}
+
+.workforce-profile-viewer .meta-label {
+    font-weight: 500;
+    color: hsl(220, 10%, 60%);
+}
+
+.workforce-profile-viewer .meta-value {
+    font-weight: 600;
+    color: hsl(220, 10%, 20%);
+}
+
+.workforce-profile-viewer .report-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Report Content */
+.workforce-profile-viewer .report-content {
+    padding: 24px;
+}
+
+.report-section {
+    margin-bottom: 32px;
+}
+
+.report-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: hsl(220, 10%, 20%);
+    margin: 0 0 20px 0;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: hsl(220, 70%, 98%);
+    border: 1px solid hsl(220, 70%, 90%);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: inset 0 1px 2px hsl(220, 70%, 95%);
+}
+
+.card-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: hsl(220, 10%, 60%);
+    margin-bottom: 8px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: hsl(220, 70%, 40%);
+}
+
+/* Chart Containers */
+.chart-container {
+    background: hsl(0, 0%, 99%);
+    border: 1px solid hsl(0, 0%, 95%);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Data Tables */
+.data-table-container {
+    overflow-x: auto;
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 95%);
+    border-radius: 8px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.data-table thead th {
+    background: hsl(220, 10%, 98%);
+    color: hsl(220, 10%, 30%);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid hsl(0, 0%, 90%);
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.data-table tbody tr:hover {
+    background: hsl(220, 70%, 98%);
+}
+
+.data-table tbody td {
+    padding: 12px 16px;
+    color: hsl(220, 10%, 20%);
+}
+
+.data-table td.numeric {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Type Indicator */
+.type-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* Demographics Subsections */
+.demographics-subsection {
+    margin-bottom: 24px;
+}
+
+.demographics-subsection:last-child {
+    margin-bottom: 0;
+}
+
+.subsection-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: hsl(220, 10%, 40%);
+    margin: 0 0 12px 0;
+}
+
+/* Footer Actions */
+.workforce-profile-viewer .report-footer-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px 24px;
+    border-top: 1px solid hsl(0, 0%, 95%);
+    background: hsl(0, 0%, 98%);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .workforce-profile-viewer .report-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .workforce-profile-viewer .report-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .workforce-profile-viewer .report-content {
+        padding: 16px;
+    }
+
+    .chart-container {
+        padding: 12px;
+    }
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card-value {
+        font-size: 24px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .workforce-profile-viewer .report-actions,
+    .workforce-profile-viewer .report-footer-actions {
+        display: none;
+    }
+
+    .workforce-profile-viewer {
+        box-shadow: none;
+    }
+
+    .chart-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .report-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

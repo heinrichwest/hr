@@ -1,0 +1,367 @@
+/* ============================================================
+   REPORT GENERATION MODAL STYLES
+   Following Field Guide Design Principles
+   ============================================================ */
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: hsl(0, 0%, 0%, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Modal Container */
+.modal-container {
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 10px 30px hsl(0, 0%, 0%, 0.2),
+        0 4px 8px hsl(0, 0%, 0%, 0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: hsl(220, 10%, 20%);
+    color: hsl(0, 0%, 100%);
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: hsl(0, 0%, 100%);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: hsl(0, 0%, 100%, 0.1);
+}
+
+/* Modal Subtitle */
+.modal-subtitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: hsl(0, 0%, 98%);
+    border-bottom: 1px solid hsl(0, 0%, 90%);
+}
+
+.modal-report-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 10%, 30%);
+}
+
+.modal-step-info {
+    font-size: 13px;
+    color: hsl(220, 10%, 60%);
+}
+
+/* Error Message */
+.modal-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: hsl(0, 70%, 96%);
+    border-bottom: 1px solid hsl(0, 70%, 85%);
+    color: hsl(0, 70%, 30%);
+    font-size: 14px;
+}
+
+.modal-error svg {
+    flex-shrink: 0;
+}
+
+/* Search Bar */
+.modal-search {
+    position: relative;
+    padding: 16px 24px;
+    border-bottom: 1px solid hsl(0, 0%, 90%);
+}
+
+.modal-search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid hsl(0, 0%, 80%);
+    border-radius: 6px;
+    font-size: 14px;
+    background: hsl(0, 0%, 100%);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-search-input:focus {
+    outline: none;
+    border-color: hsl(220, 70%, 50%);
+    box-shadow: 0 0 0 3px hsl(220, 70%, 50%, 0.1);
+}
+
+.modal-search-icon {
+    position: absolute;
+    left: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: hsl(0, 0%, 60%);
+    pointer-events: none;
+}
+
+/* List Container */
+.modal-list-container {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 200px;
+    max-height: calc(80vh - 300px);
+}
+
+.modal-list {
+    padding: 8px 0;
+}
+
+/* List Item */
+.modal-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.modal-list-item:hover {
+    background: hsl(220, 70%, 98%);
+}
+
+.modal-list-item:last-child {
+    border-bottom: none;
+}
+
+.modal-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: hsl(220, 70%, 50%);
+    flex-shrink: 0;
+}
+
+.modal-item-text {
+    font-size: 14px;
+    color: hsl(220, 10%, 20%);
+    flex: 1;
+}
+
+.modal-item-secondary {
+    color: hsl(220, 10%, 60%);
+    font-size: 13px;
+}
+
+/* Loading State */
+.modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    gap: 16px;
+}
+
+.modal-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid hsl(0, 0%, 90%);
+    border-top-color: hsl(220, 70%, 50%);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.modal-loading span {
+    font-size: 14px;
+    color: hsl(220, 10%, 60%);
+}
+
+/* Empty State */
+.modal-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    font-size: 14px;
+    color: hsl(220, 10%, 60%);
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid hsl(0, 0%, 90%);
+    background: hsl(0, 0%, 98%);
+    border-radius: 0 0 8px 8px;
+}
+
+.modal-selection-count {
+    font-size: 14px;
+    color: hsl(220, 10%, 60%);
+    font-weight: 500;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn--primary {
+    background: hsl(220, 70%, 50%);
+    color: hsl(0, 0%, 100%);
+    box-shadow:
+        0 1px 2px hsl(0, 0%, 0%, 0.05),
+        inset 0 1px 0 hsl(0, 0%, 100%, 0.1);
+}
+
+.btn--primary:hover:not(:disabled) {
+    background: hsl(220, 70%, 45%);
+    box-shadow:
+        0 2px 4px hsl(0, 0%, 0%, 0.1),
+        inset 0 1px 0 hsl(0, 0%, 100%, 0.1);
+}
+
+.btn--primary:disabled {
+    background: hsl(0, 0%, 85%);
+    color: hsl(0, 0%, 60%);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn--secondary {
+    background: hsl(0, 0%, 100%);
+    color: hsl(220, 10%, 30%);
+    border: 1px solid hsl(0, 0%, 80%);
+}
+
+.btn--secondary:hover {
+    background: hsl(0, 0%, 96%);
+    border-color: hsl(0, 0%, 70%);
+}
+
+.btn svg {
+    flex-shrink: 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-container {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+    }
+
+    .modal-title {
+        font-size: 16px;
+    }
+
+    .modal-subtitle,
+    .modal-search {
+        padding: 12px 20px;
+    }
+
+    .modal-list-item {
+        padding: 10px 20px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .modal-selection-count {
+        text-align: center;
+    }
+
+    .modal-actions {
+        justify-content: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

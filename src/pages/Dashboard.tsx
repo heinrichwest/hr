@@ -18,6 +18,8 @@ import { NotificationService } from "../services/notificationService";
 import { EmployeeService } from "../services/employeeService";
 import { LeaveService } from "../services/leaveService";
 import { TakeOnSheetService } from "../services/takeOnSheetService";
+import { Seeder } from "../services/seeder";
+import { ReportsCard } from "./admin/ReportsCard";
 import type { Company } from "../types/company";
 import "./Dashboard.css";
 
@@ -39,6 +41,7 @@ export function Dashboard() {
     const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
+    const [seeding, setSeeding] = useState(false);
     const [stats, setStats] = useState<DashboardStats>({
         pendingTasks: 0,
         notifications: 0,
@@ -205,6 +208,25 @@ export function Dashboard() {
             navigate(`/take-on-sheets?companyId=${selectedCompanyId}`);
         } else {
             navigate('/take-on-sheets');
+        }
+    };
+
+    // Handle seed demo data
+    const handleSeedDemoData = async () => {
+        if (!window.confirm('This will DELETE all existing companies and employees, then create fresh demo data with realistic South African names. Continue?')) {
+            return;
+        }
+
+        setSeeding(true);
+        try {
+            await Seeder.clearAndReseed();
+            alert('Demo data created successfully! Refreshing page...');
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to seed database:', error);
+            alert('Failed to create demo data. Check console for errors.');
+        } finally {
+            setSeeding(false);
         }
     };
 
@@ -415,6 +437,11 @@ export function Dashboard() {
                         <span className="stat-label">Take On Sheets</span>
                     </div>
                 </div>
+
+                {/* Reports Card - System Admin only */}
+                {isSystemAdmin && (
+                    <ReportsCard companyId={selectedCompanyId || undefined} />
+                )}
             </div>
 
             {/* Content Grid */}
@@ -539,15 +566,29 @@ export function Dashboard() {
                                     </svg>
                                     System Settings
                                 </Button>
-                                <Button variant="secondary">
+                                <Link to="/admin/reports">
+                                    <Button variant="secondary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <polyline points="14 2 14 8 20 8" />
+                                            <line x1="16" y1="13" x2="8" y2="13" />
+                                            <line x1="16" y1="17" x2="8" y2="17" />
+                                            <polyline points="10 9 9 9 8 9" />
+                                        </svg>
+                                        View Reports
+                                    </Button>
+                                </Link>
+                                <Button
+                                    variant="secondary"
+                                    onClick={handleSeedDemoData}
+                                    disabled={seeding}
+                                >
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                        <polyline points="14 2 14 8 20 8" />
-                                        <line x1="16" y1="13" x2="8" y2="13" />
-                                        <line x1="16" y1="17" x2="8" y2="17" />
-                                        <polyline points="10 9 9 9 8 9" />
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                        <line x1="12" y1="22.08" x2="12" y2="12" />
                                     </svg>
-                                    View Reports
+                                    {seeding ? 'Creating Data...' : 'Seed Demo Data'}
                                 </Button>
                             </div>
                         </div>

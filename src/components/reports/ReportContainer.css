@@ -1,0 +1,142 @@
+/* ============================================================
+   REPORT CONTAINER STYLES
+   Task Group 6: Loading, error, and empty state styling
+   ============================================================ */
+
+/* Loading State */
+.report-container-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    padding: 48px;
+    box-shadow:
+        0 1px 3px hsl(0, 0%, 0%, 0.1),
+        0 4px 6px hsl(0, 0%, 0%, 0.05);
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid hsl(220, 10%, 95%);
+    border-top-color: hsl(220, 70%, 50%);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.report-container-loading p {
+    font-size: 16px;
+    font-weight: 500;
+    color: hsl(220, 10%, 60%);
+    margin: 0;
+}
+
+/* Error State */
+.report-container-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    padding: 48px;
+    text-align: center;
+    box-shadow:
+        0 1px 3px hsl(0, 0%, 0%, 0.1),
+        0 4px 6px hsl(0, 0%, 0%, 0.05);
+}
+
+.error-icon {
+    margin-bottom: 24px;
+}
+
+.report-container-error h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(0, 60%, 40%);
+    margin: 0 0 12px 0;
+}
+
+.report-container-error p {
+    font-size: 16px;
+    color: hsl(220, 10%, 60%);
+    margin: 0;
+    max-width: 500px;
+}
+
+/* Empty State */
+.report-container-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    padding: 48px;
+    text-align: center;
+    box-shadow:
+        0 1px 3px hsl(0, 0%, 0%, 0.1),
+        0 4px 6px hsl(0, 0%, 0%, 0.05);
+}
+
+.empty-icon {
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.report-container-empty h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(220, 10%, 40%);
+    margin: 0 0 12px 0;
+}
+
+.report-container-empty p {
+    font-size: 16px;
+    color: hsl(220, 10%, 60%);
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .report-container-loading,
+    .report-container-error,
+    .report-container-empty {
+        min-height: 300px;
+        padding: 32px 24px;
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+    }
+
+    .error-icon svg,
+    .empty-icon svg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .report-container-error h3,
+    .report-container-empty h3 {
+        font-size: 17px;
+    }
+
+    .report-container-error p,
+    .report-container-empty p {
+        font-size: 15px;
+    }
+}

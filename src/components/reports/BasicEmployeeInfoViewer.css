@@ -1,0 +1,290 @@
+/* ============================================================
+   BASIC EMPLOYEE INFO VIEWER STYLES
+   Task Group 6: Field Guide Protocol compliant styling
+   ============================================================ */
+
+.basic-employee-info-viewer {
+    background: hsl(0, 0%, 100%);
+    border-radius: 8px;
+    box-shadow:
+        0 1px 3px hsl(0, 0%, 0%, 0.1),
+        0 4px 6px hsl(0, 0%, 0%, 0.05);
+}
+
+/* Report Header */
+.basic-employee-info-viewer .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px;
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.basic-employee-info-viewer .report-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(220, 70%, 30%);
+    margin: 0 0 12px 0;
+}
+
+.basic-employee-info-viewer .report-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.basic-employee-info-viewer .meta-item {
+    display: flex;
+    gap: 8px;
+}
+
+.basic-employee-info-viewer .meta-label {
+    font-weight: 500;
+    color: hsl(220, 10%, 60%);
+}
+
+.basic-employee-info-viewer .meta-value {
+    font-weight: 600;
+    color: hsl(220, 10%, 20%);
+}
+
+.basic-employee-info-viewer .report-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Filters Section */
+.report-filters {
+    padding: 20px 24px;
+    background: hsl(0, 0%, 98%);
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.filter-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.search-field {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-field svg {
+    position: absolute;
+    left: 12px;
+    color: hsl(220, 10%, 60%);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid hsl(0, 0%, 90%);
+    border-radius: 6px;
+    background: hsl(0, 0%, 100%);
+    color: hsl(220, 10%, 20%);
+    font-size: 16px;
+    box-shadow: inset 0 1px 2px hsl(0, 0%, 0%, 0.05);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: hsl(220, 70%, 50%);
+    box-shadow:
+        inset 0 1px 2px hsl(0, 0%, 0%, 0.05),
+        0 0 0 3px hsl(220, 70%, 50%, 0.1);
+}
+
+.filter-select {
+    padding: 10px 12px;
+    border: 1px solid hsl(0, 0%, 90%);
+    border-radius: 6px;
+    background: hsl(0, 0%, 100%);
+    color: hsl(220, 10%, 20%);
+    font-size: 16px;
+    min-width: 160px;
+}
+
+.filter-summary {
+    color: hsl(220, 10%, 60%);
+    font-size: 16px;
+}
+
+/* Table Container */
+.basic-employee-info-viewer .table-container {
+    overflow-x: auto;
+    padding: 24px;
+}
+
+.basic-employee-info-viewer .employee-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 16px;
+}
+
+.basic-employee-info-viewer .employee-table thead th {
+    background: hsl(220, 10%, 98%);
+    color: hsl(220, 10%, 30%);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid hsl(0, 0%, 90%);
+    white-space: nowrap;
+}
+
+.basic-employee-info-viewer .employee-table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.basic-employee-info-viewer .employee-table thead th.sortable:hover {
+    background: hsl(220, 10%, 95%);
+}
+
+.basic-employee-info-viewer .employee-table tbody tr {
+    border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.basic-employee-info-viewer .employee-table tbody tr:hover {
+    background: hsl(220, 70%, 98%);
+}
+
+.basic-employee-info-viewer .employee-table tbody td {
+    padding: 12px 16px;
+    color: hsl(220, 10%, 20%);
+}
+
+/* Cell-specific styling */
+.emp-number {
+    font-weight: 600;
+    color: hsl(220, 70%, 40%);
+}
+
+.emp-name {
+    font-weight: 500;
+}
+
+.emp-id {
+    font-family: monospace;
+    color: hsl(220, 10%, 50%);
+}
+
+.emp-contact {
+    font-size: 15px;
+}
+
+.contact-secondary {
+    color: hsl(220, 10%, 60%);
+    font-size: 14px;
+}
+
+.emp-dob {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.age-badge,
+.years-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    background: hsl(220, 10%, 95%);
+    color: hsl(220, 10%, 50%);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-active {
+    background: hsl(140, 50%, 95%);
+    color: hsl(140, 50%, 35%);
+}
+
+.status-inactive {
+    background: hsl(0, 0%, 95%);
+    color: hsl(0, 0%, 50%);
+}
+
+.status-terminated {
+    background: hsl(0, 50%, 95%);
+    color: hsl(0, 50%, 40%);
+}
+
+/* Footer Actions */
+.basic-employee-info-viewer .report-footer-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px 24px;
+    border-top: 1px solid hsl(0, 0%, 95%);
+    background: hsl(0, 0%, 98%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .basic-employee-info-viewer .report-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .basic-employee-info-viewer .report-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .search-field {
+        width: 100%;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .basic-employee-info-viewer .table-container {
+        padding: 12px;
+    }
+
+    .basic-employee-info-viewer .employee-table {
+        font-size: 14px;
+    }
+
+    .basic-employee-info-viewer .employee-table thead th,
+    .basic-employee-info-viewer .employee-table tbody td {
+        padding: 8px 12px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .basic-employee-info-viewer .report-actions,
+    .basic-employee-info-viewer .report-footer-actions,
+    .report-filters {
+        display: none;
+    }
+
+    .basic-employee-info-viewer {
+        box-shadow: none;
+    }
+
+    .basic-employee-info-viewer .employee-table {
+        font-size: 10px;
+    }
+}
