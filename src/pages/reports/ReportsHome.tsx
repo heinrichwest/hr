@@ -87,8 +87,8 @@ export function ReportsHome() {
                 </div>
             </div>
 
-            {/* Dashboard Metrics */}
-            {loading ? (
+            {/* Dashboard Metrics - Only show when there's a companyId and data */}
+            {userProfile?.companyId && loading && (
                 <div className="reports-metrics">
                     {[1, 2, 3, 4, 5, 6].map(i => (
                         <div key={i} className="reports-metric-card">
@@ -96,7 +96,9 @@ export function ReportsHome() {
                         </div>
                     ))}
                 </div>
-            ) : metrics && (
+            )}
+
+            {userProfile?.companyId && !loading && metrics && (
                 <div className="reports-metrics">
                     <div className="reports-metric-card">
                         <div className="reports-metric-header">

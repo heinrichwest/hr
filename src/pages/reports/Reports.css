@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-1);
     gap: var(--space-4);
 }
 
@@ -38,7 +38,7 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-2);
 }
 
 @media (max-width: 1200px) {
@@ -557,6 +557,34 @@
     margin: 0;
 }
 
+/* Error State */
+.report-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12);
+    text-align: center;
+}
+
+.report-error-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: hsl(0, 60%, 95%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-4);
+    color: hsl(0, 60%, 50%);
+}
+
+.report-error-text {
+    font-size: var(--text-base);
+    color: var(--color-text);
+    margin: 0 0 var(--space-4) 0;
+}
+
 /* Tabs */
 .report-tabs {
     display: flex;
@@ -670,6 +698,10 @@
     color: var(--color-text);
     cursor: pointer;
     transition: background var(--transition-fast);
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
 }
 
 .export-dropdown-item:hover {
@@ -863,4 +895,157 @@
 .status-badge {
     font-weight: 500;
     font-size: 16px;
+}
+
+/* ============================================================
+   ABSENTEEISM EXPORT BUTTON STYLES
+   Task Group 4: Export UI Component Styles
+   ============================================================ */
+
+.export-button-container {
+    position: relative;
+}
+
+.export-button-wrapper {
+    position: relative;
+}
+
+.export-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 10%, 20%);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 88%);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.export-button:hover:not(:disabled) {
+    border-color: hsl(220, 70%, 40%);
+    background: hsl(220, 70%, 98%);
+}
+
+.export-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.export-button svg {
+    flex-shrink: 0;
+}
+
+.spinning-icon {
+    animation: spin 1s linear infinite;
+}
+
+.export-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 180px;
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsl(0, 0%, 88%);
+    border-radius: 8px;
+    box-shadow:
+        0 4px 6px hsl(0, 0%, 0%, 0.07),
+        0 8px 16px hsl(0, 0%, 0%, 0.05);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.export-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: hsl(220, 10%, 20%);
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.export-dropdown-item:hover {
+    background: hsl(220, 70%, 98%);
+}
+
+.export-dropdown-item svg {
+    color: hsl(220, 10%, 60%);
+    flex-shrink: 0;
+}
+
+.export-dropdown-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+}
+
+.export-error-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: hsl(0, 60%, 95%);
+    border: 1px solid hsl(0, 60%, 85%);
+    border-radius: 8px;
+    box-shadow:
+        0 4px 8px hsl(0, 0%, 0%, 0.1),
+        0 8px 16px hsl(0, 0%, 0%, 0.05);
+    z-index: 200;
+    max-width: 400px;
+    animation: slideInFromRight 0.3s ease;
+}
+
+.export-error-toast svg {
+    color: hsl(0, 60%, 50%);
+    flex-shrink: 0;
+}
+
+.export-error-toast span {
+    font-size: 14px;
+    color: hsl(0, 60%, 30%);
+    flex: 1;
+}
+
+.export-error-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: hsl(0, 60%, 50%);
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.export-error-close:hover {
+    color: hsl(0, 60%, 35%);
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
