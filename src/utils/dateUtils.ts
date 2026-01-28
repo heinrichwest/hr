@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { LeaveRequest } from '../types/leave';
+import type { Timestamp } from 'firebase/firestore';
 
 /**
  * Calculate business days in a date range excluding weekends and public holidays
@@ -213,4 +214,47 @@ export function getNextBusinessDay(date: Date): Date {
     }
 
     return result;
+}
+
+/**
+ * Format timestamp as relative time string (e.g., "2 min ago", "Yesterday")
+ * @param timestamp - Firestore Timestamp or Date object
+ * @returns Relative time string
+ */
+export function getRelativeTime(timestamp: Timestamp | Date): string {
+    // Convert Firestore Timestamp to Date if needed
+    const date = timestamp instanceof Date ? timestamp : timestamp.toDate();
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    // Less than 1 minute
+    if (diffInMinutes < 1) {
+        return 'Just now';
+    }
+
+    // Less than 60 minutes
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} min ago`;
+    }
+
+    // Less than 24 hours
+    if (diffInHours < 24) {
+        return `${diffInHours} hr ago`;
+    }
+
+    // Yesterday
+    if (diffInDays === 1) {
+        return 'Yesterday';
+    }
+
+    // More than 2 days
+    if (diffInDays >= 2) {
+        return `${diffInDays} days ago`;
+    }
+
+    // Fallback (should not reach here)
+    return 'Recently';
 }

@@ -4,59 +4,104 @@
 // ============================================================
 
 import { Timestamp } from 'firebase/firestore';
-import type { UserRole } from './user';
 
 /**
- * Type of notification
+ * Type of notification - specific categories for different notification purposes
  */
-export type NotificationType = 'info' | 'warning' | 'success' | 'error' | 'system';
+export type NotificationType =
+    | 'leave_request'
+    | 'announcement'
+    | 'performance'
+    | 'training'
+    | 'attendance'
+    | 'payroll_cutoff';
+
+/**
+ * Priority level of notification
+ */
+export type NotificationPriority = 'high' | 'medium' | 'low';
 
 /**
  * Notification interface
- * Represents a system notification that can be global or company-specific
+ * Represents a user-specific or broadcast notification with tenant isolation
  */
 export interface Notification {
     /** Unique identifier for the notification */
     id: string;
 
-    /** Type of notification (affects styling and priority) */
+    /** Company ID this notification is for (null for System Admin global notifications) */
+    companyId: string | null;
+
+    /** User ID this notification is for, or 'ALL' for broadcast notifications */
+    userId: string;
+
+    /** Type of notification */
     type: NotificationType;
+
+    /** Priority level (affects color coding: high=red, medium=yellow, low=green) */
+    priority: NotificationPriority;
 
     /** Short title for the notification */
     title: string;
 
-    /** Full notification message */
-    message: string;
-
-    /** Company ID this notification is for (null for global notifications) */
-    companyId: string | null;
-
-    /** Timestamp when the notification was created */
-    createdAt: Timestamp;
+    /** Full notification description/message */
+    description: string;
 
     /** Whether the notification has been read */
     isRead: boolean;
 
-    /** Role(s) this notification is intended for (null for all roles) */
-    recipientRole: UserRole | null;
+    /** Whether the underlying action has been completed (e.g., leave request approved) */
+    isResolved: boolean;
+
+    /** Whether the user has dismissed this notification */
+    isDismissed: boolean;
+
+    /** Timestamp when the notification was created */
+    createdAt: Timestamp;
+
+    /** Timestamp when the notification was resolved (optional) */
+    resolvedAt?: Timestamp;
+
+    /** Timestamp when the notification was archived (optional) */
+    archivedAt?: Timestamp;
+
+    /** Additional context-specific metadata */
+    metadata?: {
+        /** ID of related entity (e.g., leaveRequestId, employeeId) */
+        relatedEntityId?: string;
+        /** Type of related entity (e.g., 'leave_request', 'employee') */
+        relatedEntityType?: string;
+        /** Allow additional custom fields */
+        [key: string]: unknown;
+    };
 }
 
 /**
  * Data required to create a new notification
  */
 export interface CreateNotificationData {
+    /** Company ID this notification is for (null for System Admin global notifications) */
+    companyId: string | null;
+
+    /** User ID this notification is for, or 'ALL' for broadcast notifications */
+    userId: string;
+
     /** Type of notification */
     type: NotificationType;
+
+    /** Priority level (high, medium, low) */
+    priority: NotificationPriority;
 
     /** Short title for the notification */
     title: string;
 
-    /** Full notification message */
-    message: string;
+    /** Full notification description/message */
+    description: string;
 
-    /** Company ID this notification is for (optional, null for global) */
-    companyId?: string | null;
-
-    /** Role this notification is intended for (optional, null for all roles) */
-    recipientRole?: UserRole | null;
+    /** Optional metadata for context-specific information */
+    metadata?: {
+        relatedEntityId?: string;
+        relatedEntityType?: string;
+        [key: string]: unknown;
+    };
 }

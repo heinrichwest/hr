@@ -1,34 +1,60 @@
 // ============================================================
-// NOTIFICATIONS PAGE
-// System Admin page for viewing and managing notifications
+// NOTIFICATIONS PAGE (REFACTORED)
+// Multi-role accessible page for viewing and managing notifications
+// Task Group 5: Refactored for user-specific notifications with pagination and filters
 // ============================================================
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { NotificationService } from '../../services/notificationService';
 import { useAuth } from '../../contexts/AuthContext';
-import type { Notification, NotificationType } from '../../types/notification';
+import type { Notification, NotificationPriority } from '../../types/notification';
 import { Button } from '../../components/Button/Button';
 import { MainLayout } from '../../components/Layout/MainLayout';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '../../components/ui/pagination';
+import { getRelativeTime } from '../../utils/dateUtils';
+import { getPriorityColor } from '../../utils/notificationUtils';
 import './Notifications.css';
 
+const ITEMS_PER_PAGE = 20;
+
 export function Notifications() {
-    const { userProfile } = useAuth();
+    const { userProfile, currentUser } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
     const [markingAll, setMarkingAll] = useState(false);
     const [markingId, setMarkingId] = useState<string | null>(null);
+    const [seeding, setSeeding] = useState(false);
+
+    // Get current page and filter from URL params
+    const currentPage = parseInt(searchParams.get('page') || '1', 10);
+    const activeFilter = (searchParams.get('filter') || 'all') as 'all' | 'unread' | 'read';
 
     // Initial load
     useEffect(() => {
         loadNotifications();
     }, []);
 
-    // Load notifications
+    // Load notifications for current user
     const loadNotifications = async () => {
+        if (!userProfile || !currentUser) return;
+
         setLoading(true);
         try {
-            // For System Admin, load all notifications (global)
-            const data = await NotificationService.getNotifications();
+            // Determine companyId based on role
+            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+
+            // Load user-specific notifications
+            const data = await NotificationService.getUserNotifications(companyId, currentUser.uid);
             setNotifications(data);
         } catch (error) {
             console.error('Failed to load notifications:', error);
@@ -55,9 +81,12 @@ export function Notifications() {
 
     // Mark all notifications as read
     const handleMarkAllAsRead = async () => {
+        if (!userProfile || !currentUser) return;
+
         setMarkingAll(true);
         try {
-            await NotificationService.markAllAsRead();
+            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            await NotificationService.markAllAsRead(companyId, currentUser.uid);
             // Update local state
             setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
         } catch (error) {
@@ -67,69 +96,102 @@ export function Notifications() {
         }
     };
 
-    // Get notification icon based on type
-    const getNotificationIcon = (type: NotificationType) => {
-        switch (type) {
-            case 'info':
-                return <InfoIcon />;
-            case 'warning':
-                return <WarningIcon />;
-            case 'success':
-                return <SuccessIcon />;
-            case 'error':
-                return <ErrorIcon />;
-            case 'system':
-                return <SystemIcon />;
-            default:
-                return <InfoIcon />;
+    // Seed demo notifications for testing
+    const handleSeedDemoData = async () => {
+        if (!userProfile || !currentUser) return;
+
+        if (!window.confirm('This will create 12 demo notifications for testing. Continue?')) {
+            return;
+        }
+
+        setSeeding(true);
+        try {
+            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            await NotificationService.seedDemoNotifications(companyId, currentUser.uid);
+            // Reload notifications after seeding
+            await loadNotifications();
+        } catch (error) {
+            console.error('Failed to seed notifications:', error);
+            alert('Failed to seed demo notifications. Check console for errors.');
+        } finally {
+            setSeeding(false);
         }
     };
 
-    // Get notification type class
-    const getNotificationTypeClass = (type: NotificationType) => {
-        return `notification-type--${type}`;
+    // Clear all notifications for testing
+    const handleClearNotifications = async () => {
+        if (!userProfile || !currentUser) return;
+
+        if (!window.confirm('This will delete ALL your notifications. Continue?')) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            await NotificationService.clearDemoNotifications(companyId, currentUser.uid);
+            setNotifications([]);
+        } catch (error) {
+            console.error('Failed to clear notifications:', error);
+            alert('Failed to clear notifications. Check console for errors.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Format date for display
-    const formatDate = (timestamp: Notification['createdAt']) => {
-        if (!timestamp) return 'Unknown';
-        try {
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp as unknown as string);
-            return date.toLocaleDateString('en-ZA', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        } catch {
-            return 'Unknown';
+    // Filter notifications based on active filter
+    const filteredNotifications = notifications.filter(n => {
+        if (activeFilter === 'unread') return !n.isRead;
+        if (activeFilter === 'read') return n.isRead;
+        return true; // 'all' shows all (already filtered by service to exclude resolved/dismissed)
+    });
+
+    // Paginate filtered notifications
+    const totalPages = Math.ceil(filteredNotifications.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedNotifications = filteredNotifications.slice(startIndex, endIndex);
+
+    // Handle page change
+    const handlePageChange = (page: number) => {
+        setSearchParams({ page: page.toString(), filter: activeFilter });
+    };
+
+    // Handle filter tab change
+    const handleFilterChange = (filter: string) => {
+        setSearchParams({ page: '1', filter });
+    };
+
+    // Get notification icon based on priority
+    const getNotificationIcon = (priority: NotificationPriority) => {
+        const color = getPriorityColor(priority);
+
+        switch (priority) {
+            case 'high':
+                return <ErrorIcon color={color} />;
+            case 'medium':
+                return <WarningIcon color={color} />;
+            case 'low':
+                return <SuccessIcon color={color} />;
+            default:
+                return <InfoIcon color={color} />;
         }
     };
 
     // Count unread notifications
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
-    // Check if user has permission
-    const isSystemAdmin = userProfile?.role === 'System Admin' || userProfile?.role?.toLowerCase() === 'system admin';
-
-    if (!isSystemAdmin) {
-        return (
-            <MainLayout>
-                <div className="notifications-access-denied">
-                    <div className="notifications-access-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <circle cx="12" cy="12" r="10" />
-                            <line x1="12" y1="8" x2="12" y2="12" />
-                            <line x1="12" y1="16" x2="12.01" y2="16" />
-                        </svg>
-                    </div>
-                    <h2>Access Denied</h2>
-                    <p>You do not have permission to view this page.</p>
-                </div>
-            </MainLayout>
-        );
-    }
+    // Get empty state message based on active filter
+    const getEmptyStateMessage = () => {
+        switch (activeFilter) {
+            case 'unread':
+                return 'No unread notifications';
+            case 'read':
+                return 'No read notifications';
+            default:
+                return 'No notifications to display';
+        }
+    };
 
     return (
         <MainLayout>
@@ -138,7 +200,7 @@ export function Notifications() {
                 <div className="notifications-header-content">
                     <h1 className="notifications-title">Notifications</h1>
                     <p className="notifications-subtitle">
-                        View and manage system notifications
+                        View and manage your notifications
                         {unreadCount > 0 && (
                             <span className="notifications-unread-badge">
                                 {unreadCount} unread
@@ -168,7 +230,54 @@ export function Notifications() {
                             Mark All as Read
                         </Button>
                     )}
+                    {/* Demo data buttons - for testing */}
+                    <Button
+                        variant="secondary"
+                        onClick={handleSeedDemoData}
+                        disabled={seeding || loading}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                        </svg>
+                        {seeding ? 'Seeding...' : 'Seed Demo Data'}
+                    </Button>
+                    {notifications.length > 0 && (
+                        <Button
+                            variant="secondary"
+                            onClick={handleClearNotifications}
+                            disabled={loading}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                            Clear All
+                        </Button>
+                    )}
                 </div>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="notifications-tabs animate-scale-in">
+                <Tabs value={activeFilter} onValueChange={handleFilterChange}>
+                    <TabsList>
+                        <TabsTrigger value="all">All</TabsTrigger>
+                        <TabsTrigger value="unread">Unread</TabsTrigger>
+                        <TabsTrigger value="read">Read</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="all">
+                        {/* Content is rendered below */}
+                    </TabsContent>
+                    <TabsContent value="unread">
+                        {/* Content is rendered below */}
+                    </TabsContent>
+                    <TabsContent value="read">
+                        {/* Content is rendered below */}
+                    </TabsContent>
+                </Tabs>
             </div>
 
             {/* Notifications List */}
@@ -186,7 +295,7 @@ export function Notifications() {
                             </div>
                         ))}
                     </div>
-                ) : notifications.length === 0 ? (
+                ) : paginatedNotifications.length === 0 ? (
                     <div className="notifications-empty">
                         <div className="notifications-empty-icon">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -194,81 +303,111 @@ export function Notifications() {
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                             </svg>
                         </div>
-                        <p className="notifications-empty-text">No notifications</p>
+                        <p className="notifications-empty-text">{getEmptyStateMessage()}</p>
                         <p className="notifications-empty-hint">
-                            System notifications will appear here when there are updates
+                            {activeFilter === 'all'
+                                ? 'System notifications will appear here when there are updates'
+                                : 'Try switching to a different filter tab'}
                         </p>
                     </div>
                 ) : (
-                    <div className="notifications-list">
-                        {notifications.map((notification) => (
-                            <div
-                                key={notification.id}
-                                className={`notification-item ${!notification.isRead ? 'notification-item--unread' : ''} ${getNotificationTypeClass(notification.type)}`}
-                            >
-                                <div className={`notification-icon ${getNotificationTypeClass(notification.type)}`}>
-                                    {getNotificationIcon(notification.type)}
-                                </div>
-                                <div className="notification-content">
-                                    <div className="notification-header">
-                                        <h3 className="notification-title">{notification.title}</h3>
-                                        <span className={`notification-type-badge ${getNotificationTypeClass(notification.type)}`}>
-                                            {notification.type}
-                                        </span>
+                    <>
+                        <div className="notifications-list">
+                            {paginatedNotifications.map((notification) => (
+                                <div
+                                    key={notification.id}
+                                    className={`notification-item ${!notification.isRead ? 'notification-item--unread' : ''} notification-priority--${notification.priority}`}
+                                >
+                                    <div
+                                        className={`notification-icon notification-priority--${notification.priority}`}
+                                        style={{ color: getPriorityColor(notification.priority) }}
+                                    >
+                                        {getNotificationIcon(notification.priority)}
                                     </div>
-                                    <p className="notification-message">{notification.message}</p>
-                                    <div className="notification-meta">
-                                        <span className="notification-date">
-                                            {formatDate(notification.createdAt)}
-                                        </span>
-                                        {notification.recipientRole && (
-                                            <span className="notification-role">
-                                                For: {notification.recipientRole}
+                                    <div className="notification-content">
+                                        <div className="notification-header">
+                                            <h3 className="notification-title">{notification.title}</h3>
+                                            <span className="notification-timestamp">
+                                                {getRelativeTime(notification.createdAt)}
                                             </span>
+                                        </div>
+                                        <p className="notification-description">{notification.description}</p>
+                                    </div>
+                                    <div className="notification-actions">
+                                        {!notification.isRead && (
+                                            <button
+                                                className="notification-action-btn"
+                                                onClick={() => handleMarkAsRead(notification.id)}
+                                                disabled={markingId === notification.id}
+                                                title="Mark as read"
+                                                aria-label="Mark as read"
+                                            >
+                                                {markingId === notification.id ? (
+                                                    <span className="notification-action-loading" />
+                                                ) : (
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <polyline points="20 6 9 17 4 12" />
+                                                    </svg>
+                                                )}
+                                            </button>
                                         )}
                                     </div>
                                 </div>
-                                <div className="notification-actions">
-                                    {!notification.isRead && (
-                                        <button
-                                            className="notification-action-btn"
-                                            onClick={() => handleMarkAsRead(notification.id)}
-                                            disabled={markingId === notification.id}
-                                            title="Mark as read"
-                                        >
-                                            {markingId === notification.id ? (
-                                                <span className="notification-action-loading" />
-                                            ) : (
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <polyline points="20 6 9 17 4 12" />
-                                                </svg>
-                                            )}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
 
-                {/* Footer */}
-                {!loading && notifications.length > 0 && (
-                    <div className="notifications-footer">
-                        <span className="notifications-count">
-                            Showing <strong>{notifications.length}</strong> notification{notifications.length !== 1 ? 's' : ''}
-                            {unreadCount > 0 && ` (${unreadCount} unread)`}
-                        </span>
-                    </div>
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="notifications-pagination">
+                                <Pagination>
+                                    <PaginationContent>
+                                        <PaginationItem>
+                                            <PaginationPrevious
+                                                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                                                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                                            />
+                                        </PaginationItem>
+
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink
+                                                    onClick={() => handlePageChange(page)}
+                                                    isActive={page === currentPage}
+                                                >
+                                                    {page}
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        ))}
+
+                                        <PaginationItem>
+                                            <PaginationNext
+                                                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                                                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                                            />
+                                        </PaginationItem>
+                                    </PaginationContent>
+                                </Pagination>
+                            </div>
+                        )}
+
+                        {/* Footer */}
+                        <div className="notifications-footer">
+                            <span className="notifications-count">
+                                Showing <strong>{startIndex + 1}-{Math.min(endIndex, filteredNotifications.length)}</strong> of <strong>{filteredNotifications.length}</strong> notification{filteredNotifications.length !== 1 ? 's' : ''}
+                                {unreadCount > 0 && ` (${unreadCount} unread)`}
+                            </span>
+                        </div>
+                    </>
                 )}
             </div>
         </MainLayout>
     );
 }
 
-// Icon Components
-function InfoIcon() {
+// Icon Components with priority-based colors
+function InfoIcon({ color }: { color: string }) {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="16" x2="12" y2="12" />
             <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -276,9 +415,9 @@ function InfoIcon() {
     );
 }
 
-function WarningIcon() {
+function WarningIcon({ color }: { color: string }) {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
             <line x1="12" y1="9" x2="12" y2="13" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -286,30 +425,21 @@ function WarningIcon() {
     );
 }
 
-function SuccessIcon() {
+function SuccessIcon({ color }: { color: string }) {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <polyline points="22 4 12 14.01 9 11.01" />
         </svg>
     );
 }
 
-function ErrorIcon() {
+function ErrorIcon({ color }: { color: string }) {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <line x1="15" y1="9" x2="9" y2="15" />
             <line x1="9" y1="9" x2="15" y2="15" />
-        </svg>
-    );
-}
-
-function SystemIcon() {
-    return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
     );
 }

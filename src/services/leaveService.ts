@@ -27,6 +27,9 @@ import type {
     LeaveRequestStatus,
     ApprovalRecord
 } from '../types/leave';
+import { NotificationService } from './notificationService';
+import { UserService } from './userService';
+import { EmployeeService } from './employeeService';
 
 // Helper to convert Firestore timestamps
 const convertTimestamps = <T extends DocumentData>(data: T): T => {
@@ -353,7 +356,65 @@ export const LeaveService = {
             ...request,
             createdAt: Timestamp.now()
         });
-        return docRef.id;
+
+        const leaveRequestId = docRef.id;
+
+        // ============================================================
+        // NOTIFICATION TRIGGER: Leave Request Submission
+        // ============================================================
+        try {
+            // Get employee details to find their name
+            const employee = await EmployeeService.getEmployee(request.employeeId);
+            const employeeName = employee
+                ? `${employee.firstName} ${employee.lastName}`
+                : request.employeeName || 'Employee';
+
+            // Create notification for Line Manager
+            if (employee?.managerId) {
+                // Get Line Manager's employee record to find their userId
+                const manager = await EmployeeService.getEmployee(employee.managerId);
+                if (manager?.userId) {
+                    await NotificationService.createNotification({
+                        companyId: request.companyId,
+                        userId: manager.userId,
+                        type: 'leave_request',
+                        priority: 'high',
+                        title: `New Leave Request from ${employeeName}`,
+                        description: `${employeeName} has requested ${request.workingDays} days of ${request.leaveTypeName}`,
+                        metadata: {
+                            relatedEntityId: leaveRequestId,
+                            relatedEntityType: 'leave_request'
+                        }
+                    });
+                }
+            }
+
+            // Create notifications for HR Admin and HR Manager roles
+            const hrUsers = await UserService.getAllUsers(request.companyId);
+            const hrRoles = ['HR Admin', 'HR Manager'];
+
+            for (const user of hrUsers) {
+                if (hrRoles.includes(user.role)) {
+                    await NotificationService.createNotification({
+                        companyId: request.companyId,
+                        userId: user.uid,
+                        type: 'leave_request',
+                        priority: 'high',
+                        title: `New Leave Request from ${employeeName}`,
+                        description: `${employeeName} has requested ${request.workingDays} days of ${request.leaveTypeName}`,
+                        metadata: {
+                            relatedEntityId: leaveRequestId,
+                            relatedEntityType: 'leave_request'
+                        }
+                    });
+                }
+            }
+        } catch (error) {
+            // Log error but don't fail the leave request creation
+            console.error('Failed to create leave request notification:', error);
+        }
+
+        return leaveRequestId;
     },
 
     async updateLeaveRequest(requestId: string, data: Partial<LeaveRequest>): Promise<void> {
@@ -394,6 +455,45 @@ export const LeaveService = {
             request.leaveTypeId,
             request.workingDays
         );
+
+        // ============================================================
+        // NOTIFICATION TRIGGER: Mark as Resolved on Approval
+        // ============================================================
+        try {
+            // Find all notifications related to this leave request
+            // Query all users who might have received notifications (managers and HR roles)
+            const employee = await EmployeeService.getEmployee(request.employeeId);
+            const userIdsToCheck: string[] = [];
+
+            // Add manager's userId if exists
+            if (employee?.managerId) {
+                const manager = await EmployeeService.getEmployee(employee.managerId);
+                if (manager?.userId) {
+                    userIdsToCheck.push(manager.userId);
+                }
+            }
+
+            // Add HR users
+            const hrUsers = await UserService.getAllUsers(request.companyId);
+            for (const user of hrUsers) {
+                if (['HR Admin', 'HR Manager'].includes(user.role)) {
+                    userIdsToCheck.push(user.uid);
+                }
+            }
+
+            // Mark related notifications as resolved
+            for (const userId of userIdsToCheck) {
+                const notifications = await NotificationService.getUserNotifications(request.companyId, userId);
+                for (const notification of notifications) {
+                    if (notification.metadata?.relatedEntityId === requestId) {
+                        await NotificationService.markAsResolved(notification.id);
+                    }
+                }
+            }
+        } catch (error) {
+            // Log error but don't fail the approval
+            console.error('Failed to mark leave request notifications as resolved:', error);
+        }
     },
 
     async rejectLeaveRequest(
@@ -418,6 +518,44 @@ export const LeaveService = {
             status: 'rejected',
             approvalHistory: [...(request.approvalHistory || []), approvalRecord]
         });
+
+        // ============================================================
+        // NOTIFICATION TRIGGER: Mark as Resolved on Rejection
+        // ============================================================
+        try {
+            // Find all notifications related to this leave request
+            const employee = await EmployeeService.getEmployee(request.employeeId);
+            const userIdsToCheck: string[] = [];
+
+            // Add manager's userId if exists
+            if (employee?.managerId) {
+                const manager = await EmployeeService.getEmployee(employee.managerId);
+                if (manager?.userId) {
+                    userIdsToCheck.push(manager.userId);
+                }
+            }
+
+            // Add HR users
+            const hrUsers = await UserService.getAllUsers(request.companyId);
+            for (const user of hrUsers) {
+                if (['HR Admin', 'HR Manager'].includes(user.role)) {
+                    userIdsToCheck.push(user.uid);
+                }
+            }
+
+            // Mark related notifications as resolved
+            for (const userId of userIdsToCheck) {
+                const notifications = await NotificationService.getUserNotifications(request.companyId, userId);
+                for (const notification of notifications) {
+                    if (notification.metadata?.relatedEntityId === requestId) {
+                        await NotificationService.markAsResolved(notification.id);
+                    }
+                }
+            }
+        } catch (error) {
+            // Log error but don't fail the rejection
+            console.error('Failed to mark leave request notifications as resolved:', error);
+        }
     },
 
     async cancelLeaveRequest(requestId: string, cancelledBy: string, reason?: string): Promise<void> {

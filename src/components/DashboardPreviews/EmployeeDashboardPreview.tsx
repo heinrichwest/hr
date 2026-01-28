@@ -3,6 +3,10 @@
 // Preview of Employee Self-Service dashboard with mock data
 // ============================================================
 
+import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNotifications } from '../../hooks/useNotifications';
+import { NotificationsCard } from '../NotificationsCard/NotificationsCard';
 import {
     MOCK_EMPLOYEE,
     MOCK_LEAVE_BALANCES,
@@ -12,6 +16,25 @@ import {
 import './DashboardPreviews.css';
 
 export function EmployeeDashboardPreview() {
+    const { userProfile, currentUser } = useAuth();
+    const [notificationsCardVisible, setNotificationsCardVisible] = useState(true);
+
+    // Load notifications for Employee role
+    const {
+        notifications,
+        loading: notificationsLoading,
+        markAsRead,
+        markAllAsRead,
+    } = useNotifications({
+        companyId: userProfile?.companyId || null,
+        userId: currentUser?.uid,
+        autoLoad: true,
+    });
+
+    const handleCloseNotifications = () => {
+        setNotificationsCardVisible(false);
+    };
+
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('en-ZA', {
             day: '2-digit',
@@ -88,6 +111,19 @@ export function EmployeeDashboardPreview() {
 
             {/* Main Content Grid */}
             <div className="preview-grid">
+                {/* Notifications Card - Full width at top */}
+                {notificationsCardVisible && (
+                    <div className="preview-card-full-width" style={{ gridColumn: '1 / -1' }}>
+                        <NotificationsCard
+                            notifications={notifications}
+                            onMarkAsRead={markAsRead}
+                            onMarkAllAsRead={markAllAsRead}
+                            onClose={handleCloseNotifications}
+                            loading={notificationsLoading}
+                        />
+                    </div>
+                )}
+
                 {/* Leave Balances */}
                 <div className="preview-card preview-card--full-width">
                     <div className="preview-card-header">

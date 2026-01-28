@@ -3,9 +3,32 @@
 // Preview for HR Admin and HR Manager roles
 // ============================================================
 
+import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNotifications } from '../../hooks/useNotifications';
+import { NotificationsCard } from '../NotificationsCard/NotificationsCard';
 import './DashboardPreviews.css';
 
 export function HRDashboardPreview() {
+    const { userProfile, currentUser } = useAuth();
+    const [notificationsCardVisible, setNotificationsCardVisible] = useState(true);
+
+    // Load notifications for HR role
+    const {
+        notifications,
+        loading: notificationsLoading,
+        markAsRead,
+        markAllAsRead,
+    } = useNotifications({
+        companyId: userProfile?.companyId || null,
+        userId: currentUser?.uid,
+        autoLoad: true,
+    });
+
+    const handleCloseNotifications = () => {
+        setNotificationsCardVisible(false);
+    };
+
     return (
         <div className="dashboard-preview hr-preview">
             {/* Sample Data Notice */}
@@ -67,6 +90,19 @@ export function HRDashboardPreview() {
 
             {/* Content Grid */}
             <div className="preview-grid">
+                {/* Notifications Card - Full width at top */}
+                {notificationsCardVisible && (
+                    <div className="preview-card-full-width" style={{ gridColumn: '1 / -1' }}>
+                        <NotificationsCard
+                            notifications={notifications}
+                            onMarkAsRead={markAsRead}
+                            onMarkAllAsRead={markAllAsRead}
+                            onClose={handleCloseNotifications}
+                            loading={notificationsLoading}
+                        />
+                    </div>
+                )}
+
                 {/* Pending Leave Requests */}
                 <div className="preview-card">
                     <div className="preview-card-header">
