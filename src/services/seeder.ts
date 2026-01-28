@@ -28,10 +28,23 @@ const SA_FIRST_NAMES = [
 const SA_LAST_NAMES = [
     'Khumalo', 'Nkosi', 'Dlamini', 'Ndlovu', 'Mthembu', 'Sithole', 'Zulu', 'Mokoena',
     'Molefe', 'Nhlapo', 'Maseko', 'Mabaso', 'Cele', 'Buthelezi', 'Radebe', 'Naidoo',
-    'Van der Merwe', 'Botha', 'De Klerk', 'Pretorius', 'Du Plessis', 'Swart', 'Nel',
+    'Van der Merge', 'Botha', 'De Klerk', 'Pretorius', 'Du Plessis', 'Swart', 'Nel',
     'Patel', 'Pillay', 'Govender', 'Chetty', 'Reddy', 'Naicker',
     'Abrahams', 'Jacobs', 'Williams', 'Adams', 'Peterson', 'Smith'
 ];
+
+/**
+ * Hash password using Web Crypto API (SHA-256)
+ * Same implementation as SignUp.tsx for consistency
+ */
+async function hashPassword(password: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
 
 export const Seeder = {
     async clearAllData() {
@@ -83,6 +96,9 @@ export const Seeder = {
             }
             console.log(`Deleted ${companies.length} companies`);
 
+            // NOTE: access_requests collection is NOT cleared to preserve demo data
+            // Demo access requests persist across re-seeding operations
+
             console.log("All data cleared successfully!");
         } catch (error) {
             console.error("Failed to clear data:", error);
@@ -111,9 +127,124 @@ export const Seeder = {
                 console.log(`Seeding tenant: ${tenant.name}...`);
                 await this.seedTenant(tenant);
             }
+
+            // Seed demo access requests after tenants
+            await this.seedDemoAccessRequests();
+
             console.log("Database seed completed successfully!");
         } catch (error) {
             console.error("Seeding failed:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Seeds 3 demo pending access requests for System Admin dashboard testing
+     *
+     * Demo requests use:
+     * - Random South African names from SA_FIRST_NAMES and SA_LAST_NAMES arrays
+     * - Email pattern: firstname.lastname@example.com (lowercase)
+     * - Varied creation timestamps: today, 2 days ago, 3 days ago
+     * - Pending status only
+     *
+     * Duplicate Prevention:
+     * - Checks for existing @example.com requests before creating
+     * - Skips creation if demo requests already exist
+     * - Prevents duplicate names across all 3 requests
+     *
+     * Data Persistence:
+     * - Demo requests persist across re-seeding operations
+     * - clearAllData() does NOT delete access_requests collection
+     */
+    async seedDemoAccessRequests() {
+        console.log("Seeding demo access requests...");
+
+        try {
+            const { collection, getDocs, query, where, Timestamp, setDoc, doc } = await import('firebase/firestore');
+            const { db } = await import('../firebase');
+
+            // Check if demo requests already exist (prevent duplicates on re-seed)
+            const accessRequestsRef = collection(db, 'access_requests');
+            const allRequestsSnapshot = await getDocs(accessRequestsRef);
+
+            // Filter for existing demo requests with @example.com domain
+            const existingDemoRequests = allRequestsSnapshot.docs.filter(doc => {
+                const email = doc.data().email || '';
+                return email.endsWith('@example.com');
+            });
+
+            if (existingDemoRequests.length > 0) {
+                console.log(`Found ${existingDemoRequests.length} existing demo requests, skipping creation...`);
+                return;
+            }
+
+            // Generate unique name combinations
+            const usedNames = new Set<string>();
+            const demoRequests = [];
+
+            // Calculate timestamp offsets in milliseconds
+            const now = Date.now();
+            const timestamps = [
+                now,                                    // Today
+                now - (2 * 24 * 60 * 60 * 1000),       // 2 days ago
+                now - (3 * 24 * 60 * 60 * 1000)        // 3 days ago
+            ];
+
+            // Generate password hash for demo password (won't be used for actual login)
+            const demoPasswordHash = await hashPassword('DemoPassword123!');
+
+            // Create 3 demo requests
+            for (let i = 0; i < 3; i++) {
+                // Get unique first and last name combination
+                let firstName = '';
+                let lastName = '';
+                let fullName = '';
+
+                do {
+                    firstName = SA_FIRST_NAMES[Math.floor(Math.random() * SA_FIRST_NAMES.length)];
+                    lastName = SA_LAST_NAMES[Math.floor(Math.random() * SA_LAST_NAMES.length)];
+                    fullName = `${firstName} ${lastName}`;
+                } while (usedNames.has(fullName));
+
+                usedNames.add(fullName);
+
+                // Generate email with example.com domain
+                const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`;
+
+                demoRequests.push({
+                    email,
+                    firstName,
+                    lastName,
+                    passwordHash: demoPasswordHash,
+                    createdAt: Timestamp.fromMillis(timestamps[i])
+                });
+            }
+
+            // Create demo requests in Firestore
+            for (const requestData of demoRequests) {
+                const docRef = doc(accessRequestsRef);
+
+                await setDoc(docRef, {
+                    id: docRef.id,
+                    email: requestData.email,
+                    firstName: requestData.firstName,
+                    lastName: requestData.lastName,
+                    passwordHash: requestData.passwordHash,
+                    status: 'pending',
+                    createdAt: requestData.createdAt,
+                    reviewedAt: null,
+                    reviewedBy: null,
+                    assignedRole: null,
+                    assignedCompanyId: null,
+                    linkedEmployeeId: null
+                });
+
+                console.log(`Created demo access request for ${requestData.email}`);
+            }
+
+            console.log("Created 3 demo pending access requests");
+        } catch (error) {
+            console.error("Failed to seed demo access requests:", error);
             throw error;
         }
     },
@@ -161,7 +292,7 @@ export const Seeder = {
             isActive: true,
             city: 'Pretoria' // Assuming simple object match for now, fixing if interface differs
         } as any); // Casting mainly because Branch interface might have specific address structure or just ID.
-        // Actually Branch interface in previous turn: address: Address. 
+        // Actually Branch interface in previous turn: address: Address.
         // Let's refine this to match the type properly in a moment, but for now `as any` or strictly matching `Address` is safer.
 
         // 3. Create Departments
