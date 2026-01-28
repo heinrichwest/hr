@@ -44,7 +44,7 @@ export const MOCK_EMPLOYEE: MockEmployee = {
     employeeNumber: 'EMP001',
     firstName: 'Sample',
     lastName: 'Employee',
-    department: 'Engineering',
+    department: 'IT Development',
     jobTitle: 'Software Developer',
     startDate: '2023-01-15',
     email: 'sample.employee@example.com',

@@ -13,7 +13,40 @@ const TENANTS = [
     { name: 'Andebe', suffix: '(A)', domain: 'andebe.co.za', color: '#f59e0b' }
 ];
 
-const DEPARTMENTS = ['Executive', 'HR', 'Finance', 'Operations', 'IT'];
+const DEPARTMENTS = [
+    'Human Resources',
+    'Finance',
+    'IT Development',
+    'IT Hardware and Software Support',
+    'IT Client Support',
+    'Sales',
+    'TAP Academy',
+    'Content Development',
+    'Administration',
+    'Client Liaison',
+    'Learnership & Training',
+    'Recruitment',
+    'Key Accounts',
+    'Practical Work Experience Learners'
+];
+
+const DEPARTMENT_CODES: Record<string, string> = {
+    'Human Resources': 'HR',
+    'Finance': 'FIN',
+    'IT Development': 'IT-DEV',
+    'IT Hardware and Software Support': 'IT-HW',
+    'IT Client Support': 'IT-CS',
+    'Sales': 'SAL',
+    'TAP Academy': 'TAP',
+    'Content Development': 'CD',
+    'Administration': 'ADM',
+    'Client Liaison': 'CL',
+    'Learnership & Training': 'LT',
+    'Recruitment': 'REC',
+    'Key Accounts': 'KA',
+    'Practical Work Experience Learners': 'PWE'
+};
+
 const JOB_TITLES = ['Manager', 'Specialist', 'Assistant', 'Officer'];
 
 // Realistic South African employee names
@@ -32,6 +65,9 @@ const SA_LAST_NAMES = [
     'Patel', 'Pillay', 'Govender', 'Chetty', 'Reddy', 'Naicker',
     'Abrahams', 'Jacobs', 'Williams', 'Adams', 'Peterson', 'Smith'
 ];
+
+// Export constants for testing
+export { DEPARTMENTS, DEPARTMENT_CODES, TENANTS };
 
 /**
  * Hash password using Web Crypto API (SHA-256)
@@ -297,12 +333,14 @@ export const Seeder = {
 
         // 3. Create Departments
         const deptIds: string[] = [];
+        const tenantSuffix = tenant.suffix.replace(/[()]/g, '');
         for (const deptName of DEPARTMENTS) {
+            const deptCode = DEPARTMENT_CODES[deptName];
             const deptId = await CompanyService.createDepartment({
                 companyId,
                 branchId,
                 name: `${deptName} ${tenant.suffix}`,
-                code: `${deptName.substring(0, 3).toUpperCase()}-${tenant.suffix.replace(/[()]/g, '')}`,
+                code: `${deptCode}-${tenantSuffix}`,
                 isActive: true
             });
             deptIds.push(deptId);
