@@ -4,7 +4,6 @@
 // ============================================================
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Timestamp } from 'firebase/firestore';
 
 describe('Demo Access Request Seeding', () => {
     // Mock Firestore functions

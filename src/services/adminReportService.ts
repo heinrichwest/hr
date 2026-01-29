@@ -19,13 +19,12 @@ import { db } from '../firebase';
 import type { Employee } from '../types/employee';
 import type { Company } from '../types/company';
 import type { LeaveBalance, LeaveRequest, LeaveType } from '../types/leave';
-import type { PayRun, PayRunLine } from '../types/payroll';
+import type { PayRunLine } from '../types/payroll';
 import type {
     UI19Report,
     UI19EmployeeRow,
     UI19EmployerDetails,
-    TerminationReasonCode,
-    NonContributorReasonCode
+    TerminationReasonCode
 } from '../types/ui19';
 import type {
     BasicEmployeeInfoReport,
@@ -37,8 +36,7 @@ import type {
     LeaveTakenRecord,
     LeaveUsageTrend,
     ReportMetadata,
-    ReportHistoryEntry,
-    ReportPeriodType
+    ReportHistoryEntry
 } from '../types/adminReports';
 
 /**
@@ -107,8 +105,6 @@ export const AdminReportService = {
         const hoursWorkedMap = new Map<string, number>();
 
         for (const payRunDoc of payRunsSnapshot.docs) {
-            const payRun = payRunDoc.data() as PayRun;
-
             // Get pay run lines
             const linesRef = collection(db, `companies/${companyId}/payRuns/${payRunDoc.id}/payRunLines`);
             const linesSnapshot = await getDocs(linesRef);
@@ -199,6 +195,7 @@ export const AdminReportService = {
 
         const report: UI19Report = {
             reportId,
+            reportType: 'ui-19',
             companyId,
             reportingPeriod: {
                 month: periodStart.getMonth() + 1,
@@ -346,6 +343,7 @@ export const AdminReportService = {
         };
 
         return {
+            reportType: 'basic-employee-info',
             metadata,
             employees: employeeRows,
             summary: {
@@ -526,6 +524,7 @@ export const AdminReportService = {
         };
 
         return {
+            reportType: 'workforce-profile',
             metadata,
             headcountSummary: {
                 total,
@@ -912,6 +911,7 @@ export const AdminReportService = {
         };
 
         return {
+            reportType: 'leave-movement',
             metadata,
             balancesByType,
             leaveTakenRecords,

@@ -4,7 +4,7 @@
 // ============================================================
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { NotificationService } from '../services/notificationService';
 import { NotificationsCard } from '../components/NotificationsCard/NotificationsCard';
@@ -166,7 +166,7 @@ describe('Critical Gaps - End-to-End Workflows', () => {
         const onMarkAsRead = vi.fn();
         const onClose = vi.fn();
 
-        const { container } = render(
+        render(
             <BrowserRouter>
                 <NotificationsCard
                     notifications={[mockNotification]}

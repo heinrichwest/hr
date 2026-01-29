@@ -196,7 +196,7 @@ export const Seeder = {
         console.log("Seeding demo access requests...");
 
         try {
-            const { collection, getDocs, query, where, Timestamp, setDoc, doc } = await import('firebase/firestore');
+            const { collection, getDocs, Timestamp, setDoc, doc } = await import('firebase/firestore');
             const { db } = await import('../firebase');
 
             // Check if demo requests already exist (prevent duplicates on re-seed)

@@ -14,7 +14,10 @@ export type NotificationType =
     | 'performance'
     | 'training'
     | 'attendance'
-    | 'payroll_cutoff';
+    | 'payroll_cutoff'
+    | 'info'
+    | 'system'
+    | 'warning';
 
 /**
  * Priority level of notification

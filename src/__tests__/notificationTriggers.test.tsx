@@ -5,7 +5,6 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NotificationService } from '../services/notificationService';
-import { LeaveService } from '../services/leaveService';
 import { UserService } from '../services/userService';
 import { EmployeeService } from '../services/employeeService';
 import type { LeaveRequest } from '../types/leave';
@@ -64,16 +63,6 @@ describe('Notification Triggers', () => {
 
             // Mock createNotification
             vi.mocked(NotificationService.createNotification).mockResolvedValue('notification-001');
-
-            // Simulate leave request creation with notification trigger
-            const leaveRequest: Partial<LeaveRequest> = {
-                id: mockLeaveRequestId,
-                companyId: mockCompanyId,
-                employeeId: mockEmployeeId,
-                employeeName: 'John Doe',
-                leaveTypeName: 'Annual Leave',
-                workingDays: 3
-            };
 
             // Trigger notification creation (this would happen in createLeaveRequest)
             await NotificationService.createNotification({

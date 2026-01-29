@@ -114,6 +114,7 @@ export interface UI19EmployerDetails {
 export interface UI19Report {
     // Report metadata
     reportId: string;
+    reportType: 'ui-19';
     companyId: string;
     reportingPeriod: {
         month: number; // 1-12

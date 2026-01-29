@@ -11,6 +11,7 @@ import type { UI19Report } from '../types/ui19';
 // Mock UI-19 report data
 const mockUI19Report: UI19Report = {
     reportId: 'test-report-001',
+    reportType: 'ui-19',
     companyId: 'company-123',
     reportingPeriod: {
         month: 1,

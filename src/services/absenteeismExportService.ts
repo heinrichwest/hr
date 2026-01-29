@@ -5,7 +5,7 @@
 
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import type { AbsenteeismReportData, AbsenteeismFilters } from '../types/reports';
+import type { AbsenteeismReportData, AbsenteeismFilters, ComplianceFlag } from '../types/reports';
 
 /**
  * Export absenteeism report to Excel format
@@ -162,7 +162,7 @@ export function exportAbsenteeismReportToPDF(
         xPosition += colWidths[7];
 
         // Action Flags (use text symbols)
-        const flagSymbols = row.flags.map(flag => {
+        const flagSymbols = row.flags.map((flag: ComplianceFlag) => {
             switch (flag.severity) {
                 case 'error': return '✗';
                 case 'warning': return '⚠';
@@ -318,7 +318,7 @@ function createDetailedDataSheet(data: AbsenteeismReportData[]): unknown[][] {
         emp.cycleInfo.daysRemaining,
         emp.absenteeismRate.toFixed(2),
         emp.unauthorizedAbsenceCount,
-        emp.flags.map(f => `${f.type}: ${f.message}`).join('; ') || 'None'
+        emp.flags.map((f: ComplianceFlag) => `${f.type}: ${f.message}`).join('; ') || 'None'
     ]);
 
     return [headers, ...rows];

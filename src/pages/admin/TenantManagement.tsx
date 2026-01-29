@@ -29,10 +29,6 @@ export function TenantManagement() {
     const [newAdminRole, setNewAdminRole] = useState<UserRole>('HR Admin');
     const [addingAdmin, setAddingAdmin] = useState(false);
 
-    // Migration state
-    const [migratingLeaveTypes, setMigratingLeaveTypes] = useState(false);
-    const [migrationResult, setMigrationResult] = useState<string | null>(null);
-
     // Form State
     const [newCompany, setNewCompany] = useState({
         legalName: '',
@@ -184,26 +180,6 @@ export function TenantManagement() {
         }
     };
 
-    const handleAddMissingLeaveTypes = async () => {
-        if (!selectedTenant) return;
-
-        setMigratingLeaveTypes(true);
-        setMigrationResult(null);
-        try {
-            const addedTypes = await LeaveService.addMissingLeaveTypes(selectedTenant.id);
-            if (addedTypes.length > 0) {
-                setMigrationResult(`Added: ${addedTypes.join(', ')}`);
-            } else {
-                setMigrationResult('All leave types already exist for this tenant.');
-            }
-        } catch (error) {
-            console.error('Failed to add missing leave types:', error);
-            setMigrationResult('Failed to add leave types. Please try again.');
-        } finally {
-            setMigratingLeaveTypes(false);
-        }
-    };
-
     const handleRemoveDuplicates = async () => {
         if (!confirm('This will remove duplicate tenants, keeping only the first occurrence of each company name. Continue?')) return;
 
@@ -344,35 +320,6 @@ export function TenantManagement() {
                             <div className="tenant-stat">
                                 <div className="tenant-stat-value">{tenantStats.admins}</div>
                                 <div className="tenant-stat-label">Admin Users</div>
-                            </div>
-                        </div>
-
-                        {/* Tenant Actions Section */}
-                        <div className="tenant-actions-section">
-                            <h3>
-                                <SettingsIcon />
-                                Tenant Actions
-                            </h3>
-                            <div className="tenant-action-item">
-                                <div className="tenant-action-info">
-                                    <span className="tenant-action-name">Add Missing Leave Types</span>
-                                    <span className="tenant-action-description">
-                                        Adds Paternity Leave and Birthday Leave if not already present
-                                    </span>
-                                    {migrationResult && (
-                                        <span className={`tenant-action-result ${migrationResult.startsWith('Failed') ? 'tenant-action-result--error' : 'tenant-action-result--success'}`}>
-                                            {migrationResult}
-                                        </span>
-                                    )}
-                                </div>
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={handleAddMissingLeaveTypes}
-                                    disabled={migratingLeaveTypes}
-                                >
-                                    {migratingLeaveTypes ? 'Adding...' : 'Run Migration'}
-                                </Button>
                             </div>
                         </div>
 

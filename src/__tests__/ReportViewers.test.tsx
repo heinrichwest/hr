@@ -13,6 +13,7 @@ import type { BasicEmployeeInfoReport, WorkforceProfileReport, LeaveMovementRepo
 
 // Mock data
 const mockBasicEmployeeInfo: BasicEmployeeInfoReport = {
+    reportType: 'basic-employee-info',
     metadata: {
         reportId: 'test-1',
         reportType: 'basic-employee-info',
@@ -57,6 +58,7 @@ const mockBasicEmployeeInfo: BasicEmployeeInfoReport = {
 };
 
 const mockWorkforceProfile: WorkforceProfileReport = {
+    reportType: 'workforce-profile',
     metadata: {
         reportId: 'test-2',
         reportType: 'workforce-profile',
@@ -103,6 +105,7 @@ const mockWorkforceProfile: WorkforceProfileReport = {
 };
 
 const mockLeaveMovement: LeaveMovementReport = {
+    reportType: 'leave-movement',
     metadata: {
         reportId: 'test-3',
         reportType: 'leave-movement',

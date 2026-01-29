@@ -94,6 +94,7 @@ export interface BasicEmployeeInfoRow {
  * Basic Employee Information Report structure
  */
 export interface BasicEmployeeInfoReport {
+    reportType: 'basic-employee-info';
     metadata: ReportMetadata;
     employees: BasicEmployeeInfoRow[];
     summary: {
@@ -145,6 +146,7 @@ export interface DemographicsBreakdown {
  * Workforce Profile Report structure with chart data
  */
 export interface WorkforceProfileReport {
+    reportType: 'workforce-profile';
     metadata: ReportMetadata;
 
     // Headcount summaries
@@ -294,6 +296,7 @@ export interface LeaveUsageTrend {
  * Employee Leave Movement Report structure
  */
 export interface LeaveMovementReport {
+    reportType: 'leave-movement';
     metadata: ReportMetadata;
 
     // Leave balance summary by type

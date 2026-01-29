@@ -64,7 +64,7 @@ export async function generateAbsenteeismReport(
         const reportData = await Promise.all(reportDataPromises);
 
         // Filter out any null results (employees with errors)
-        return reportData.filter((data): data is AbsenteeismReportData => data !== null);
+        return reportData.filter((data: AbsenteeismReportData | null): data is AbsenteeismReportData => data !== null);
     } catch (error) {
         console.error('Error generating absenteeism report:', error);
         // Return demo data on error
@@ -323,7 +323,7 @@ export async function generatePaginatedAbsenteeismReport(
 
         // Filter out any null results
         const validReportData = reportData.filter(
-            (data): data is AbsenteeismReportData => data !== null
+            (data: AbsenteeismReportData | null): data is AbsenteeismReportData => data !== null
         );
 
         return {

@@ -49,7 +49,6 @@ describe('Dashboard Integration - NotificationsCard', () => {
 
     it('should load user-specific notifications for HR roles', async () => {
         const userId = 'hr-user-123';
-        const companyId = 'test-company-123';
 
         const mockNotifications: Notification[] = [
             createMockNotification('1', userId, 'leave_request', 'high'),

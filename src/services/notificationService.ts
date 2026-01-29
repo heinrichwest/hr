@@ -18,6 +18,7 @@ import {
     writeBatch,
     Timestamp,
     or,
+    and,
 } from 'firebase/firestore';
 import type { Notification, CreateNotificationData } from '../types/notification';
 
@@ -138,14 +139,16 @@ export const NotificationService = {
 
         const unreadQuery = query(
             notificationsRef,
-            where('companyId', '==', companyId),
-            or(
-                where('userId', '==', userId),
-                where('userId', '==', 'ALL')
-            ),
-            where('isRead', '==', false),
-            where('isResolved', '==', false),
-            where('isDismissed', '==', false)
+            and(
+                where('companyId', '==', companyId),
+                or(
+                    where('userId', '==', userId),
+                    where('userId', '==', 'ALL')
+                ),
+                where('isRead', '==', false),
+                where('isResolved', '==', false),
+                where('isDismissed', '==', false)
+            )
         );
 
         const snapshot = await getDocs(unreadQuery);

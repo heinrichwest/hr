@@ -6,7 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AdminReportService } from '../services/adminReportService';
-import type { UI19Report } from '../types/ui19';
 
 // Mock Firestore
 vi.mock('../firebase', () => ({

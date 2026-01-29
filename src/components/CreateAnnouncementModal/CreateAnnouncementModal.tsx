@@ -68,7 +68,7 @@ export function CreateAnnouncementModal({
     useEffect(() => {
         const loadCompanies = async () => {
             try {
-                const allCompanies = await CompanyService.getCompanies();
+                const allCompanies = await CompanyService.getAllCompanies();
                 setCompanies(allCompanies);
             } catch (err) {
                 console.error('Failed to load companies:', err);
@@ -174,7 +174,7 @@ export function CreateAnnouncementModal({
                                 id="title"
                                 placeholder="Enter announcement title"
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                                 required
                             />
                         </div>
@@ -188,7 +188,7 @@ export function CreateAnnouncementModal({
                                 id="description"
                                 placeholder="Enter announcement description"
                                 value={description}
-                                onChange={(e) => setDescription(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                                 rows={4}
                                 required
                             />
@@ -255,7 +255,7 @@ export function CreateAnnouncementModal({
                                         <SelectContent>
                                             {companies.map((company) => (
                                                 <SelectItem key={company.id} value={company.id}>
-                                                    {company.name}
+                                                    {company.tradingName || company.legalName}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

@@ -24,6 +24,58 @@ export type DateRangePreset =
     | 'custom';
 
 // ============================================================
+// COMMON TYPES FOR REPORTS
+// ============================================================
+
+export interface DateRange {
+    startDate: Date;
+    endDate: Date;
+}
+
+export type LeaveTypeMode = 'sick_only' | 'all_types';
+
+export interface ComplianceFlag {
+    type: string;
+    message: string;
+    severity: 'info' | 'warning' | 'error';
+    ruleTriggered: string;
+}
+
+export interface BCEASickLeaveCycle {
+    employeeId: string;
+    startDate: Date;
+    endDate: Date;
+    daysUsed: number;
+    daysRemaining: number;
+    occasions: number;
+}
+
+export interface AbsenteeismFilters {
+    employeeId?: string;
+    dateRange: DateRange;
+    leaveTypeMode: LeaveTypeMode;
+}
+
+export interface AbsenteeismReportData {
+    employeeId: string;
+    employeeNumber: string;
+    employeeName: string;
+    department: string;
+    totalAbsentDays: number;
+    sickLeaveDays: number;
+    occasions: number;
+    cycleInfo: {
+        cycleStartDate: Date;
+        cycleEndDate: Date;
+        daysUsed: number;
+        daysRemaining: number;
+    };
+    absenteeismRate: number;
+    flags: ComplianceFlag[];
+    unauthorizedAbsenceCount: number;
+}
+
+// ============================================================
 // REPORT DEFINITIONS
 // ============================================================
 

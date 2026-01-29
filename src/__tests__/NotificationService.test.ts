@@ -103,7 +103,7 @@ describe('NotificationService', () => {
                     id: 'notif-1',
                     type: 'info',
                     title: 'Company Notification',
-                    message: 'Test message 1',
+                    description: 'Test message 1',
                     companyId: 'company-123',
                     isRead: false,
                 },
@@ -111,7 +111,7 @@ describe('NotificationService', () => {
                     id: 'notif-2',
                     type: 'system',
                     title: 'Global Notification',
-                    message: 'Test message 2',
+                    description: 'Test message 2',
                     companyId: null,
                     isRead: false,
                 },
@@ -136,7 +136,7 @@ describe('NotificationService', () => {
                     id: 'notif-1',
                     type: 'system',
                     title: 'Global Notification',
-                    message: 'Test message',
+                    description: 'Test message',
                     companyId: null,
                     isRead: false,
                 },
@@ -202,7 +202,7 @@ describe('NotificationService', () => {
                 docs: mockDocs,
             });
 
-            await NotificationService.markAllAsRead();
+            await NotificationService.markAllAsRead('company-123', 'user-123');
 
             expect(mockBatchUpdate).toHaveBeenCalledTimes(2);
             expect(mockBatchCommit).toHaveBeenCalled();
@@ -214,7 +214,7 @@ describe('NotificationService', () => {
                 docs: [],
             });
 
-            await NotificationService.markAllAsRead();
+            await NotificationService.markAllAsRead('company-123', 'user-123');
 
             expect(mockBatchCommit).not.toHaveBeenCalled();
         });
@@ -225,9 +225,10 @@ describe('NotificationService', () => {
             const createData: CreateNotificationData = {
                 type: 'info',
                 title: 'Test Notification',
-                message: 'This is a test notification message',
+                description: 'This is a test notification message',
                 companyId: 'company-123',
-                recipientRole: 'HR Admin',
+                userId: 'user-123',
+                priority: 'medium',
             };
 
             mockSetDoc.mockResolvedValue(undefined);
@@ -242,10 +243,11 @@ describe('NotificationService', () => {
                     id: 'test-notification-id',
                     type: 'info',
                     title: 'Test Notification',
-                    message: 'This is a test notification message',
+                    description: 'This is a test notification message',
                     companyId: 'company-123',
+                    userId: 'user-123',
+                    priority: 'medium',
                     isRead: false,
-                    recipientRole: 'HR Admin',
                 })
             );
         });
@@ -254,7 +256,10 @@ describe('NotificationService', () => {
             const createData: CreateNotificationData = {
                 type: 'system',
                 title: 'System Update',
-                message: 'A system-wide update has occurred',
+                description: 'A system-wide update has occurred',
+                companyId: null,
+                userId: 'ALL',
+                priority: 'high',
             };
 
             mockSetDoc.mockResolvedValue(undefined);
@@ -265,16 +270,19 @@ describe('NotificationService', () => {
                 expect.anything(),
                 expect.objectContaining({
                     companyId: null,
-                    recipientRole: null,
+                    userId: 'ALL',
                 })
             );
         });
 
-        it('should trim title and message whitespace', async () => {
+        it('should trim title and description whitespace', async () => {
             const createData: CreateNotificationData = {
                 type: 'warning',
                 title: '  Trimmed Title  ',
-                message: '  Trimmed message content  ',
+                description: '  Trimmed message content  ',
+                companyId: null,
+                userId: 'ALL',
+                priority: 'high',
             };
 
             mockSetDoc.mockResolvedValue(undefined);
@@ -285,7 +293,7 @@ describe('NotificationService', () => {
                 expect.anything(),
                 expect.objectContaining({
                     title: 'Trimmed Title',
-                    message: 'Trimmed message content',
+                    description: 'Trimmed message content',
                 })
             );
         });
