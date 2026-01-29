@@ -36,17 +36,6 @@ const CHART_COLORS = {
     danger: 'hsl(0, 60%, 50%)'
 };
 
-const DEPARTMENT_COLORS = [
-    'hsl(220, 70%, 50%)',
-    'hsl(35, 100%, 50%)',
-    'hsl(140, 50%, 45%)',
-    'hsl(280, 60%, 55%)',
-    'hsl(0, 60%, 50%)',
-    'hsl(180, 50%, 45%)',
-    'hsl(50, 90%, 50%)',
-    'hsl(320, 60%, 50%)'
-];
-
 const EMPLOYEE_TYPE_COLORS = [
     'hsl(220, 70%, 50%)', // Permanent
     'hsl(35, 100%, 50%)', // Fixed Term
@@ -216,12 +205,12 @@ export function WorkforceProfileViewer({ report, onExportExcel, onExportCSV }: W
                                         cx="50%"
                                         cy="50%"
                                         labelLine={false}
-                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                        label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
                                         outerRadius={100}
                                         fill={CHART_COLORS.primary}
                                         dataKey="value"
                                     >
-                                        {employeeTypeChartData.map((entry, index) => (
+                                        {employeeTypeChartData.map((_, index) => (
                                             <Cell key={`cell-${index}`} fill={EMPLOYEE_TYPE_COLORS[index % EMPLOYEE_TYPE_COLORS.length]} />
                                         ))}
                                     </Pie>

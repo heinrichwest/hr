@@ -194,7 +194,7 @@ export function ReportHistoryTable({
                                 <td className="actions-column">
                                     <Button
                                         variant="secondary"
-                                        size="small"
+                                        size="sm"
                                         onClick={() => onDownload(entry)}
                                     >
                                         Download
@@ -210,7 +210,7 @@ export function ReportHistoryTable({
                 <div className="history-pagination">
                     <Button
                         variant="secondary"
-                        size="small"
+                        size="sm"
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                         disabled={currentPage === 1}
                     >
@@ -221,7 +221,7 @@ export function ReportHistoryTable({
                     </span>
                     <Button
                         variant="secondary"
-                        size="small"
+                        size="sm"
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                         disabled={currentPage === totalPages}
                     >

@@ -51,7 +51,7 @@ export function Notifications() {
         setLoading(true);
         try {
             // Determine companyId based on role
-            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            const companyId = userProfile.role === 'System Admin' ? null : (userProfile.companyId || null);
 
             // Load user-specific notifications
             const data = await NotificationService.getUserNotifications(companyId, currentUser.uid);
@@ -85,7 +85,7 @@ export function Notifications() {
 
         setMarkingAll(true);
         try {
-            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            const companyId = userProfile.role === 'System Admin' ? null : (userProfile.companyId || null);
             await NotificationService.markAllAsRead(companyId, currentUser.uid);
             // Update local state
             setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
@@ -106,7 +106,7 @@ export function Notifications() {
 
         setSeeding(true);
         try {
-            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            const companyId = userProfile.role === 'System Admin' ? null : (userProfile.companyId || null);
             await NotificationService.seedDemoNotifications(companyId, currentUser.uid);
             // Reload notifications after seeding
             await loadNotifications();
@@ -128,7 +128,7 @@ export function Notifications() {
 
         setLoading(true);
         try {
-            const companyId = userProfile.role === 'System Admin' ? null : userProfile.companyId;
+            const companyId = userProfile.role === 'System Admin' ? null : (userProfile.companyId || null);
             await NotificationService.clearDemoNotifications(companyId, currentUser.uid);
             setNotifications([]);
         } catch (error) {

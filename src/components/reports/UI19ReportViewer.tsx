@@ -5,7 +5,6 @@
 // ============================================================
 
 import type { UI19Report } from '../../types/ui19';
-import { TERMINATION_REASON_LABELS, NON_CONTRIBUTOR_REASON_LABELS } from '../../types/ui19';
 import { Button } from '../Button/Button';
 import './UI19ReportViewer.css';
 
@@ -16,16 +15,6 @@ interface UI19ReportViewerProps {
 }
 
 export function UI19ReportViewer({ report, onExportExcel, onExportCSV }: UI19ReportViewerProps) {
-    // Format date as DD/MM/YY (two-digit year as per official form)
-    const formatDate = (date: Date | undefined): string => {
-        if (!date) return '';
-        const d = new Date(date);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = String(d.getFullYear()).slice(-2);
-        return `${day}/${month}/${year}`;
-    };
-
     // Split date into individual digit boxes for DD MM YY format
     const formatDateBoxes = (date: Date | undefined): string[] => {
         if (!date) return Array(6).fill('');

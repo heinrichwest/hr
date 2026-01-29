@@ -7,7 +7,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NotificationService } from '../services/notificationService';
 import { UserService } from '../services/userService';
 import { EmployeeService } from '../services/employeeService';
-import type { LeaveRequest } from '../types/leave';
 import type { Employee } from '../types/employee';
 import type { UserProfile } from '../types/user';
 

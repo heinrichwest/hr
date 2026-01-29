@@ -4,16 +4,8 @@
 // ============================================================
 
 import './DashboardPreviews.css';
-import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNotifications } from '../../hooks/useNotifications';
-import { NotificationsCard } from '../NotificationsCard/NotificationsCard';
 
 export function FinanceDashboardPreview() {
-    const { userProfile, currentUser } = useAuth();
-    const [notificationsCardVisible, setNotificationsCardVisible] = useState(true);
-    const { notifications, loading: notificationsLoading, markAsRead, markAllAsRead } = useNotifications({ companyId: userProfile?.companyId || null, userId: currentUser?.uid, autoLoad: true });
-    const handleCloseNotifications = () => { setNotificationsCardVisible(false); };
 
     return (
         <div className="dashboard-preview finance-preview">

@@ -121,12 +121,7 @@ describe('ReportExportService', () => {
                 byDepartment: { IT: 1 },
                 byContractType: { permanent: 1 },
                 byStatus: { active: 1 }
-            },
-            generatedAt: new Date(),
-            generatedBy: 'user123',
-            generatedByName: 'Test User',
-            companyId: 'company123',
-            companyName: 'Test Company'
+            }
         };
     });
 
